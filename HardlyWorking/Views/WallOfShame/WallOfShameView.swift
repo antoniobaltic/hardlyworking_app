@@ -7,9 +7,15 @@ struct WallOfShameView: View {
     @AppStorage("userCountry") private var userCountry: String = ""
     @AppStorage("userIndustry") private var userIndustry: String = ""
 
+    @State private var viewModel = BenchmarkViewModel()
+    @Environment(SubscriptionManager.self) private var subscriptionManager
+    @State private var showPaywall = false
+
+    private var isProUser: Bool { subscriptionManager.isProUser }
+
     private var userAvgPerDay: TimeInterval {
         let calendar = Calendar.current
-        let weekAgo = calendar.date(byAdding: .day, value: -7, to: .now)!
+        let weekAgo = calendar.date(byAdding: .day, value: -7, to: .now) ?? .now
         let recentEntries = allEntries.filter { !$0.isRunning && $0.startTime >= weekAgo }
         let total = recentEntries.reduce(0.0) { $0 + $1.duration }
 
@@ -32,29 +38,47 @@ struct WallOfShameView: View {
                 VStack(spacing: 28) {
                     YourPositionView(
                         userAvgPerDay: userAvgPerDay,
-                        globalAvgPerDay: MockBenchmarkData.global.globalAvgSecondsPerDay
+                        globalAvgPerDay: viewModel.globalStats.globalAvgSecondsPerDay
                     )
                     .padding(.horizontal, 24)
 
                     Divider().padding(.horizontal, 24)
 
-                    CountryRankingsView(
-                        countries: MockBenchmarkData.countries,
-                        userCountry: userCountry
-                    )
-                    .padding(.horizontal, 24)
+                    if isProUser {
+                        CountryRankingsView(
+                            countries: viewModel.countries,
+                            userCountry: userCountry
+                        )
+                        .padding(.horizontal, 24)
+                    } else {
+                        lockedSection(
+                            title: "Country Rankings",
+                            description: "International slacking data is\nclassified. Pro clearance required.",
+                            icon: "globe"
+                        )
+                        .padding(.horizontal, 24)
+                    }
 
                     Divider().padding(.horizontal, 24)
 
-                    IndustryRankingsView(
-                        industries: MockBenchmarkData.industries,
-                        userIndustry: userIndustry
-                    )
-                    .padding(.horizontal, 24)
+                    if isProUser {
+                        IndustryRankingsView(
+                            industries: viewModel.industries,
+                            userIndustry: userIndustry
+                        )
+                        .padding(.horizontal, 24)
+                    } else {
+                        lockedSection(
+                            title: "Industry Rankings",
+                            description: "Sector-level intelligence requires\nPro authorization.",
+                            icon: "building.2.fill"
+                        )
+                        .padding(.horizontal, 24)
+                    }
 
                     Divider().padding(.horizontal, 24)
 
-                    GlobalStatsView(stats: MockBenchmarkData.global)
+                    GlobalStatsView(stats: viewModel.globalStats)
                         .padding(.horizontal, 24)
                 }
                 .padding(.top, 20)
@@ -62,6 +86,21 @@ struct WallOfShameView: View {
             }
         }
         .background(Color.white)
+        .task { await viewModel.loadBenchmarks() }
+        .sheet(isPresented: $showPaywall, onDismiss: {
+            subscriptionManager.showProBannerIfPending()
+        }) {
+            PaywallView()
+                .presentationDragIndicator(.visible)
+        }
+    }
+
+    private func lockedSection(title: String, description: String, icon: String) -> some View {
+        ProLockedView(
+            title: title,
+            description: description,
+            icon: icon
+        ) { showPaywall = true }
     }
 
     // MARK: - Formula Bar
@@ -92,7 +131,7 @@ struct WallOfShameView: View {
 
                 Spacer()
 
-                Text(userAvgPerDay > 0 ? percentileLabel : "#N/A")
+                Text(percentileLabel)
                     .font(.system(.callout, design: .monospaced, weight: .bold))
                     .foregroundStyle(userAvgPerDay > 0 ? Theme.accent : Theme.textPrimary.opacity(0.3))
             }
@@ -111,9 +150,16 @@ struct WallOfShameView: View {
     }
 
     private var percentileLabel: String {
-        let globalAvg = MockBenchmarkData.global.globalAvgSecondsPerDay
+        guard userAvgPerDay > 0 else { return "#N/A" }
+
+        // Use live percentile from Supabase if available
+        if let percentile = viewModel.userPercentile {
+            return "Top \(100 - percentile)%"
+        }
+
+        // Fallback: estimate from global average
+        let globalAvg = viewModel.globalStats.globalAvgSecondsPerDay
         guard globalAvg > 0 else { return "#N/A" }
-        // Simple percentile estimate based on position relative to average
         let ratio = userAvgPerDay / globalAvg
         let percentile: Int
         if ratio > 2.0 { percentile = 1 }

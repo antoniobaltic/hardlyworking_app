@@ -4,10 +4,20 @@ import SwiftUI
 struct DashboardView: View {
     @Query(sort: \TimeEntry.startTime, order: .reverse)
     private var allEntries: [TimeEntry]
+    @Query(sort: \CustomCategory.createdAt)
+    private var customCategories: [CustomCategory]
     @AppStorage("hourlyRate") private var hourlyRate: Double = 15.0
     @AppStorage("workHoursPerDay") private var workHoursPerDay: Double = 8.0
     @AppStorage("includeWeekends") private var includeWeekends: Bool = false
     @State private var viewModel = DashboardViewModel()
+    @Environment(SubscriptionManager.self) private var subscriptionManager
+    @State private var showPaywall = false
+
+    private var isProUser: Bool { subscriptionManager.isProUser }
+
+    private func isPeriodLocked(_ period: TimePeriod) -> Bool {
+        !isProUser && [.month, .year, .lifetime].contains(period)
+    }
 
     var body: some View {
         ScrollView {
@@ -22,7 +32,9 @@ struct DashboardView: View {
                         .padding(.bottom, 20)
                 }
 
-                if viewModel.filteredEntries(allEntries).isEmpty {
+                if isPeriodLocked(viewModel.selectedPeriod) {
+                    lockedPeriodContent
+                } else if viewModel.filteredEntries(allEntries).isEmpty {
                     emptyState
                 } else if viewModel.selectedPeriod == .lifetime {
                     lifetimeContent
@@ -32,6 +44,14 @@ struct DashboardView: View {
             }
         }
         .background(Color.white)
+        .onAppear { viewModel.customCategories = customCategories }
+        .onChange(of: customCategories) { viewModel.customCategories = customCategories }
+        .sheet(isPresented: $showPaywall, onDismiss: {
+            subscriptionManager.showProBannerIfPending()
+        }) {
+            PaywallView()
+                .presentationDragIndicator(.visible)
+        }
     }
 
     // MARK: - Period Content (Day/Week/Month/Year)
@@ -58,11 +78,34 @@ struct DashboardView: View {
                 dayTimeline
             }
 
-            Divider().padding(.horizontal, 24)
-            InsightsView(insights: viewModel.generateInsights(allEntries, hourlyRate: hourlyRate, includeWeekends: includeWeekends))
-                .padding(.horizontal, 24)
+            if isProUser {
+                Divider().padding(.horizontal, 24)
+                InsightsView(insights: viewModel.generateInsights(allEntries, hourlyRate: hourlyRate, includeWeekends: includeWeekends))
+                    .padding(.horizontal, 24)
+            } else {
+                Divider().padding(.horizontal, 24)
+                ProLockedView(
+                    title: "Audit Findings",
+                    description: "Your behavioral analysis requires\nPro clearance to access.",
+                    icon: "lightbulb.fill"
+                ) { showPaywall = true }
+                    .padding(.horizontal, 24)
+            }
         }
         .padding(.bottom, 60)
+    }
+
+    // MARK: - Locked Period Content
+
+    private var lockedPeriodContent: some View {
+        return ProLockedView(
+            title: "\(viewModel.selectedPeriod.rawValue) Report",
+            description: "This report is classified.\nPro clearance required.",
+            icon: "chart.bar.fill"
+        ) { showPaywall = true }
+            .padding(.horizontal, 24)
+            .padding(.top, 40)
+            .padding(.bottom, 60)
     }
 
     // MARK: - Lifetime Content
@@ -145,29 +188,44 @@ struct DashboardView: View {
         HStack(spacing: 0) {
             ForEach(TimePeriod.allCases) { period in
                 let isSelected = viewModel.selectedPeriod == period
+                let isLocked = isPeriodLocked(period)
                 Button {
                     Haptics.selection()
-                    withAnimation(.easeInOut(duration: 0.15)) {
-                        viewModel.selectedPeriod = period
-                        viewModel.selectedDate = .now
+                    if isLocked {
+                        showPaywall = true
+                    } else {
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            viewModel.selectedPeriod = period
+                            viewModel.selectedDate = .now
+                        }
                     }
                 } label: {
-                    Text(period.rawValue)
-                        .font(.system(size: 12, weight: isSelected ? .semibold : .regular, design: .monospaced))
-                        .foregroundStyle(isSelected ? Theme.textPrimary : Theme.textPrimary.opacity(0.4))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
-                        .background(
-                            isSelected
-                                ? Color.white
-                                : Theme.cardBackground
-                        )
-                        .overlay(
-                            Rectangle()
-                                .fill(isSelected ? Theme.accent : Color.clear)
-                                .frame(height: 2),
-                            alignment: .bottom
-                        )
+                    HStack(spacing: 3) {
+                        Text(period.rawValue)
+                            .font(.system(size: 12, weight: isSelected ? .semibold : .regular, design: .monospaced))
+                        if isLocked {
+                            Image(systemName: "lock.fill")
+                                .font(.system(size: 7, weight: .bold))
+                        }
+                    }
+                    .foregroundStyle(
+                        isLocked
+                            ? Theme.textPrimary.opacity(0.2)
+                            : (isSelected ? Theme.textPrimary : Theme.textPrimary.opacity(0.4))
+                    )
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(
+                        isSelected && !isLocked
+                            ? Color.white
+                            : Theme.cardBackground
+                    )
+                    .overlay(
+                        Rectangle()
+                            .fill(isSelected && !isLocked ? Theme.accent : Color.clear)
+                            .frame(height: 2),
+                        alignment: .bottom
+                    )
                 }
             }
         }
@@ -406,8 +464,8 @@ struct DashboardView: View {
     ]
 
     for (daysAgo, category, hour, minute, duration) in sampleData {
-        let day = calendar.date(byAdding: .day, value: -daysAgo, to: today)!
-        let start = calendar.date(bySettingHour: hour, minute: minute, second: 0, of: day)!
+        let day = calendar.date(byAdding: .day, value: -daysAgo, to: today) ?? today
+        let start = calendar.date(bySettingHour: hour, minute: minute, second: 0, of: day) ?? day
         let end = start.addingTimeInterval(Double(duration) * 60)
         let entry = TimeEntry(category: category, startTime: start, endTime: end)
         context.insert(entry)

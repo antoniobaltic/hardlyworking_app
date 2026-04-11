@@ -5,10 +5,10 @@ import SwiftData
 final class TimeEntry {
     #Index<TimeEntry>([\.startTime])
 
-    var category: String
-    var startTime: Date
+    var category: String = ""
+    var startTime: Date = Date.now
     var endTime: Date?
-    var isManual: Bool
+    var isManual: Bool = false
 
     var duration: TimeInterval {
         let end = endTime ?? .now

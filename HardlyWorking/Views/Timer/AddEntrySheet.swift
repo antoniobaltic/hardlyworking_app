@@ -1,13 +1,24 @@
+import SwiftData
 import SwiftUI
 
 struct AddEntrySheet: View {
     @Environment(\.dismiss) private var dismiss
+    @Query(sort: \CustomCategory.createdAt)
+    private var customCategories: [CustomCategory]
+    @Query(sort: \TimeEntry.startTime, order: .reverse)
+    private var allEntries: [TimeEntry]
+    @AppStorage("workHoursPerDay") private var workHoursPerDay: Double = 8.0
     var onSave: (String, Date, Date) -> Void
 
     @State private var selectedCategory: String = SlackCategory.defaults[0].name
+    @State private var validationError: String?
+
+    private var allCategories: [SlackCategory] {
+        SlackCategory.allCategories(custom: customCategories)
+    }
     @State private var startTime: Date = Calendar.current.date(
         byAdding: .minute, value: -30, to: .now
-    )!
+    ) ?? .now
     @State private var endTime: Date = .now
 
     var body: some View {
@@ -20,20 +31,32 @@ struct AddEntrySheet: View {
             .background(Color.white)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button("Cancel") { Haptics.light(); dismiss() }
                         .font(.system(.body, design: .monospaced))
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add") {
-                        Haptics.medium()
-                        onSave(selectedCategory, startTime, endTime)
-                        dismiss()
+                        if let error = RecordingLimits.validate(
+                            start: startTime,
+                            end: endTime,
+                            existingEntries: allEntries,
+                            workHoursPerDay: workHoursPerDay
+                        ) {
+                            Haptics.warning()
+                            validationError = error.localizedDescription
+                        } else {
+                            Haptics.medium()
+                            onSave(selectedCategory, startTime, endTime)
+                            dismiss()
+                        }
                     }
                     .font(.system(.body, design: .monospaced, weight: .semibold))
                     .foregroundStyle(Theme.accent)
                     .disabled(endTime <= startTime)
                 }
             }
+            .onChange(of: startTime) { validationError = nil }
+            .onChange(of: endTime) { validationError = nil }
         }
     }
 
@@ -65,7 +88,7 @@ struct AddEntrySheet: View {
             formSection("ACTIVITY") {
                 ScrollView(.horizontal) {
                     HStack(spacing: 8) {
-                        ForEach(SlackCategory.defaults) { category in
+                        ForEach(allCategories) { category in
                             Button {
                                 Haptics.light()
                                 selectedCategory = category.name
@@ -123,6 +146,14 @@ struct AddEntrySheet: View {
                     Spacer()
                 }
                 .padding(.horizontal, 24)
+            }
+
+            if let validationError {
+                Text(validationError)
+                    .font(.system(.caption2, design: .monospaced))
+                    .foregroundStyle(Theme.timer)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 12)
             }
         }
     }

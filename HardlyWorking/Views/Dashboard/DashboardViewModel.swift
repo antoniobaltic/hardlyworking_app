@@ -33,6 +33,7 @@ struct Insight: Identifiable {
 
 @Observable @MainActor
 final class DashboardViewModel {
+    var customCategories: [CustomCategory] = []
     var selectedPeriod: TimePeriod = .week
     var selectedDate: Date = .now
 
@@ -65,10 +66,10 @@ final class DashboardViewModel {
 
     private var earliestDate: Date {
         switch selectedPeriod {
-        case .day: calendar.date(byAdding: .day, value: -90, to: .now)!
-        case .week: calendar.date(byAdding: .weekOfYear, value: -50, to: .now)!
-        case .month: calendar.date(byAdding: .month, value: -24, to: .now)!
-        case .year: calendar.date(byAdding: .year, value: -10, to: .now)!
+        case .day: calendar.date(byAdding: .day, value: -90, to: .now) ?? .now
+        case .week: calendar.date(byAdding: .weekOfYear, value: -50, to: .now) ?? .now
+        case .month: calendar.date(byAdding: .month, value: -24, to: .now) ?? .now
+        case .year: calendar.date(byAdding: .year, value: -10, to: .now) ?? .now
         case .lifetime: .distantPast
         }
     }
@@ -106,7 +107,8 @@ final class DashboardViewModel {
             let range = dateRange(for: .week)
             let f = DateFormatter()
             f.dateFormat = "MMM d"
-            let endDate = calendar.date(byAdding: .day, value: -1, to: calendar.date(byAdding: .weekOfYear, value: 1, to: range.start)!)!
+            let nextWeek = calendar.date(byAdding: .weekOfYear, value: 1, to: range.start) ?? range.start
+            let endDate = calendar.date(byAdding: .day, value: -1, to: nextWeek) ?? nextWeek
             return "\(f.string(from: range.start)) – \(f.string(from: endDate))"
 
         case .month:
@@ -152,28 +154,28 @@ final class DashboardViewModel {
         switch period {
         case .day:
             let start = calendar.startOfDay(for: selectedDate)
-            let end = calendar.date(byAdding: .day, value: 1, to: start)!
+            let end = calendar.date(byAdding: .day, value: 1, to: start) ?? start
             return (start, isCurrent ? .now : end)
 
         case .week:
             let comps = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: selectedDate)
-            let start = calendar.date(from: comps)!
+            let start = calendar.date(from: comps) ?? .now
             if isCurrent { return (start, .now) }
-            let end = calendar.date(byAdding: .weekOfYear, value: 1, to: start)!
+            let end = calendar.date(byAdding: .weekOfYear, value: 1, to: start) ?? start
             return (start, end)
 
         case .month:
             let comps = calendar.dateComponents([.year, .month], from: selectedDate)
-            let start = calendar.date(from: comps)!
+            let start = calendar.date(from: comps) ?? .now
             if isCurrent { return (start, .now) }
-            let end = calendar.date(byAdding: .month, value: 1, to: start)!
+            let end = calendar.date(byAdding: .month, value: 1, to: start) ?? start
             return (start, end)
 
         case .year:
             let comps = calendar.dateComponents([.year], from: selectedDate)
-            let start = calendar.date(from: comps)!
+            let start = calendar.date(from: comps) ?? .now
             if isCurrent { return (start, .now) }
-            let end = calendar.date(byAdding: .year, value: 1, to: start)!
+            let end = calendar.date(byAdding: .year, value: 1, to: start) ?? start
             return (start, end)
 
         case .lifetime:
@@ -211,6 +213,8 @@ final class DashboardViewModel {
         let longestSession: (duration: TimeInterval, category: String, date: Date)?
         let laziestDay: (duration: TimeInterval, date: Date)?
         let mostSessionsDay: (count: Int, date: Date)?
+        let biggestPayday: (money: Double, date: Date)?
+        let mostCategoriesDay: (count: Int, date: Date)?
     }
 
     func careerStats(_ entries: [TimeEntry], hourlyRate: Double) -> CareerStats {
@@ -249,6 +253,22 @@ final class DashboardViewModel {
         }
         let mostSessions = dayCounts.values.max(by: { $0.count < $1.count })
 
+        // Biggest payday (highest single-day earnings)
+        let biggestPayday = dayTotals.values.max(by: { $0.duration < $1.duration }).map {
+            (money: $0.duration / 3600.0 * hourlyRate, date: $0.date)
+        }
+
+        // Most categories in one day
+        var dayCategorySets: [String: (categories: Set<String>, date: Date)] = [:]
+        for entry in filtered {
+            let key = dayFormatter.string(from: entry.startTime)
+            var existing = dayCategorySets[key] ?? (categories: [], date: entry.startTime)
+            existing.categories.insert(entry.category)
+            dayCategorySets[key] = existing
+        }
+        let mostCategories = dayCategorySets.values.map { (count: $0.categories.count, date: $0.date) }
+            .max(by: { $0.count < $1.count })
+
         return CareerStats(
             totalTime: total,
             totalMoney: total / 3600.0 * hourlyRate,
@@ -257,7 +277,9 @@ final class DashboardViewModel {
             avgPerWorkDay: avgPerDay,
             longestSession: longest.map { ($0.duration, $0.category, $0.startTime) },
             laziestDay: laziest,
-            mostSessionsDay: mostSessions
+            mostSessionsDay: mostSessions,
+            biggestPayday: biggestPayday,
+            mostCategoriesDay: mostCategories
         )
     }
 
@@ -347,7 +369,7 @@ final class DashboardViewModel {
         let today = calendar.startOfDay(for: .now)
         let range = dateRange(for: selectedPeriod)
         let weekStart = calendar.startOfDay(for: range.start)
-        let endDate = calendar.date(byAdding: .day, value: includeWeekends ? 6 : 4, to: weekStart)!
+        let endDate = calendar.date(byAdding: .day, value: includeWeekends ? 6 : 4, to: weekStart) ?? weekStart
 
         var days: [Date] = []
         var current = weekStart
@@ -357,14 +379,14 @@ final class DashboardViewModel {
             if includeWeekends || !isWeekend {
                 days.append(current)
             }
-            current = calendar.date(byAdding: .day, value: 1, to: current)!
+            current = calendar.date(byAdding: .day, value: 1, to: current) ?? current
         }
 
         let formatter = DateFormatter()
         formatter.dateFormat = "EEE"
 
         return days.map { day in
-            let dayEnd = calendar.date(byAdding: .day, value: 1, to: day)!
+            let dayEnd = calendar.date(byAdding: .day, value: 1, to: day) ?? day
             let total = filtered.filter { $0.startTime >= day && $0.startTime < dayEnd }
                 .reduce(0.0) { $0 + $1.duration }
             return ChartBar(
@@ -382,13 +404,13 @@ final class DashboardViewModel {
         let today = calendar.startOfDay(for: .now)
 
         let monthComps = calendar.dateComponents([.year, .month], from: selectedDate)
-        let monthStart = calendar.date(from: monthComps)!
-        let monthEnd = calendar.date(byAdding: .month, value: 1, to: monthStart)!
+        let monthStart = calendar.date(from: monthComps) ?? .now
+        let monthEnd = calendar.date(byAdding: .month, value: 1, to: monthStart) ?? monthStart
 
         var weekCursor = monthStart
         let wd = calendar.component(.weekday, from: weekCursor)
         let daysFromMonday = (wd + 5) % 7
-        weekCursor = calendar.date(byAdding: .day, value: -daysFromMonday, to: weekCursor)!
+        weekCursor = calendar.date(byAdding: .day, value: -daysFromMonday, to: weekCursor) ?? weekCursor
 
         let dayFormatter = DateFormatter()
         dayFormatter.dateFormat = "d"
@@ -399,10 +421,10 @@ final class DashboardViewModel {
         var bars: [ChartBar] = []
 
         while weekCursor < monthEnd {
-            let weekEnd = calendar.date(byAdding: .day, value: 7, to: weekCursor)!
+            let weekEnd = calendar.date(byAdding: .day, value: 7, to: weekCursor) ?? weekCursor
             let clampedStart = max(weekCursor, monthStart)
             let clampedEnd = min(weekEnd, monthEnd)
-            let labelEnd = calendar.date(byAdding: .day, value: -1, to: clampedEnd)!
+            let labelEnd = calendar.date(byAdding: .day, value: -1, to: clampedEnd) ?? clampedEnd
 
             let startLabel = monthDayFormatter.string(from: clampedStart)
             let endDay = dayFormatter.string(from: labelEnd)
@@ -433,14 +455,14 @@ final class DashboardViewModel {
         let today = calendar.startOfDay(for: .now)
 
         let yearComps = calendar.dateComponents([.year], from: selectedDate)
-        let yearStart = calendar.date(from: yearComps)!
+        let yearStart = calendar.date(from: yearComps) ?? .now
 
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM"
 
         return (0..<12).map { monthOffset in
-            let month = calendar.date(byAdding: .month, value: monthOffset, to: yearStart)!
-            let monthEnd = calendar.date(byAdding: .month, value: 1, to: month)!
+            let month = calendar.date(byAdding: .month, value: monthOffset, to: yearStart) ?? yearStart
+            let monthEnd = calendar.date(byAdding: .month, value: 1, to: month) ?? month
             let total = filtered
                 .filter { $0.startTime >= month && $0.startTime < monthEnd }
                 .reduce(0.0) { $0 + $1.duration }
@@ -468,8 +490,8 @@ final class DashboardViewModel {
             formatter.dateFormat = "yyyy"
 
             return (startYear...currentYear).map { year in
-                let yearStart = calendar.date(from: DateComponents(year: year))!
-                let yearEnd = calendar.date(from: DateComponents(year: year + 1))!
+                let yearStart = calendar.date(from: DateComponents(year: year)) ?? .now
+                let yearEnd = calendar.date(from: DateComponents(year: year + 1)) ?? .now
                 let total = filtered
                     .filter { $0.startTime >= yearStart && $0.startTime < yearEnd }
                     .reduce(0.0) { $0 + $1.duration }
@@ -483,13 +505,13 @@ final class DashboardViewModel {
         } else {
             // Single year: monthly bars (inline, no state mutation)
             let yearComps = calendar.dateComponents([.year], from: Date.now)
-            let yearStart = calendar.date(from: yearComps)!
+            let yearStart = calendar.date(from: yearComps) ?? .now
             let fmt = DateFormatter()
             fmt.dateFormat = "MMM"
 
             return (0..<12).map { offset in
-                let month = calendar.date(byAdding: .month, value: offset, to: yearStart)!
-                let monthEnd = calendar.date(byAdding: .month, value: 1, to: month)!
+                let month = calendar.date(byAdding: .month, value: offset, to: yearStart) ?? yearStart
+                let monthEnd = calendar.date(byAdding: .month, value: 1, to: month) ?? month
                 let total = filtered
                     .filter { $0.startTime >= month && $0.startTime < monthEnd }
                     .reduce(0.0) { $0 + $1.duration }
@@ -582,18 +604,16 @@ final class DashboardViewModel {
             insights.append(Insight(text: "Peak slacking hour: \(formatted). \(quip)"))
         }
 
-        if categories.contains(where: { $0.name == "Bathroom Break" }) {
-            let bathroomCount = filtered.filter { $0.category == "Bathroom Break" }.count
-            if bathroomCount >= 3 {
-                insights.append(Insight(text: "\(bathroomCount) bathroom breaks. Hydration or avoidance?"))
-            }
+        let bathroomEntries = filtered.filter { matchesCategory($0.category, parent: "Bathroom Break") }
+        if bathroomEntries.count >= 3 {
+            insights.append(Insight(text: "\(bathroomEntries.count) bathroom breaks. Hydration or avoidance?"))
         }
 
-        if let lookingBusy = categories.first(where: { $0.name == "Looking Busy" }) {
-            let minutes = Int(lookingBusy.totalDuration / 60)
-            if minutes > 0 {
-                insights.append(Insight(text: "\(minutes)m spent looking busy. Oscar-worthy performance."))
-            }
+        let lookingBusyDuration = filtered.filter { matchesCategory($0.category, parent: "Looking Busy") }
+            .reduce(0.0) { $0 + $1.duration }
+        let lookingBusyMinutes = Int(lookingBusyDuration / 60)
+        if lookingBusyMinutes > 0 {
+            insights.append(Insight(text: "\(lookingBusyMinutes)m spent looking busy. Oscar-worthy performance."))
         }
 
         return Array(insights.prefix(3))
@@ -632,19 +652,19 @@ final class DashboardViewModel {
             insights.append(Insight(text: "\(top.emoji) \(top.name) accounts for \(pct)% of your portfolio. Diversify."))
         }
 
-        if let bathroom = categories.first(where: { $0.name == "Bathroom Break" }) {
-            let bathroomEntries = filtered.filter { $0.category == "Bathroom Break" }
-            let avgMinutes = Int(bathroom.totalDuration / Double(max(1, bathroomEntries.count)) / 60)
+        let monthBathroomEntries = filtered.filter { matchesCategory($0.category, parent: "Bathroom Break") }
+        if !monthBathroomEntries.isEmpty {
+            let totalBathroomDuration = monthBathroomEntries.reduce(0.0) { $0 + $1.duration }
+            let avgMinutes = Int(totalBathroomDuration / Double(monthBathroomEntries.count) / 60)
             if avgMinutes > 0 {
                 insights.append(Insight(text: "Your average bathroom break is \(avgMinutes) minutes. HR has been notified."))
             }
         }
 
-        if let lookingBusy = categories.first(where: { $0.name == "Looking Busy" }) {
-            let hours = lookingBusy.totalDuration / 3600
-            if hours >= 1 {
-                insights.append(Insight(text: "You've spent \(String(format: "%.1f", hours))h looking busy. Employee of the month."))
-            }
+        let monthLookingBusyHours = filtered.filter { matchesCategory($0.category, parent: "Looking Busy") }
+            .reduce(0.0) { $0 + $1.duration } / 3600
+        if monthLookingBusyHours >= 1 {
+            insights.append(Insight(text: "You've spent \(String(format: "%.1f", monthLookingBusyHours))h looking busy. Employee of the month."))
         }
 
         return Array(insights.prefix(3))
@@ -821,23 +841,23 @@ final class DashboardViewModel {
         switch period {
         case .day:
             let start = calendar.startOfDay(for: referenceDate)
-            let end = calendar.date(byAdding: .day, value: 1, to: start)!
+            let end = calendar.date(byAdding: .day, value: 1, to: start) ?? start
             return (start, isCurrentPeriod ? .now : end)
         case .week:
             let comps = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: referenceDate)
-            let start = calendar.date(from: comps)!
+            let start = calendar.date(from: comps) ?? .now
             if isCurrentPeriod { return (start, .now) }
-            return (start, calendar.date(byAdding: .weekOfYear, value: 1, to: start)!)
+            return (start, calendar.date(byAdding: .weekOfYear, value: 1, to: start) ?? start)
         case .month:
             let comps = calendar.dateComponents([.year, .month], from: referenceDate)
-            let start = calendar.date(from: comps)!
+            let start = calendar.date(from: comps) ?? .now
             if isCurrentPeriod { return (start, .now) }
-            return (start, calendar.date(byAdding: .month, value: 1, to: start)!)
+            return (start, calendar.date(byAdding: .month, value: 1, to: start) ?? start)
         case .year:
             let comps = calendar.dateComponents([.year], from: referenceDate)
-            let start = calendar.date(from: comps)!
+            let start = calendar.date(from: comps) ?? .now
             if isCurrentPeriod { return (start, .now) }
-            return (start, calendar.date(byAdding: .year, value: 1, to: start)!)
+            return (start, calendar.date(byAdding: .year, value: 1, to: start) ?? start)
         case .lifetime:
             return (.distantPast, .now)
         }
@@ -846,6 +866,12 @@ final class DashboardViewModel {
     private func entries(for period: TimePeriod, date: Date, from allEntries: [TimeEntry]) -> [TimeEntry] {
         let range = dateRange(for: period, referenceDate: date)
         return allEntries.filter { !$0.isRunning && $0.startTime >= range.start && $0.startTime < range.end }
+    }
+
+    /// Checks if a category name matches a parent category (including custom mappings).
+    private func matchesCategory(_ categoryName: String, parent: String) -> Bool {
+        if categoryName == parent { return true }
+        return customCategories.contains { $0.name == categoryName && $0.parentName == parent }
     }
 
     private func countWeekdays(from start: Date, days: Int) -> Int {

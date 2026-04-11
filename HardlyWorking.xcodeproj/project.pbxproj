@@ -7,20 +7,66 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AA00000000000000000B0010 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000000000000000E0010 /* RevenueCat */; };
-		AA00000000000000000B0011 /* AppsFlyerLib in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000000000000000E0011 /* AppsFlyerLib */; };
-		AA00000000000000000B000B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F000C /* AppDelegate.swift */; };
+		A8EE36052F87CFD800B9A436 /* RapSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36042F87CFD800B9A436 /* RapSheetView.swift */; };
+		A8EE36072F87CFED00B9A436 /* BookingHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36062F87CFED00B9A436 /* BookingHeaderView.swift */; };
+		A8EE36092F87CFF700B9A436 /* RapSheetStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36082F87CFF700B9A436 /* RapSheetStatsView.swift */; };
+		A8EE360B2F87D00300B9A436 /* CoverStoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE360A2F87D00300B9A436 /* CoverStoryView.swift */; };
+		A8EE360D2F87D02C00B9A436 /* CoverStoryEditSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE360C2F87D02C00B9A436 /* CoverStoryEditSheet.swift */; };
+		A8EE36102F87EBE800B9A436 /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE360F2F87EBE800B9A436 /* SubscriptionManager.swift */; };
+		A8EE36132F87EC1E00B9A436 /* OnboardingWelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36122F87EC1E00B9A436 /* OnboardingWelcomeView.swift */; };
+		A8EE36152F87EC2B00B9A436 /* OnboardingScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36142F87EC2B00B9A436 /* OnboardingScheduleView.swift */; };
+		A8EE36192F87EC4F00B9A436 /* OnboardingWageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36182F87EC4F00B9A436 /* OnboardingWageView.swift */; };
+		A8EE361B2F87EC5800B9A436 /* OnboardingDepartmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE361A2F87EC5800B9A436 /* OnboardingDepartmentView.swift */; };
+		A8EE361D2F87EC6600B9A436 /* OnboardingContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE361C2F87EC6600B9A436 /* OnboardingContainerView.swift */; };
+		A8EE361F2F87EC9300B9A436 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE361E2F87EC9300B9A436 /* PaywallView.swift */; };
+		A8EE36212F88075800B9A436 /* OnboardingMotivationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36202F88075800B9A436 /* OnboardingMotivationView.swift */; };
+		A8EE36232F88076100B9A436 /* OnboardingFrustrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36222F88076100B9A436 /* OnboardingFrustrationView.swift */; };
+		A8EE36252F88076A00B9A436 /* OnboardingHonestyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36242F88076A00B9A436 /* OnboardingHonestyView.swift */; };
+		A8EE36272F88077F00B9A436 /* OnboardingPersonalityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36262F88077F00B9A436 /* OnboardingPersonalityView.swift */; };
+		A8EE36292F88079100B9A436 /* OnboardingInsightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36282F88079100B9A436 /* OnboardingInsightView.swift */; };
+		A8EE362B2F88079800B9A436 /* OnboardingCommitmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE362A2F88079800B9A436 /* OnboardingCommitmentView.swift */; };
+		A8EE362D2F8807A500B9A436 /* OnboardingLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE362C2F8807A500B9A436 /* OnboardingLoadingView.swift */; };
+		A8EE36302F88177800B9A436 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = A8EE362F2F88177800B9A436 /* Supabase */; };
+		A8EE36322F8817FA00B9A436 /* SupabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36312F8817FA00B9A436 /* SupabaseManager.swift */; };
+		A8EE36342F88207700B9A436 /* BenchmarkViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36332F88207700B9A436 /* BenchmarkViewModel.swift */; };
+		A8EE36372F88269000B9A436 /* GroupsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36362F88269000B9A436 /* GroupsViewModel.swift */; };
+		A8EE36392F8826A300B9A436 /* CreateGroupSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36382F8826A300B9A436 /* CreateGroupSheet.swift */; };
+		A8EE363B2F8826B200B9A436 /* JoinGroupSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE363A2F8826B200B9A436 /* JoinGroupSheet.swift */; };
+		A8EE363D2F8826D200B9A436 /* GroupsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE363C2F8826D200B9A436 /* GroupsView.swift */; };
+		A8EE363F2F8826F800B9A436 /* GroupDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE363E2F8826F800B9A436 /* GroupDetailSheet.swift */; };
+		A8EE36432F882BCE00B9A436 /* ProLockedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36422F882BCE00B9A436 /* ProLockedView.swift */; };
+		A8EE36452F88329F00B9A436 /* UnlockedAchievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36442F88329F00B9A436 /* UnlockedAchievement.swift */; };
+		A8EE36472F8832B000B9A436 /* AchievementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36462F8832B000B9A436 /* AchievementManager.swift */; };
+		A8EE36492F88334800B9A436 /* AchievementCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36482F88334800B9A436 /* AchievementCatalog.swift */; };
+		A8EE364B2F88336700B9A436 /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE364A2F88336700B9A436 /* AchievementsView.swift */; };
+		A8EE364D2F88385A00B9A436 /* CustomCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE364C2F88385A00B9A436 /* CustomCategory.swift */; };
+		A8EE364F2F88387100B9A436 /* AddCategorySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE364E2F88387100B9A436 /* AddCategorySheet.swift */; };
+		A8EE36512F883AA600B9A436 /* CSVExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36502F883AA600B9A436 /* CSVExporter.swift */; };
+		A8EE36532F883F4800B9A436 /* ShareCardData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36522F883F4800B9A436 /* ShareCardData.swift */; };
+		A8EE36552F883F4900B9A436 /* ShareCardRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36542F883F4900B9A436 /* ShareCardRenderer.swift */; };
+		A8EE36572F883F7B00B9A436 /* ShareCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36562F883F7B00B9A436 /* ShareCardView.swift */; };
+		A8EE36592F883F8C00B9A436 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36582F883F8C00B9A436 /* ShareSheet.swift */; };
+		A8EE365B2F88D21D00B9A436 /* ATTPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE365A2F88D21D00B9A436 /* ATTPromptView.swift */; };
+		A8EE365E2F88EC2400B9A436 /* RecordingLimits.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE365D2F88EC2400B9A436 /* RecordingLimits.swift */; };
+		A8EE36602F88F36500B9A436 /* RatingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE365F2F88F36500B9A436 /* RatingManager.swift */; };
+		A8EE36622F88F38100B9A436 /* SatisfactionSurveyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36612F88F38100B9A436 /* SatisfactionSurveyView.swift */; };
+		A8EE36642F89357900B9A436 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36632F89357900B9A436 /* NotificationManager.swift */; };
+		A8EE36662F89358100B9A436 /* ProUpgradeBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36652F89358100B9A436 /* ProUpgradeBanner.swift */; };
 		AA00000000000000000B0001 /* HardlyWorkingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0001 /* HardlyWorkingApp.swift */; };
 		AA00000000000000000B0002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0002 /* ContentView.swift */; };
 		AA00000000000000000B0003 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0003 /* Theme.swift */; };
 		AA00000000000000000B0004 /* TimeEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0004 /* TimeEntry.swift */; };
 		AA00000000000000000B0005 /* SlackCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0005 /* SlackCategory.swift */; };
 		AA00000000000000000B0006 /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0006 /* TimerView.swift */; };
+		AA00000000000000000B0007 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0007 /* DashboardView.swift */; };
+		AA00000000000000000B000A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F000A /* Assets.xcassets */; };
+		AA00000000000000000B000B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F000C /* AppDelegate.swift */; };
 		AA00000000000000000B000C /* TimerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F000D /* TimerViewModel.swift */; };
 		AA00000000000000000B000D /* EntryEditSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F000E /* EntryEditSheet.swift */; };
 		AA00000000000000000B000E /* AddEntrySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0010 /* AddEntrySheet.swift */; };
 		AA00000000000000000B000F /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0011 /* Haptics.swift */; };
-		AA00000000000000000B0007 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0007 /* DashboardView.swift */; };
+		AA00000000000000000B0010 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000000000000000E0010 /* RevenueCat */; };
+		AA00000000000000000B0011 /* AppsFlyerLib in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000000000000000E0011 /* AppsFlyerLib */; };
 		AA00000000000000000B0020 /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0020 /* DashboardViewModel.swift */; };
 		AA00000000000000000B0021 /* DailyChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0021 /* DailyChartView.swift */; };
 		AA00000000000000000B0022 /* CategoryChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0022 /* CategoryChartView.swift */; };
@@ -34,22 +80,69 @@
 		AA00000000000000000B0043 /* IndustryRankingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0043 /* IndustryRankingsView.swift */; };
 		AA00000000000000000B0044 /* GlobalStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0044 /* GlobalStatsView.swift */; };
 		AA00000000000000000B0045 /* MockBenchmarkData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0045 /* MockBenchmarkData.swift */; };
-		AA00000000000000000B0009 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0009 /* ProfileView.swift */; };
-		AA00000000000000000B000A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F000A /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A8EE36042F87CFD800B9A436 /* RapSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RapSheetView.swift; sourceTree = "<group>"; };
+		A8EE36062F87CFED00B9A436 /* BookingHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookingHeaderView.swift; sourceTree = "<group>"; };
+		A8EE36082F87CFF700B9A436 /* RapSheetStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RapSheetStatsView.swift; sourceTree = "<group>"; };
+		A8EE360A2F87D00300B9A436 /* CoverStoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverStoryView.swift; sourceTree = "<group>"; };
+		A8EE360C2F87D02C00B9A436 /* CoverStoryEditSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverStoryEditSheet.swift; sourceTree = "<group>"; };
+		A8EE360F2F87EBE800B9A436 /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
+		A8EE36122F87EC1E00B9A436 /* OnboardingWelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWelcomeView.swift; sourceTree = "<group>"; };
+		A8EE36142F87EC2B00B9A436 /* OnboardingScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingScheduleView.swift; sourceTree = "<group>"; };
+		A8EE36182F87EC4F00B9A436 /* OnboardingWageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWageView.swift; sourceTree = "<group>"; };
+		A8EE361A2F87EC5800B9A436 /* OnboardingDepartmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingDepartmentView.swift; sourceTree = "<group>"; };
+		A8EE361C2F87EC6600B9A436 /* OnboardingContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingContainerView.swift; sourceTree = "<group>"; };
+		A8EE361E2F87EC9300B9A436 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		A8EE36202F88075800B9A436 /* OnboardingMotivationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingMotivationView.swift; sourceTree = "<group>"; };
+		A8EE36222F88076100B9A436 /* OnboardingFrustrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFrustrationView.swift; sourceTree = "<group>"; };
+		A8EE36242F88076A00B9A436 /* OnboardingHonestyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingHonestyView.swift; sourceTree = "<group>"; };
+		A8EE36262F88077F00B9A436 /* OnboardingPersonalityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPersonalityView.swift; sourceTree = "<group>"; };
+		A8EE36282F88079100B9A436 /* OnboardingInsightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingInsightView.swift; sourceTree = "<group>"; };
+		A8EE362A2F88079800B9A436 /* OnboardingCommitmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCommitmentView.swift; sourceTree = "<group>"; };
+		A8EE362C2F8807A500B9A436 /* OnboardingLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingLoadingView.swift; sourceTree = "<group>"; };
+		A8EE36312F8817FA00B9A436 /* SupabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseManager.swift; sourceTree = "<group>"; };
+		A8EE36332F88207700B9A436 /* BenchmarkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkViewModel.swift; sourceTree = "<group>"; };
+		A8EE36362F88269000B9A436 /* GroupsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsViewModel.swift; sourceTree = "<group>"; };
+		A8EE36382F8826A300B9A436 /* CreateGroupSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupSheet.swift; sourceTree = "<group>"; };
+		A8EE363A2F8826B200B9A436 /* JoinGroupSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinGroupSheet.swift; sourceTree = "<group>"; };
+		A8EE363C2F8826D200B9A436 /* GroupsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsView.swift; sourceTree = "<group>"; };
+		A8EE363E2F8826F800B9A436 /* GroupDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupDetailSheet.swift; sourceTree = "<group>"; };
+		A8EE36402F88280C00B9A436 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		A8EE36422F882BCE00B9A436 /* ProLockedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProLockedView.swift; sourceTree = "<group>"; };
+		A8EE36442F88329F00B9A436 /* UnlockedAchievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnlockedAchievement.swift; sourceTree = "<group>"; };
+		A8EE36462F8832B000B9A436 /* AchievementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementManager.swift; sourceTree = "<group>"; };
+		A8EE36482F88334800B9A436 /* AchievementCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementCatalog.swift; sourceTree = "<group>"; };
+		A8EE364A2F88336700B9A436 /* AchievementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsView.swift; sourceTree = "<group>"; };
+		A8EE364C2F88385A00B9A436 /* CustomCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCategory.swift; sourceTree = "<group>"; };
+		A8EE364E2F88387100B9A436 /* AddCategorySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategorySheet.swift; sourceTree = "<group>"; };
+		A8EE36502F883AA600B9A436 /* CSVExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVExporter.swift; sourceTree = "<group>"; };
+		A8EE36522F883F4800B9A436 /* ShareCardData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCardData.swift; sourceTree = "<group>"; };
+		A8EE36542F883F4900B9A436 /* ShareCardRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCardRenderer.swift; sourceTree = "<group>"; };
+		A8EE36562F883F7B00B9A436 /* ShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCardView.swift; sourceTree = "<group>"; };
+		A8EE36582F883F8C00B9A436 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
+		A8EE365A2F88D21D00B9A436 /* ATTPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ATTPromptView.swift; sourceTree = "<group>"; };
+		A8EE365C2F88E3A800B9A436 /* HardlyWorking.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HardlyWorking.entitlements; sourceTree = "<group>"; };
+		A8EE365D2F88EC2400B9A436 /* RecordingLimits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingLimits.swift; sourceTree = "<group>"; };
+		A8EE365F2F88F36500B9A436 /* RatingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingManager.swift; sourceTree = "<group>"; };
+		A8EE36612F88F38100B9A436 /* SatisfactionSurveyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatisfactionSurveyView.swift; sourceTree = "<group>"; };
+		A8EE36632F89357900B9A436 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		A8EE36652F89358100B9A436 /* ProUpgradeBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProUpgradeBanner.swift; sourceTree = "<group>"; };
 		AA00000000000000000F0001 /* HardlyWorkingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardlyWorkingApp.swift; sourceTree = "<group>"; };
 		AA00000000000000000F0002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		AA00000000000000000F0003 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		AA00000000000000000F0004 /* TimeEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeEntry.swift; sourceTree = "<group>"; };
 		AA00000000000000000F0005 /* SlackCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackCategory.swift; sourceTree = "<group>"; };
 		AA00000000000000000F0006 /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
+		AA00000000000000000F0007 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		AA00000000000000000F000A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AA00000000000000000F000B /* HardlyWorking.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HardlyWorking.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA00000000000000000F000C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AA00000000000000000F000D /* TimerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerViewModel.swift; sourceTree = "<group>"; };
 		AA00000000000000000F000E /* EntryEditSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryEditSheet.swift; sourceTree = "<group>"; };
 		AA00000000000000000F0010 /* AddEntrySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEntrySheet.swift; sourceTree = "<group>"; };
 		AA00000000000000000F0011 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
-		AA00000000000000000F0007 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		AA00000000000000000F0020 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
 		AA00000000000000000F0021 /* DailyChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyChartView.swift; sourceTree = "<group>"; };
 		AA00000000000000000F0022 /* CategoryChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryChartView.swift; sourceTree = "<group>"; };
@@ -63,10 +156,6 @@
 		AA00000000000000000F0043 /* IndustryRankingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndustryRankingsView.swift; sourceTree = "<group>"; };
 		AA00000000000000000F0044 /* GlobalStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalStatsView.swift; sourceTree = "<group>"; };
 		AA00000000000000000F0045 /* MockBenchmarkData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockBenchmarkData.swift; sourceTree = "<group>"; };
-		AA00000000000000000F0009 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
-		AA00000000000000000F000A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		AA00000000000000000F000B /* HardlyWorking.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HardlyWorking.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		AA00000000000000000F000C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,12 +165,85 @@
 			files = (
 				AA00000000000000000B0010 /* RevenueCat in Frameworks */,
 				AA00000000000000000B0011 /* AppsFlyerLib in Frameworks */,
+				A8EE36302F88177800B9A436 /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A8EE36022F87CF8500B9A436 /* RapSheet 2 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "RapSheet 2";
+			sourceTree = "<group>";
+		};
+		A8EE36032F87CFA400B9A436 /* RapSheet */ = {
+			isa = PBXGroup;
+			children = (
+				A8EE36042F87CFD800B9A436 /* RapSheetView.swift */,
+				A8EE36062F87CFED00B9A436 /* BookingHeaderView.swift */,
+				A8EE36082F87CFF700B9A436 /* RapSheetStatsView.swift */,
+				A8EE360A2F87D00300B9A436 /* CoverStoryView.swift */,
+				A8EE360C2F87D02C00B9A436 /* CoverStoryEditSheet.swift */,
+				A8EE364A2F88336700B9A436 /* AchievementsView.swift */,
+			);
+			path = RapSheet;
+			sourceTree = "<group>";
+		};
+		A8EE360E2F87EBD500B9A436 /* Onboarding 2 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Onboarding 2";
+			sourceTree = "<group>";
+		};
+		A8EE36112F87EC0C00B9A436 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				A8EE36122F87EC1E00B9A436 /* OnboardingWelcomeView.swift */,
+				A8EE36142F87EC2B00B9A436 /* OnboardingScheduleView.swift */,
+				A8EE36182F87EC4F00B9A436 /* OnboardingWageView.swift */,
+				A8EE361A2F87EC5800B9A436 /* OnboardingDepartmentView.swift */,
+				A8EE361C2F87EC6600B9A436 /* OnboardingContainerView.swift */,
+				A8EE361E2F87EC9300B9A436 /* PaywallView.swift */,
+				A8EE36202F88075800B9A436 /* OnboardingMotivationView.swift */,
+				A8EE36222F88076100B9A436 /* OnboardingFrustrationView.swift */,
+				A8EE36242F88076A00B9A436 /* OnboardingHonestyView.swift */,
+				A8EE36262F88077F00B9A436 /* OnboardingPersonalityView.swift */,
+				A8EE36282F88079100B9A436 /* OnboardingInsightView.swift */,
+				A8EE362A2F88079800B9A436 /* OnboardingCommitmentView.swift */,
+				A8EE362C2F8807A500B9A436 /* OnboardingLoadingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		A8EE36352F88266C00B9A436 /* Groups */ = {
+			isa = PBXGroup;
+			children = (
+				A8EE36362F88269000B9A436 /* GroupsViewModel.swift */,
+				A8EE36382F8826A300B9A436 /* CreateGroupSheet.swift */,
+				A8EE363A2F8826B200B9A436 /* JoinGroupSheet.swift */,
+				A8EE363C2F8826D200B9A436 /* GroupsView.swift */,
+				A8EE363E2F8826F800B9A436 /* GroupDetailSheet.swift */,
+			);
+			path = Groups;
+			sourceTree = "<group>";
+		};
+		A8EE36412F882BBB00B9A436 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				A8EE36422F882BCE00B9A436 /* ProLockedView.swift */,
+				A8EE36562F883F7B00B9A436 /* ShareCardView.swift */,
+				A8EE36582F883F8C00B9A436 /* ShareSheet.swift */,
+				A8EE365A2F88D21D00B9A436 /* ATTPromptView.swift */,
+				A8EE36612F88F38100B9A436 /* SatisfactionSurveyView.swift */,
+				A8EE36652F89358100B9A436 /* ProUpgradeBanner.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
 		AA00000000000000000C0001 = {
 			isa = PBXGroup;
 			children = (
@@ -93,6 +255,8 @@
 		AA00000000000000000C0002 /* HardlyWorking */ = {
 			isa = PBXGroup;
 			children = (
+				A8EE365C2F88E3A800B9A436 /* HardlyWorking.entitlements */,
+				A8EE36402F88280C00B9A436 /* Info.plist */,
 				AA00000000000000000C0003 /* App */,
 				AA00000000000000000C0005 /* Models */,
 				AA00000000000000000C0004 /* Theme */,
@@ -127,6 +291,9 @@
 			children = (
 				AA00000000000000000F0004 /* TimeEntry.swift */,
 				AA00000000000000000F0005 /* SlackCategory.swift */,
+				A8EE36442F88329F00B9A436 /* UnlockedAchievement.swift */,
+				A8EE364C2F88385A00B9A436 /* CustomCategory.swift */,
+				A8EE36522F883F4800B9A436 /* ShareCardData.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -137,9 +304,42 @@
 				AA00000000000000000C000B /* Dashboard */,
 				AA00000000000000000C000A /* Timer */,
 				AA00000000000000000C000D /* WallOfShame */,
-				AA00000000000000000F0009 /* ProfileView.swift */,
+				A8EE36022F87CF8500B9A436 /* RapSheet 2 */,
+				A8EE36032F87CFA400B9A436 /* RapSheet */,
+				A8EE360E2F87EBD500B9A436 /* Onboarding 2 */,
+				A8EE36112F87EC0C00B9A436 /* Onboarding */,
+				A8EE36352F88266C00B9A436 /* Groups */,
+				A8EE36412F882BBB00B9A436 /* Shared */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		AA00000000000000000C0007 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000000000000000F000A /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		AA00000000000000000C0008 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000000000000000F000B /* HardlyWorking.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA00000000000000000C000A /* Timer */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000000000000000F0010 /* AddEntrySheet.swift */,
+				AA00000000000000000F000E /* EntryEditSheet.swift */,
+				AA00000000000000000F0006 /* TimerView.swift */,
+				AA00000000000000000F000D /* TimerViewModel.swift */,
+				A8EE364E2F88387100B9A436 /* AddCategorySheet.swift */,
+			);
+			path = Timer;
 			sourceTree = "<group>";
 		};
 		AA00000000000000000C000B /* Dashboard */ = {
@@ -165,17 +365,6 @@
 			path = Lifetime;
 			sourceTree = "<group>";
 		};
-		AA00000000000000000C000A /* Timer */ = {
-			isa = PBXGroup;
-			children = (
-				AA00000000000000000F0010 /* AddEntrySheet.swift */,
-				AA00000000000000000F000E /* EntryEditSheet.swift */,
-				AA00000000000000000F0006 /* TimerView.swift */,
-				AA00000000000000000F000D /* TimerViewModel.swift */,
-			);
-			path = Timer;
-			sourceTree = "<group>";
-		};
 		AA00000000000000000C000D /* WallOfShame */ = {
 			isa = PBXGroup;
 			children = (
@@ -184,6 +373,7 @@
 				AA00000000000000000F0043 /* IndustryRankingsView.swift */,
 				AA00000000000000000F0040 /* WallOfShameView.swift */,
 				AA00000000000000000F0041 /* YourPositionView.swift */,
+				A8EE36332F88207700B9A436 /* BenchmarkViewModel.swift */,
 			);
 			path = WallOfShame;
 			sourceTree = "<group>";
@@ -192,24 +382,17 @@
 			isa = PBXGroup;
 			children = (
 				AA00000000000000000F0045 /* MockBenchmarkData.swift */,
+				A8EE360F2F87EBE800B9A436 /* SubscriptionManager.swift */,
+				A8EE36312F8817FA00B9A436 /* SupabaseManager.swift */,
+				A8EE36462F8832B000B9A436 /* AchievementManager.swift */,
+				A8EE36482F88334800B9A436 /* AchievementCatalog.swift */,
+				A8EE36502F883AA600B9A436 /* CSVExporter.swift */,
+				A8EE36542F883F4900B9A436 /* ShareCardRenderer.swift */,
+				A8EE365D2F88EC2400B9A436 /* RecordingLimits.swift */,
+				A8EE365F2F88F36500B9A436 /* RatingManager.swift */,
+				A8EE36632F89357900B9A436 /* NotificationManager.swift */,
 			);
 			path = Services;
-			sourceTree = "<group>";
-		};
-		AA00000000000000000C0007 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				AA00000000000000000F000A /* Assets.xcassets */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		AA00000000000000000C0008 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				AA00000000000000000F000B /* HardlyWorking.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -228,12 +411,13 @@
 			dependencies = (
 			);
 			name = HardlyWorking;
-			productName = HardlyWorking;
-			productReference = AA00000000000000000F000B /* HardlyWorking.app */;
 			packageProductDependencies = (
 				AA00000000000000000E0010 /* RevenueCat */,
 				AA00000000000000000E0011 /* AppsFlyerLib */,
+				A8EE362F2F88177800B9A436 /* Supabase */,
 			);
+			productName = HardlyWorking;
+			productReference = AA00000000000000000F000B /* HardlyWorking.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -244,7 +428,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1600;
-				LastUpgradeCheck = 1600;
+				LastUpgradeCheck = 2640;
 				TargetAttributes = {
 					AA00000000000000000E0001 = {
 						CreatedOnToolsVersion = 16.0;
@@ -264,6 +448,7 @@
 			packageReferences = (
 				AA00000000000000000E0020 /* XCRemoteSwiftPackageReference "purchases-ios" */,
 				AA00000000000000000E0021 /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */,
+				A8EE362E2F88177800B9A436 /* XCRemoteSwiftPackageReference "supabase-swift" */,
 			);
 			productRefGroup = AA00000000000000000C0008 /* Products */;
 			projectDirPath = "";
@@ -290,33 +475,75 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A8EE36132F87EC1E00B9A436 /* OnboardingWelcomeView.swift in Sources */,
+				A8EE36092F87CFF700B9A436 /* RapSheetStatsView.swift in Sources */,
+				A8EE36602F88F36500B9A436 /* RatingManager.swift in Sources */,
 				AA00000000000000000B0001 /* HardlyWorkingApp.swift in Sources */,
 				AA00000000000000000B0002 /* ContentView.swift in Sources */,
 				AA00000000000000000B0003 /* Theme.swift in Sources */,
+				A8EE36532F883F4800B9A436 /* ShareCardData.swift in Sources */,
+				A8EE36212F88075800B9A436 /* OnboardingMotivationView.swift in Sources */,
+				A8EE365E2F88EC2400B9A436 /* RecordingLimits.swift in Sources */,
 				AA00000000000000000B0004 /* TimeEntry.swift in Sources */,
+				A8EE36492F88334800B9A436 /* AchievementCatalog.swift in Sources */,
 				AA00000000000000000B0005 /* SlackCategory.swift in Sources */,
 				AA00000000000000000B0006 /* TimerView.swift in Sources */,
 				AA00000000000000000B0007 /* DashboardView.swift in Sources */,
-				AA00000000000000000B0008 /* LeaderboardView.swift in Sources */,
-				AA00000000000000000B0009 /* ProfileView.swift in Sources */,
 				AA00000000000000000B000B /* AppDelegate.swift in Sources */,
+				A8EE36102F87EBE800B9A436 /* SubscriptionManager.swift in Sources */,
 				AA00000000000000000B000C /* TimerViewModel.swift in Sources */,
 				AA00000000000000000B000D /* EntryEditSheet.swift in Sources */,
+				A8EE36642F89357900B9A436 /* NotificationManager.swift in Sources */,
+				A8EE364F2F88387100B9A436 /* AddCategorySheet.swift in Sources */,
+				A8EE36662F89358100B9A436 /* ProUpgradeBanner.swift in Sources */,
+				A8EE36372F88269000B9A436 /* GroupsViewModel.swift in Sources */,
+				A8EE364B2F88336700B9A436 /* AchievementsView.swift in Sources */,
 				AA00000000000000000B000E /* AddEntrySheet.swift in Sources */,
+				A8EE36192F87EC4F00B9A436 /* OnboardingWageView.swift in Sources */,
+				A8EE361B2F87EC5800B9A436 /* OnboardingDepartmentView.swift in Sources */,
+				A8EE36622F88F38100B9A436 /* SatisfactionSurveyView.swift in Sources */,
+				A8EE362B2F88079800B9A436 /* OnboardingCommitmentView.swift in Sources */,
+				A8EE364D2F88385A00B9A436 /* CustomCategory.swift in Sources */,
+				A8EE362D2F8807A500B9A436 /* OnboardingLoadingView.swift in Sources */,
+				A8EE36272F88077F00B9A436 /* OnboardingPersonalityView.swift in Sources */,
+				A8EE36452F88329F00B9A436 /* UnlockedAchievement.swift in Sources */,
 				AA00000000000000000B000F /* Haptics.swift in Sources */,
 				AA00000000000000000B0020 /* DashboardViewModel.swift in Sources */,
+				A8EE363B2F8826B200B9A436 /* JoinGroupSheet.swift in Sources */,
+				A8EE36432F882BCE00B9A436 /* ProLockedView.swift in Sources */,
+				A8EE363F2F8826F800B9A436 /* GroupDetailSheet.swift in Sources */,
+				A8EE36152F87EC2B00B9A436 /* OnboardingScheduleView.swift in Sources */,
 				AA00000000000000000B0021 /* DailyChartView.swift in Sources */,
+				A8EE36592F883F8C00B9A436 /* ShareSheet.swift in Sources */,
 				AA00000000000000000B0022 /* CategoryChartView.swift in Sources */,
 				AA00000000000000000B0023 /* InsightsView.swift in Sources */,
+				A8EE36552F883F4900B9A436 /* ShareCardRenderer.swift in Sources */,
+				A8EE36342F88207700B9A436 /* BenchmarkViewModel.swift in Sources */,
+				A8EE360D2F87D02C00B9A436 /* CoverStoryEditSheet.swift in Sources */,
+				A8EE360B2F87D00300B9A436 /* CoverStoryView.swift in Sources */,
+				A8EE36572F883F7B00B9A436 /* ShareCardView.swift in Sources */,
 				AA00000000000000000B0030 /* CareerStatsView.swift in Sources */,
 				AA00000000000000000B0031 /* PersonalRecordsView.swift in Sources */,
+				A8EE36322F8817FA00B9A436 /* SupabaseManager.swift in Sources */,
+				A8EE36292F88079100B9A436 /* OnboardingInsightView.swift in Sources */,
+				A8EE36072F87CFED00B9A436 /* BookingHeaderView.swift in Sources */,
+				A8EE36052F87CFD800B9A436 /* RapSheetView.swift in Sources */,
+				A8EE361F2F87EC9300B9A436 /* PaywallView.swift in Sources */,
+				A8EE36252F88076A00B9A436 /* OnboardingHonestyView.swift in Sources */,
+				A8EE36512F883AA600B9A436 /* CSVExporter.swift in Sources */,
 				AA00000000000000000B0032 /* CategoryRankingsView.swift in Sources */,
+				A8EE365B2F88D21D00B9A436 /* ATTPromptView.swift in Sources */,
 				AA00000000000000000B0040 /* WallOfShameView.swift in Sources */,
 				AA00000000000000000B0041 /* YourPositionView.swift in Sources */,
 				AA00000000000000000B0042 /* CountryRankingsView.swift in Sources */,
 				AA00000000000000000B0043 /* IndustryRankingsView.swift in Sources */,
+				A8EE36472F8832B000B9A436 /* AchievementManager.swift in Sources */,
+				A8EE363D2F8826D200B9A436 /* GroupsView.swift in Sources */,
+				A8EE36392F8826A300B9A436 /* CreateGroupSheet.swift in Sources */,
 				AA00000000000000000B0044 /* GlobalStatsView.swift in Sources */,
 				AA00000000000000000B0045 /* MockBenchmarkData.swift in Sources */,
+				A8EE361D2F87EC6600B9A436 /* OnboardingContainerView.swift in Sources */,
+				A8EE36232F88076100B9A436 /* OnboardingFrustrationView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,6 +555,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -358,6 +586,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 7Z862J5PAH;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -381,6 +610,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -391,6 +621,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -421,6 +652,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 7Z862J5PAH;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -437,6 +669,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -447,27 +680,32 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = HardlyWorking/HardlyWorking.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HardlyWorking/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Hardly Working";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier helps us understand which ads brought you here and improve your experience.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hardlyworking.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -476,27 +714,32 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = HardlyWorking/HardlyWorking.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HardlyWorking/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Hardly Working";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier helps us understand which ads brought you here and improve your experience.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hardlyworking.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -524,6 +767,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		A8EE362E2F88177800B9A436 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
 		AA00000000000000000E0020 /* XCRemoteSwiftPackageReference "purchases-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/RevenueCat/purchases-ios.git";
@@ -543,6 +794,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		A8EE362F2F88177800B9A436 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A8EE362E2F88177800B9A436 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
 		AA00000000000000000E0010 /* RevenueCat */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = AA00000000000000000E0020 /* XCRemoteSwiftPackageReference "purchases-ios" */;

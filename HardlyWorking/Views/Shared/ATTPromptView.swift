@@ -1,0 +1,93 @@
+import AppTrackingTransparency
+import SwiftUI
+
+struct ATTPromptView: View {
+    @AppStorage("hasSeenATTPrompt") private var hasSeenATTPrompt = false
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Spacer()
+
+            Image("mascot_welcome")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(height: 200)
+
+            Spacer().frame(height: 24)
+
+            Text("COMPLIANCE NOTICE")
+                .font(.system(.caption2, design: .monospaced, weight: .bold))
+                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .tracking(1.5)
+
+            Spacer().frame(height: 20)
+
+            Text("Before you begin, a brief\ndisclosure from the Department\nof Data Transparency.")
+                .font(.system(.subheadline, design: .monospaced))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
+                .multilineTextAlignment(.center)
+
+            Spacer().frame(height: 24)
+
+            VStack(spacing: 0) {
+                Rectangle()
+                    .fill(Theme.textPrimary.opacity(0.06))
+                    .frame(height: 1)
+
+                Text("We use an anonymous identifier to\nmeasure which advertisements led you\nhere. This data is used exclusively for\nattribution purposes and is never shared\nwith your employer.")
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
+                    .multilineTextAlignment(.center)
+                    .padding(.vertical, 20)
+                    .padding(.horizontal, 24)
+
+                Rectangle()
+                    .fill(Theme.textPrimary.opacity(0.06))
+                    .frame(height: 1)
+            }
+            .padding(.horizontal, 24)
+
+            Spacer().frame(height: 12)
+
+            Text("Your participation is voluntary.")
+                .font(.system(.caption2, design: .monospaced))
+                .foregroundStyle(Theme.textPrimary.opacity(0.25))
+
+            Spacer()
+
+            VStack(spacing: 12) {
+                Button {
+                    Haptics.medium()
+                    requestATT()
+                } label: {
+                    Text("Authorize Tracking")
+                        .font(.system(.headline, design: .monospaced))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 18)
+                        .background(Theme.accent, in: RoundedRectangle(cornerRadius: 14))
+                }
+
+                Button {
+                    Haptics.light()
+                    hasSeenATTPrompt = true
+                } label: {
+                    Text("Decline")
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                }
+            }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 24)
+        }
+        .background(Color.white)
+    }
+
+    private func requestATT() {
+        ATTrackingManager.requestTrackingAuthorization { _ in
+            DispatchQueue.main.async {
+                hasSeenATTPrompt = true
+            }
+        }
+    }
+}

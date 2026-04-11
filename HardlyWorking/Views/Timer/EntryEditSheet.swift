@@ -1,7 +1,13 @@
+import SwiftData
 import SwiftUI
 
 struct EntryEditSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @Query(sort: \CustomCategory.createdAt)
+    private var customCategories: [CustomCategory]
+    @Query(sort: \TimeEntry.startTime, order: .reverse)
+    private var allEntries: [TimeEntry]
+    @AppStorage("workHoursPerDay") private var workHoursPerDay: Double = 8.0
     @Bindable var entry: TimeEntry
     var onDelete: () -> Void
 
@@ -9,6 +15,11 @@ struct EntryEditSheet: View {
     @State private var endTime: Date
     @State private var selectedCategory: String
     @State private var showDeleteConfirmation = false
+    @State private var validationError: String?
+
+    private var allCategories: [SlackCategory] {
+        SlackCategory.allCategories(custom: customCategories)
+    }
 
     init(entry: TimeEntry, onDelete: @escaping () -> Void) {
         self.entry = entry
@@ -29,7 +40,7 @@ struct EntryEditSheet: View {
             .background(Color.white)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button("Cancel") { Haptics.light(); dismiss() }
                         .font(.system(.body, design: .monospaced))
                 }
                 ToolbarItem(placement: .confirmationAction) {
@@ -42,17 +53,19 @@ struct EntryEditSheet: View {
                 }
             }
             .confirmationDialog(
-                "Expunge this record?",
+                "Delete this entry?",
                 isPresented: $showDeleteConfirmation,
                 titleVisibility: .visible
             ) {
-                Button("Expunge Record", role: .destructive) {
+                Button("Delete Entry", role: .destructive) {
                     Haptics.warning()
                     onDelete()
                 }
             } message: {
                 Text("This action cannot be undone. The entry will be permanently removed.")
             }
+            .onChange(of: startTime) { validationError = nil }
+            .onChange(of: endTime) { validationError = nil }
         }
     }
 
@@ -84,7 +97,7 @@ struct EntryEditSheet: View {
             formSection("ACTIVITY") {
                 ScrollView(.horizontal) {
                     HStack(spacing: 8) {
-                        ForEach(SlackCategory.defaults) { category in
+                        ForEach(allCategories) { category in
                             Button {
                                 Haptics.light()
                                 selectedCategory = category.name
@@ -128,7 +141,7 @@ struct EntryEditSheet: View {
 
                     Text("\u{2192}")
                         .font(.system(.caption, design: .monospaced, weight: .medium))
-                        .foregroundStyle(Theme.textPrimary.opacity(0.25))
+                        .foregroundStyle(Theme.textPrimary.opacity(0.4))
 
                     DatePicker(
                         "",
@@ -142,6 +155,14 @@ struct EntryEditSheet: View {
                     Spacer()
                 }
                 .padding(.horizontal, 24)
+            }
+
+            if let validationError {
+                Text(validationError)
+                    .font(.system(.caption2, design: .monospaced))
+                    .foregroundStyle(Theme.timer)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 12)
             }
         }
     }
@@ -167,7 +188,7 @@ struct EntryEditSheet: View {
         } label: {
             HStack(spacing: 6) {
                 Image(systemName: "trash")
-                Text("Expunge Record")
+                Text("Delete Entry")
                     .font(.system(.subheadline, design: .monospaced))
             }
             .foregroundStyle(Theme.timer)
@@ -189,10 +210,23 @@ struct EntryEditSheet: View {
     }
 
     private func save() {
+        if let error = RecordingLimits.validate(
+            start: startTime,
+            end: endTime,
+            existingEntries: allEntries,
+            excludingEntryID: entry,
+            workHoursPerDay: workHoursPerDay
+        ) {
+            Haptics.warning()
+            validationError = error.localizedDescription
+            return
+        }
+
         entry.category = selectedCategory
         entry.startTime = startTime
         entry.endTime = endTime
         try? entry.modelContext?.save()
+        AchievementManager.markEntryEdited()
         dismiss()
     }
 }

@@ -31,4 +31,32 @@ struct SlackCategory: Identifiable, Codable, Sendable {
         SlackCategory(name: "Into the Void", emoji: "\u{1F441}"),
         SlackCategory(name: "Long Lunch", emoji: "\u{1F37D}"),
     ]
+
+    /// Combines default categories with user-created custom categories.
+    static func allCategories(custom: [CustomCategory]) -> [SlackCategory] {
+        let customs = custom.map {
+            SlackCategory(id: $0.persistentModelID.hashValue == 0 ? UUID() : UUID(), name: $0.name, emoji: $0.emoji, isDefault: false)
+        }
+        return defaults + customs
+    }
+
+    /// Looks up the emoji for a category name, checking defaults first then custom.
+    static func emoji(for categoryName: String, custom: [CustomCategory] = []) -> String {
+        if let match = defaults.first(where: { $0.name == categoryName }) {
+            return match.emoji
+        }
+        if let match = custom.first(where: { $0.name == categoryName }) {
+            return match.emoji
+        }
+        return "\u{2753}" // ❓ fallback
+    }
+
+    /// Maps a category name to its parent (for custom categories).
+    /// Returns the name unchanged if it's a default category.
+    static func parentName(for categoryName: String, custom: [CustomCategory]) -> String {
+        if defaults.contains(where: { $0.name == categoryName }) {
+            return categoryName
+        }
+        return custom.first(where: { $0.name == categoryName })?.parentName ?? categoryName
+    }
 }

@@ -63,7 +63,7 @@ struct PersonalRecordsView: View {
                 .foregroundStyle(Theme.textPrimary.opacity(0.08))
             Text("Not enough data for records yet.")
                 .font(.system(.caption2, design: .monospaced))
-                .foregroundStyle(Theme.textPrimary.opacity(0.2))
+                .foregroundStyle(Theme.textPrimary.opacity(0.3))
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 32)
@@ -106,6 +106,24 @@ struct PersonalRecordsView: View {
                 title: "Most Sessions (1 Day)",
                 value: "\(most.count)",
                 detail: dateFormatter.string(from: most.date)
+            ))
+        }
+
+        if let payday = stats.biggestPayday, payday.money > 0 {
+            records.append(Record(
+                icon: "\u{1F4B5}",
+                title: "Biggest Payday",
+                value: Theme.formatMoney(payday.money),
+                detail: dateFormatter.string(from: payday.date)
+            ))
+        }
+
+        if let variety = stats.mostCategoriesDay, variety.count >= 3 {
+            records.append(Record(
+                icon: "\u{1F500}",
+                title: "Most Categories (1 Day)",
+                value: "\(variety.count)",
+                detail: dateFormatter.string(from: variety.date)
             ))
         }
 
