@@ -83,6 +83,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A8B93AA22F8B7EF400B35E0D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A8EE36042F87CFD800B9A436 /* RapSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RapSheetView.swift; sourceTree = "<group>"; };
 		A8EE36062F87CFED00B9A436 /* BookingHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookingHeaderView.swift; sourceTree = "<group>"; };
 		A8EE36082F87CFF700B9A436 /* RapSheetStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RapSheetStatsView.swift; sourceTree = "<group>"; };
@@ -249,6 +250,7 @@
 			children = (
 				AA00000000000000000C0002 /* HardlyWorking */,
 				AA00000000000000000C0008 /* Products */,
+				A8B93AA22F8B7EF400B35E0D /* PrivacyInfo.xcprivacy */,
 			);
 			sourceTree = "<group>";
 		};
