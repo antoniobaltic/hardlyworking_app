@@ -94,7 +94,7 @@ struct AddCategorySheet: View {
 
             formSection("PARENT CATEGORY") {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("What type of slacking is this?")
+                    Text("Select parent activity code.")
                         .font(.system(.caption, design: .monospaced))
                         .foregroundStyle(Theme.textPrimary.opacity(0.4))
                         .padding(.horizontal, 24)

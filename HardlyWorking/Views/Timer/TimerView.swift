@@ -481,7 +481,7 @@ struct TimerView: View {
             Text("#N/A")
                 .font(.system(size: 32, weight: .bold, design: .monospaced))
                 .foregroundStyle(Theme.textPrimary.opacity(0.1))
-            Text("No entries yet. Tap a category above.")
+            Text("No entries yet. Tap an activity code above.")
                 .font(.system(.caption, design: .monospaced))
                 .foregroundStyle(Theme.textPrimary.opacity(0.35))
         }

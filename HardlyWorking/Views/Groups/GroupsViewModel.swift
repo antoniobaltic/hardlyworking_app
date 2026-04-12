@@ -57,7 +57,7 @@ final class GroupsViewModel {
             await loadGroups()
             return true
         } catch {
-            self.error = "Group formation denied. Try again."
+            self.error = "Unit formation denied. Try again."
             print("[Groups] Create failed: \(error)")
             return false
         }

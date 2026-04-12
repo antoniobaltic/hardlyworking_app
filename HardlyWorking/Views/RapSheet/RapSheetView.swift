@@ -538,7 +538,7 @@ struct RapSheetView: View {
         components.scheme = "mailto"
         components.path = Self.supportEmail
         components.queryItems = [
-            URLQueryItem(name: "subject", value: "Hardly Working \u{2014} Support Request"),
+            URLQueryItem(name: "subject", value: "Hardly Working Corp. \u{2014} Support Request"),
         ]
 
         guard let url = components.url else { return }

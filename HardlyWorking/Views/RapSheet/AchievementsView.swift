@@ -138,7 +138,7 @@ struct AchievementsView: View {
         .buttonStyle(.plain)
         .disabled(!isProLocked) // Only tappable if Pro-locked (to show paywall)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(isProLocked ? "\(definition.name), classified, requires Pro" : (isUnlocked ? "\(definition.name), level \(unlockedLevel) of \(definition.totalLevels), \(currentRarity.label)" : "\(definition.name), locked"))
+        .accessibilityLabel(isProLocked ? "\(definition.name), classified, requires Executive clearance" : (isUnlocked ? "\(definition.name), level \(unlockedLevel) of \(definition.totalLevels), \(currentRarity.label)" : "\(definition.name), locked"))
     }
 
     private func progressBar(current: Double, nextThreshold: Double?, previousThreshold: Double, color: Color) -> some View {

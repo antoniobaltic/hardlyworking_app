@@ -72,7 +72,7 @@ struct CategoryRankingsView: View {
             Text("#N/A")
                 .font(.system(.title3, design: .monospaced, weight: .bold))
                 .foregroundStyle(Theme.textPrimary.opacity(0.08))
-            Text("No categories tracked yet.")
+            Text("No activity codes tracked yet.")
                 .font(.system(.caption2, design: .monospaced))
                 .foregroundStyle(Theme.textPrimary.opacity(0.2))
         }

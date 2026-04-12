@@ -121,7 +121,7 @@ struct PersonalRecordsView: View {
         if let variety = stats.mostCategoriesDay, variety.count >= 3 {
             records.append(Record(
                 icon: "\u{1F500}",
-                title: "Most Categories (1 Day)",
+                title: "Most Activity Codes (1 Day)",
                 value: "\(variety.count)",
                 detail: dateFormatter.string(from: variety.date)
             ))

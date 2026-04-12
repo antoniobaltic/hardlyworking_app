@@ -203,7 +203,7 @@ struct GroupsView: View {
         )
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(group.name), \(group.memberCount ?? 0) participants")
-        .accessibilityHint("Tap to view group details")
+        .accessibilityHint("Tap to view unit details")
     }
 
     // MARK: - Action Buttons

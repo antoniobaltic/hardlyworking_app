@@ -42,7 +42,7 @@ enum CSVExporter {
         csv += "#\n"
 
         // Time entries
-        csv += "Category,Parent Category,Start Time,End Time,Duration (seconds),Duration,Amount Reclaimed (\(currency)),Manual Entry\n"
+        csv += "Activity Code,Parent Code,Start Time,End Time,Duration (seconds),Duration,Amount Reclaimed (\(currency)),Manual Entry\n"
 
         for entry in completed.sorted(by: { $0.startTime < $1.startTime }) {
             let parentName = SlackCategory.parentName(for: entry.category, custom: customCategories)
@@ -62,7 +62,7 @@ enum CSVExporter {
         // Custom categories
         if !customCategories.isEmpty {
             csv += "\n# CUSTOM ACTIVITY CLASSIFICATIONS\n"
-            csv += "Name,Emoji,Parent Category,Created\n"
+            csv += "Name,Emoji,Parent Code,Created\n"
             for cat in customCategories.sorted(by: { $0.createdAt < $1.createdAt }) {
                 csv += "\(escapeCSV(cat.name)),"
                 csv += "\(escapeCSV(cat.emoji)),"
