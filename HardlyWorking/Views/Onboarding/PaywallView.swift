@@ -306,10 +306,9 @@ struct PaywallView: View {
             }
 
             HStack(spacing: 8) {
-                // TODO: Replace with real URLs
-                Text("Terms")
+                Link("Terms", destination: URL(string: "https://hardlyworking.app/terms")!)
                 Text("\u{00B7}")
-                Text("Privacy")
+                Link("Privacy", destination: URL(string: "https://hardlyworking.app/privacy")!)
             }
             .font(.system(.caption, design: .monospaced))
             .foregroundStyle(Theme.textPrimary.opacity(0.35))

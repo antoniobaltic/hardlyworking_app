@@ -530,6 +530,19 @@ struct RapSheetView: View {
             Text(Self.supportEmail)
                 .font(.system(.caption2, design: .monospaced))
                 .foregroundStyle(Theme.textPrimary.opacity(0.3))
+
+            HStack(spacing: 16) {
+                Link(destination: URL(string: "https://hardlyworking.app/privacy")!) {
+                    Text("Privacy Policy")
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(Theme.textPrimary.opacity(0.4))
+                }
+                Link(destination: URL(string: "https://hardlyworking.app/terms")!) {
+                    Text("Terms of Service")
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(Theme.textPrimary.opacity(0.4))
+                }
+            }
         }
     }
 
