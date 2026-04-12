@@ -17,7 +17,7 @@ enum CSVExporter {
         displayFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
 
         // Metadata
-        csv += "# HARDLY WORKING — DATA EXPORT\n"
+        csv += "# HARDLY WORKING CORP. — DATA EXPORT\n"
         csv += "# Generated: \(displayFormatter.string(from: .now))\n"
         csv += "# Compensation: \(String(format: "%.2f", hourlyRate)) \(currency)/hr\n"
         csv += "# Schedule: \(Int(workHoursPerDay))h/day, \(workDaysPerWeek) days/week\n"

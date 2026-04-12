@@ -86,7 +86,7 @@ struct DashboardView: View {
                 Divider().padding(.horizontal, 24)
                 ProLockedView(
                     title: "Audit Findings",
-                    description: "Your behavioral analysis requires\nPro clearance to access.",
+                    description: "Your behavioral analysis requires\nExecutive clearance to access.",
                     icon: "lightbulb.fill"
                 ) { showPaywall = true }
                     .padding(.horizontal, 24)
@@ -100,7 +100,7 @@ struct DashboardView: View {
     private var lockedPeriodContent: some View {
         return ProLockedView(
             title: "\(viewModel.selectedPeriod.rawValue) Report",
-            description: "This report is classified.\nPro clearance required.",
+            description: "This report is classified.\nExecutive clearance required.",
             icon: "chart.bar.fill"
         ) { showPaywall = true }
             .padding(.horizontal, 24)

@@ -53,7 +53,7 @@ struct WallOfShameView: View {
                     } else {
                         lockedSection(
                             title: "Country Rankings",
-                            description: "International slacking data is\nclassified. Pro clearance required.",
+                            description: "International slacking data is\nclassified. Executive clearance required.",
                             icon: "globe"
                         )
                         .padding(.horizontal, 24)

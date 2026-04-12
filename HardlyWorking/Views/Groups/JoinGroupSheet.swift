@@ -43,7 +43,7 @@ struct JoinGroupSheet: View {
         VStack(spacing: 4) {
             Text(lookedUpGroup?.emoji ?? "?")
                 .font(.system(size: 48))
-            Text("GROUP ENROLLMENT")
+            Text("RECLAMATION UNIT ENROLLMENT")
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
                 .foregroundStyle(Theme.textPrimary.opacity(0.3))
                 .tracking(2)

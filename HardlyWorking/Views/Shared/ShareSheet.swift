@@ -20,8 +20,8 @@ struct ShareSheet: View {
                     if let renderedURL {
                         ShareLink(
                             item: renderedURL,
-                            subject: Text("My \(selectedType.rawValue) — Hardly Working"),
-                            message: Text("Filed via Hardly Working. Your employer doesn't need to see this.")
+                            subject: Text("My \(selectedType.rawValue) — Hardly Working Corp."),
+                            message: Text("Filed via Hardly Working Corp. Your other employer does not need to see this.")
                         ) {
                             HStack(spacing: 8) {
                                 Image(systemName: "square.and.arrow.up")

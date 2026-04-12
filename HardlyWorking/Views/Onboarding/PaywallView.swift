@@ -67,9 +67,9 @@ struct PaywallView: View {
                 .tracking(1.5)
                 .padding(.bottom, 12)
 
-            memoField(label: "TO", value: "New Employee")
-            memoField(label: "FROM", value: "Dept. of Time Reclamation")
-            memoField(label: "RE", value: "Promotion to Pro")
+            memoField(label: "TO", value: "New Employee (Intern)")
+            memoField(label: "FROM", value: "Office of J. Pemberton, CSO")
+            memoField(label: "RE", value: "Promotion to Executive Status")
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -97,19 +97,19 @@ struct PaywallView: View {
 
     private var benefitsList: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("PROMOTION PACKAGE")
+            Text("EXECUTIVE BENEFITS PACKAGE")
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
                 .foregroundStyle(Theme.textPrimary.opacity(0.3))
                 .tracking(1.5)
 
             VStack(alignment: .leading, spacing: 8) {
-                benefitRow("Classified reports (Month / Year / All)", included: true)
-                benefitRow("Behavioral analytics & dossier", included: true)
-                benefitRow("Full international rankings", included: true)
-                benefitRow("Form accountability groups", included: true)
-                benefitRow("Commendations & titles", included: true)
-                benefitRow("Custom activity classifications", included: true)
-                benefitRow("Data export & distribution rights", included: true)
+                benefitRow("Classified reports (Monthly / Annual / Lifetime)", included: true)
+                benefitRow("Audit Findings & behavioral analytics", included: true)
+                benefitRow("Full country & sector benchmarks", included: true)
+                benefitRow("Create reclamation units (unlimited)", included: true)
+                benefitRow("Employee commendations & titles", included: true)
+                benefitRow("Custom activity codes", included: true)
+                benefitRow("CSV export & data distribution rights", included: true)
             }
         }
     }
@@ -132,7 +132,7 @@ struct PaywallView: View {
         HStack(spacing: 12) {
             pricingCard(
                 plan: .weekly,
-                title: "WEEKLY",
+                title: "WEEKLY CONTRACT",
                 price: "$4.99",
                 period: "/week",
                 subtitle: "$259.48/year",
@@ -143,13 +143,13 @@ struct PaywallView: View {
 
             pricingCard(
                 plan: .annual,
-                title: "ANNUAL",
+                title: "ANNUAL CONTRACT",
                 price: "$39.99",
                 period: "/year",
                 subtitle: "$0.77/week",
                 subtitleStrikethrough: false,
-                badge: "BEST VALUE",
-                trialText: "7-day free trial"
+                badge: "RECOMMENDED",
+                trialText: "7-day probationary period"
             )
         }
     }
@@ -238,7 +238,7 @@ struct PaywallView: View {
     // MARK: - Social Proof
 
     private var socialProof: some View {
-        Text("12,000+ professionals reclaiming $2.4M+ this week")
+        Text("12,000+ employees promoted this quarter")
             .font(.system(.caption2, design: .monospaced))
             .foregroundStyle(Theme.textPrimary.opacity(0.3))
             .multilineTextAlignment(.center)
@@ -256,7 +256,7 @@ struct PaywallView: View {
                     ProgressView()
                         .tint(.white)
                 } else {
-                    Text(selectedPlan == .annual ? "Start Free Trial" : "Subscribe for $4.99/week")
+                    Text(selectedPlan == .annual ? "Accept Promotion" : "Accept Weekly Contract")
                         .font(.system(.headline, design: .monospaced))
                 }
             }
@@ -271,9 +271,9 @@ struct PaywallView: View {
     private var trialDisclosure: some View {
         Group {
             if selectedPlan == .annual {
-                Text("7 days free, then $39.99/year. Cancel anytime.")
+                Text("7-day probation, then $39.99/year. Resign anytime.")
             } else {
-                Text("$4.99/week. Cancel anytime.")
+                Text("$4.99/week. Resign anytime.")
             }
         }
         .font(.system(.caption2, design: .monospaced))
@@ -290,7 +290,7 @@ struct PaywallView: View {
                 Haptics.light()
                 dismiss()
             } label: {
-                Text("Maybe later")
+                Text("Decline promotion")
                     .font(.system(.caption, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary.opacity(0.4))
                     .padding(.vertical, 6)
@@ -300,7 +300,7 @@ struct PaywallView: View {
                 Haptics.light()
                 Task { await handleRestore() }
             } label: {
-                Text("Restore Purchases")
+                Text("Restore previous employment")
                     .font(.system(.caption, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary.opacity(0.35))
             }
@@ -348,7 +348,7 @@ struct PaywallView: View {
                 dismiss()
             }
         } catch {
-            errorMessage = "Transaction could not be processed. Try again."
+            errorMessage = "Transaction could not be processed. Please contact the department."
         }
 
         isPurchasing = false
@@ -364,10 +364,10 @@ struct PaywallView: View {
                 Haptics.success()
                 dismiss()
             } else {
-                errorMessage = "No active subscription found."
+                errorMessage = "No prior employment record found."
             }
         } catch {
-            errorMessage = "Restoration unsuccessful. Contact HR."
+            errorMessage = "Records could not be retrieved. Contact HR."
         }
 
         isPurchasing = false

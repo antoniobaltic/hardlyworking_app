@@ -8,11 +8,11 @@ struct OnboardingLoadingView: View {
     @State private var isProfileComplete = false
 
     private let steps = [
-        "Verifying compensation data...",
-        "Cross-referencing schedule...",
-        "Analyzing industry benchmarks...",
-        "Calibrating reclamation engine...",
-        "Generating personalized insights...",
+        "Verifying compensation records...",
+        "Filing schedule with HR...",
+        "Cross-referencing sector benchmarks...",
+        "Calibrating reclamation parameters...",
+        "Generating preliminary audit findings...",
     ]
 
     private let stepTimings: [Double] = [0.0, 0.8, 1.8, 3.0, 4.2]
@@ -29,7 +29,7 @@ struct OnboardingLoadingView: View {
 
             Spacer().frame(height: 24)
 
-            Text("Compiling your dossier...")
+            Text("Assembling your employee dossier...")
                 .font(.system(size: 24, weight: .light, design: .monospaced))
                 .foregroundStyle(Theme.textPrimary)
 
@@ -48,7 +48,7 @@ struct OnboardingLoadingView: View {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(.body, weight: .bold))
                             .foregroundStyle(Theme.money)
-                        Text("Dossier complete.")
+                        Text("Employee dossier filed.")
                             .font(.system(.subheadline, design: .monospaced, weight: .bold))
                             .foregroundStyle(Theme.textPrimary)
                     }

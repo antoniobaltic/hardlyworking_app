@@ -23,7 +23,7 @@ struct OnboardingWageView: View {
 
                 Spacer().frame(height: 24)
 
-                Text("To calculate your reclaimed wages,\nplease disclose your hourly rate.")
+                Text("For reclamation calculations,\ndisclose your hourly compensation rate.")
                     .font(.system(.subheadline, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     .multilineTextAlignment(.center)
@@ -39,7 +39,7 @@ struct OnboardingWageView: View {
                 Spacer().frame(height: 20)
 
                 if let rate = Double(rateText), rate > 0 {
-                    Text("That's \(Text(Theme.formatMoney(dailyPotential)).font(.system(.subheadline, design: .monospaced, weight: .semibold)).foregroundStyle(Theme.money)) per day to reclaim.")
+                    Text("Daily reclamation potential: \(Text(Theme.formatMoney(dailyPotential)).font(.system(.subheadline, design: .monospaced, weight: .semibold)).foregroundStyle(Theme.money)).")
                         .font(.system(.subheadline, design: .monospaced))
                         .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 }

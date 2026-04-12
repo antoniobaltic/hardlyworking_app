@@ -27,16 +27,16 @@ struct OnboardingContainerView: View {
 
     private let sectionHeaders = [
         "",
-        "ORIENTATION MODULE 1",
-        "ORIENTATION MODULE 2",
-        "COMPENSATION DISCLOSURE",
-        "SCHEDULE REGISTRATION",
-        "SELF-ASSESSMENT FORM",
-        "DEPARTMENT ASSIGNMENT",
-        "ASSESSMENT RESULTS",
-        "PRELIMINARY FINDINGS",
-        "EMPLOYEE PLEDGE",
-        "DOSSIER ASSEMBLY",
+        "FORM HR-1: INTENT DECLARATION",
+        "FORM HR-2: GRIEVANCE INTAKE",
+        "FORM HR-3: COMPENSATION RECORD",
+        "FORM HR-4: SCHEDULE ON FILE",
+        "FORM HR-5: SELF-ASSESSMENT",
+        "FORM HR-6: DEPARTMENT FILING",
+        "CLEARANCE LEVEL ASSIGNED",
+        "PRELIMINARY AUDIT FINDINGS",
+        "FORM HR-7: EMPLOYEE PLEDGE",
+        "DOSSIER COMPILATION",
     ]
 
     private var isLoadingScreen: Bool { currentPage == 10 }
@@ -194,7 +194,7 @@ struct OnboardingContainerView: View {
         case 6:
             let filled = !userIndustry.isEmpty && !userCountry.isEmpty
             return filled ? "Continue" : "Skip for now"
-        case 9: return "Finalize Enrollment"
+        case 9: return "Complete Enrollment"
         default: return "Continue"
         }
     }

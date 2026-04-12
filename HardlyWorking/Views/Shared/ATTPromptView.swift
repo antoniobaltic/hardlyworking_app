@@ -22,7 +22,7 @@ struct ATTPromptView: View {
 
             Spacer().frame(height: 20)
 
-            Text("Before you begin, a brief\ndisclosure from the Department\nof Data Transparency.")
+            Text("A mandatory disclosure from the\nDepartment of Data Transparency,\nper directive of J. Pemberton, CSO.")
                 .font(.system(.subheadline, design: .monospaced))
                 .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .multilineTextAlignment(.center)
@@ -34,7 +34,7 @@ struct ATTPromptView: View {
                     .fill(Theme.textPrimary.opacity(0.06))
                     .frame(height: 1)
 
-                Text("We use an anonymous identifier to\nmeasure which advertisements led you\nhere. This data is used exclusively for\nattribution purposes and is never shared\nwith your employer.")
+                Text("Hardly Working Corp. uses an anonymous\nidentifier to determine which recruitment\ncampaign led to your application. This data\nis used for attribution purposes only and\nis never shared with your other employer.")
                     .font(.system(.caption, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     .multilineTextAlignment(.center)
@@ -49,7 +49,7 @@ struct ATTPromptView: View {
 
             Spacer().frame(height: 12)
 
-            Text("Your participation is voluntary.")
+            Text("Participation is voluntary.\nNon-participation will not affect your standing.")
                 .font(.system(.caption2, design: .monospaced))
                 .foregroundStyle(Theme.textPrimary.opacity(0.25))
 
@@ -60,7 +60,7 @@ struct ATTPromptView: View {
                     Haptics.medium()
                     requestATT()
                 } label: {
-                    Text("Authorize Tracking")
+                    Text("Authorize")
                         .font(.system(.headline, design: .monospaced))
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)

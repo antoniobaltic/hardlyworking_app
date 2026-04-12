@@ -4,12 +4,12 @@ struct OnboardingFrustrationView: View {
     @Binding var userFrustration: String
 
     private let options: [(emoji: String, label: String)] = [
-        ("\u{1F4E7}", "Pointless meetings that could be emails"),
-        ("\u{1F50E}", "Being asked to justify 5 minutes of silence"),
-        ("\u{1F4E2}", "Open-plan office chaos"),
-        ("\u{1F3AD}", "Pretending to look busy"),
-        ("\u{1F4DA}", "Doing the work of three people"),
-        ("\u{1F30C}", "The existential dread of it all"),
+        ("\u{1F4E7}", "Meetings that should have been memos"),
+        ("\u{1F50E}", "Mandatory justification of non-productive intervals"),
+        ("\u{1F4E2}", "Open-plan acoustic disturbance"),
+        ("\u{1F3AD}", "Sustained performance of visible productivity"),
+        ("\u{1F4DA}", "Headcount consolidation without title adjustment"),
+        ("\u{1F30C}", "Chronic awareness of the arrangement"),
     ]
 
     var body: some View {
@@ -24,13 +24,13 @@ struct OnboardingFrustrationView: View {
 
                 Spacer().frame(height: 24)
 
-                Text("What drains you most?")
+                Text("Primary workplace grievance.")
                     .font(.system(size: 24, weight: .light, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary)
 
                 Spacer().frame(height: 8)
 
-                Text("Identifying your primary workplace\nstressor helps us calibrate your profile.")
+                Text("Per company policy, all employees must\nidentify their principal source of drain.")
                     .font(.system(.subheadline, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     .multilineTextAlignment(.center)

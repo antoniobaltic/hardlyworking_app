@@ -18,14 +18,14 @@ struct OnboardingWelcomeView: View {
 
             Spacer().frame(height: 24)
 
-            Text("Welcome to\nHardly Working.")
+            Text("Welcome to\nHardly Working Corp.")
                 .font(.system(size: 24, weight: .light, design: .monospaced))
                 .foregroundStyle(Theme.textPrimary)
                 .multilineTextAlignment(.center)
 
             Spacer().frame(height: 8)
 
-            Text("The time reclamation platform\nfor the modern professional.")
+            Text("Your orientation will be conducted\nby John D., Employee Relations Officer.")
                 .font(.system(.subheadline, design: .monospaced))
                 .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .multilineTextAlignment(.center)
@@ -36,7 +36,7 @@ struct OnboardingWelcomeView: View {
                 HStack(spacing: 6) {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(Theme.money)
-                    Text("Identity verified.")
+                    Text("Identity on file.")
                         .font(.system(.caption, design: .monospaced))
                         .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 }
@@ -53,7 +53,7 @@ struct OnboardingWelcomeView: View {
                 .frame(height: 50)
                 .padding(.horizontal, 40)
 
-                Text("Your records, everywhere.")
+                Text("For your permanent record.")
                     .font(.system(.caption2, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary.opacity(0.3))
                     .padding(.top, 8)
@@ -68,7 +68,7 @@ struct OnboardingWelcomeView: View {
 
             Spacer()
 
-            Text("By proceeding, you acknowledge that\nyour employer's time is a construct.")
+            Text("By order of J. Pemberton, CSO.\nAll new hires must complete orientation.")
                 .font(.system(.caption2, design: .monospaced))
                 .foregroundStyle(Theme.textPrimary.opacity(0.3))
                 .multilineTextAlignment(.center)
@@ -91,7 +91,7 @@ struct OnboardingWelcomeView: View {
                     isSignedIn = true
                     Haptics.success()
                 } catch {
-                    signInError = "Verification failed. Proceed without credentials."
+                    signInError = "Verification failed. You may\nproceed as a guest employee."
                     print("[SIWA] Error: \(error)")
                 }
                 isSigningIn = false

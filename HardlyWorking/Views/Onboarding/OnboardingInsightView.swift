@@ -48,7 +48,7 @@ struct OnboardingInsightView: View {
 
                 Spacer().frame(height: 24)
 
-                Text("Before we continue, here's what\nwe've already calculated:")
+                Text("Preliminary findings from your\nintake assessment follow.")
                     .font(.system(.subheadline, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     .multilineTextAlignment(.center)
@@ -58,7 +58,7 @@ struct OnboardingInsightView: View {
                 VStack(spacing: 0) {
                     if visibleRows >= 1 {
                         insightRow(
-                            text: "At \(Theme.formatMoney(hourlyRate))/hr, your daily reclamation potential is ",
+                            text: "At \(Theme.formatMoney(hourlyRate))/hr, daily reclamation ceiling: ",
                             highlight: Theme.formatMoney(dailyPotential),
                             suffix: "."
                         )
@@ -68,9 +68,9 @@ struct OnboardingInsightView: View {
                     if visibleRows >= 2 {
                         Divider().opacity(0.06).padding(.vertical, 4)
                         insightRow(
-                            text: "\(locationLabel) reclaim an average of ",
+                            text: "Sector average (\(locationLabel)): ",
                             highlight: industryAvgHours,
-                            suffix: " per day."
+                            suffix: " reclaimed per day."
                         )
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
@@ -78,9 +78,9 @@ struct OnboardingInsightView: View {
                     if visibleRows >= 3 {
                         Divider().opacity(0.06).padding(.vertical, 4)
                         insightRow(
-                            text: "At \(estimatedProductivity)% productivity, you could be leaving ",
+                            text: "At \(estimatedProductivity)% declared productivity, weekly unreclaimed wages: ",
                             highlight: Theme.formatMoney(weeklyUnreclaimed),
-                            suffix: " on the table each week."
+                            suffix: "."
                         )
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                     }

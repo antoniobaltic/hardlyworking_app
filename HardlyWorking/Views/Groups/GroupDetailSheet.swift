@@ -21,7 +21,7 @@ struct GroupDetailSheet: View {
 
     private var inviteMessage: String {
         """
-        Join "\(group.name)" on Hardly Working!
+        Join "\(group.name)" on Hardly Working Corp.!
 
         Download the app, then use invite code \(group.inviteCode) to join!
 
@@ -62,11 +62,11 @@ struct GroupDetailSheet: View {
             }
             .task { await viewModel.loadLeaderboard(groupId: group.id) }
             .confirmationDialog(
-                "Leave this group?",
+                "Leave this reclamation unit?",
                 isPresented: $showLeaveConfirmation,
                 titleVisibility: .visible
             ) {
-                Button("Leave Group", role: .destructive) {
+                Button("Leave Unit", role: .destructive) {
                     Task {
                         await viewModel.leaveGroup(groupId: group.id)
                         Haptics.warning()
@@ -74,14 +74,14 @@ struct GroupDetailSheet: View {
                     }
                 }
             } message: {
-                Text("You can rejoin later with an invite code.")
+                Text("You may re-enroll later with an authorization code.")
             }
             .confirmationDialog(
-                "Delete this group?",
+                "Dissolve this reclamation unit?",
                 isPresented: $showDeleteConfirmation,
                 titleVisibility: .visible
             ) {
-                Button("Delete Group", role: .destructive) {
+                Button("Dissolve Unit", role: .destructive) {
                     Task {
                         await viewModel.deleteGroup(groupId: group.id)
                         Haptics.warning()
@@ -89,7 +89,7 @@ struct GroupDetailSheet: View {
                     }
                 }
             } message: {
-                Text("This will permanently dissolve the group and remove all participants. This action cannot be undone.")
+                Text("This will permanently dissolve the reclamation unit and remove all members. This action cannot be undone.")
             }
         }
     }
@@ -320,7 +320,7 @@ struct GroupDetailSheet: View {
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "rectangle.portrait.and.arrow.right")
-                    Text("Leave Group")
+                    Text("Leave Unit")
                         .font(.system(.subheadline, design: .monospaced))
                 }
                 .foregroundStyle(Theme.timer)
@@ -339,7 +339,7 @@ struct GroupDetailSheet: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "trash")
-                        Text("Delete Group")
+                        Text("Dissolve Unit")
                             .font(.system(.subheadline, design: .monospaced))
                     }
                     .foregroundStyle(Theme.timer.opacity(0.6))

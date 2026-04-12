@@ -4,12 +4,12 @@ struct OnboardingMotivationView: View {
     @Binding var userMotivation: String
 
     private let options: [(emoji: String, label: String)] = [
-        ("\u{1F4B0}", "I want to know how much I'm \"earning\""),
-        ("\u{1F50D}", "Curiosity. How much do I actually slack?"),
-        ("\u{1F4C4}", "My job is pointless and I need proof"),
-        ("\u{1F4F1}", "I saw it on TikTok"),
-        ("\u{1F465}", "A friend made me download this"),
-        ("\u{1F441}", "I'm a manager spying on trends"),
+        ("\u{1F4B0}", "I want to know what my time is worth"),
+        ("\u{1F50D}", "I need to quantify my non-productive output"),
+        ("\u{1F4C4}", "My position is redundant and I require documentation"),
+        ("\u{1F4F1}", "I was referred by a recruitment campaign"),
+        ("\u{1F465}", "A current employee recommended me"),
+        ("\u{1F441}", "I'm conducting departmental research"),
     ]
 
     var body: some View {
@@ -24,13 +24,13 @@ struct OnboardingMotivationView: View {
 
                 Spacer().frame(height: 24)
 
-                Text("Why are you here?")
+                Text("State your purpose.")
                     .font(.system(size: 24, weight: .light, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary)
 
                 Spacer().frame(height: 8)
 
-                Text("Select the primary reason for your\ntime reclamation enrollment.")
+                Text("All new hires must declare their reason\nfor joining Hardly Working Corp.")
                     .font(.system(.subheadline, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     .multilineTextAlignment(.center)

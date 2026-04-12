@@ -5,11 +5,11 @@ struct OnboardingHonestyView: View {
 
     private var commentary: String {
         switch estimatedProductivity {
-        case 0...20: "Bold. We respect the honesty."
-        case 21...40: "Below the national average of 38%."
-        case 41...60: "You're in the sweet spot."
-        case 61...80: "Overachiever detected. We can help."
-        default: "Sure you are. We'll revisit this."
+        case 0...20: "Noted. Your candor has been flagged."
+        case 21...40: "Below the interdepartmental average."
+        case 41...60: "Within normal operating parameters."
+        case 61...80: "Elevated productivity. John D. will be in touch."
+        default: "This figure will be audited."
         }
     }
 
@@ -25,13 +25,13 @@ struct OnboardingHonestyView: View {
 
                 Spacer().frame(height: 24)
 
-                Text("Be honest.")
+                Text("Confidential self-assessment.")
                     .font(.system(size: 24, weight: .light, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary)
 
                 Spacer().frame(height: 8)
 
-                Text("What percentage of your workday\ndo you estimate you actually work?")
+                Text("Estimate the percentage of your\nworkday spent on actual work.")
                     .font(.system(.subheadline, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     .multilineTextAlignment(.center)

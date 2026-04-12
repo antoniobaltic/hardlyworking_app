@@ -20,7 +20,7 @@ struct OnboardingDepartmentView: View {
 
                 Spacer().frame(height: 24)
 
-                Text("Select your department and region.\nFor benchmarking purposes.")
+                Text("Indicate your sector and operating region.\nRequired for interdepartmental benchmarking.")
                     .font(.system(.subheadline, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     .multilineTextAlignment(.center)
@@ -30,7 +30,7 @@ struct OnboardingDepartmentView: View {
                 VStack(alignment: .leading, spacing: 20) {
                     // Industry
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("DEPARTMENT")
+                        Text("SECTOR")
                             .font(.system(.caption2, design: .monospaced, weight: .bold))
                             .foregroundStyle(Theme.textPrimary.opacity(0.3))
                             .tracking(1.5)
@@ -40,7 +40,7 @@ struct OnboardingDepartmentView: View {
 
                     // Country
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("REGION")
+                        Text("OPERATING REGION")
                             .font(.system(.caption2, design: .monospaced, weight: .bold))
                             .foregroundStyle(Theme.textPrimary.opacity(0.3))
                             .tracking(1.5)
@@ -104,7 +104,7 @@ struct OnboardingDepartmentView: View {
             }
         } label: {
             HStack {
-                Text(userCountry.isEmpty ? "Select country" : userCountry)
+                Text(userCountry.isEmpty ? "Select operating region" : userCountry)
                     .font(.system(.subheadline, design: .monospaced, weight: .medium))
                     .foregroundStyle(userCountry.isEmpty ? Theme.textPrimary.opacity(0.3) : Theme.textPrimary)
                 Spacer()

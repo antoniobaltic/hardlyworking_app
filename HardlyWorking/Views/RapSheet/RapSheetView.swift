@@ -177,7 +177,7 @@ struct RapSheetView: View {
                 Task { await deleteAccount() }
             }
         } message: {
-            Text("This will permanently delete your account, all recorded sessions, achievements, and group memberships. This cannot be undone.")
+            Text("This will permanently delete your account, all recorded sessions, commendations, and reclamation unit memberships. This cannot be undone.")
         }
     }
 
@@ -303,7 +303,7 @@ struct RapSheetView: View {
                     if let exportURL {
                         ShareLink(
                             item: exportURL,
-                            subject: Text("Hardly Working — Data Export"),
+                            subject: Text("Hardly Working Corp. — Data Export"),
                             message: Text("Your complete time reclamation records. Handle with discretion.")
                         ) {
                             HStack(spacing: 8) {
@@ -350,7 +350,7 @@ struct RapSheetView: View {
             } else {
                 ProLockedView(
                     title: "Data Export",
-                    description: "Your records require Pro clearance\nfor external distribution.",
+                    description: "Your records require Executive clearance\nfor external distribution.",
                     icon: "doc.text"
                 ) { showPaywall = true }
             }
@@ -387,7 +387,7 @@ struct RapSheetView: View {
                     .font(.system(.caption, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 Spacer()
-                Text(subscriptionManager.isProUser ? "Authorized" : "Standard")
+                Text(subscriptionManager.isProUser ? "Executive" : "Intern")
                     .font(.system(.subheadline, design: .monospaced, weight: .medium))
                     .foregroundStyle(subscriptionManager.isProUser ? Theme.money : Theme.textPrimary.opacity(0.5))
             }

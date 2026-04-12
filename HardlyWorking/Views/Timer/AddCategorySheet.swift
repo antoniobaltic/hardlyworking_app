@@ -44,7 +44,7 @@ struct AddCategorySheet: View {
         VStack(spacing: 4) {
             Text(emoji.isEmpty ? "?" : String(emoji.prefix(1)))
                 .font(.system(size: 48))
-            Text("NEW CATEGORY")
+            Text("NEW ACTIVITY CODE")
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
                 .foregroundStyle(Theme.textPrimary.opacity(0.3))
                 .tracking(2)

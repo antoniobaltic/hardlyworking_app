@@ -116,7 +116,7 @@ struct GroupsView: View {
                 Text("#NULL!")
                     .font(.system(size: 48, weight: .bold, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary.opacity(0.1))
-                Text("No group affiliations on file.")
+                Text("No reclamation unit affiliations on file.")
                     .font(.system(.caption, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary.opacity(0.35))
                 Text("Coordinate with like-minded professionals.")
@@ -139,7 +139,7 @@ struct GroupsView: View {
     private var groupList: some View {
         VStack(spacing: 20) {
             VStack(alignment: .leading, spacing: 14) {
-                Text("YOUR GROUPS")
+                Text("YOUR RECLAMATION UNITS")
                     .font(.system(.caption2, design: .monospaced, weight: .bold))
                     .foregroundStyle(Theme.textPrimary.opacity(0.3))
                     .tracking(1.5)
@@ -220,7 +220,7 @@ struct GroupsView: View {
             HStack(spacing: 8) {
                 Image(systemName: "plus")
                     .font(.system(.body, weight: .bold))
-                Text("Form Group")
+                Text("Establish Unit")
                     .font(.system(.headline, design: .monospaced))
             }
             .foregroundStyle(.white)

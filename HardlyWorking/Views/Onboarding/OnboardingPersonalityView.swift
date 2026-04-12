@@ -19,21 +19,21 @@ struct OnboardingPersonalityView: View {
 
     private var title: String {
         switch level {
-        case 1: "The Apprentice"
-        case 2: "The Dabbler"
-        case 3: "The Professional"
-        case 4: "The Veteran"
-        default: "The Enlightened"
+        case 1: "Probationary Intern"
+        case 2: "Junior Reclaimer"
+        case 3: "Certified Reclaimer"
+        case 4: "Senior Reclaimer"
+        default: "Executive Reclaimer"
         }
     }
 
     private var description: String {
         switch level {
-        case 1: "You're just getting started. Every expert\nwas once a beginner. We believe in you."
-        case 2: "You've dipped your toes in. There's\nso much more potential to unlock."
-        case 3: "A balanced approach to time reclamation.\nConsistent. Reliable. Professional."
-        case 4: "An experienced practitioner with a\ndeep understanding of workplace dynamics."
-        default: "You have transcended the construct of\nproductivity. Welcome to the other side."
+        case 1: "Your file indicates limited reclamation\nexperience. A training period applies."
+        case 2: "Some evidence of non-productive activity.\nFurther observation recommended."
+        case 3: "Consistent and unremarkable. You have\nbeen placed in the general population."
+        case 4: "Your dossier indicates sustained\nnon-productive output. Well documented."
+        default: "You have transcended the productivity\ncontract. The department has taken note."
         }
     }
 
@@ -48,7 +48,7 @@ struct OnboardingPersonalityView: View {
 
             Spacer().frame(height: 24)
 
-            Text("Based on your responses, you are:")
+            Text("Based on your intake assessment:")
                 .font(.system(.caption, design: .monospaced))
                 .foregroundStyle(Theme.textPrimary.opacity(0.4))
 
@@ -75,7 +75,7 @@ struct OnboardingPersonalityView: View {
 
     private var resultCard: some View {
         VStack(spacing: 12) {
-            Text("LEVEL \(level)")
+            Text("CLEARANCE LEVEL \(level)")
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
                 .foregroundStyle(Theme.textPrimary.opacity(0.3))
                 .tracking(2)

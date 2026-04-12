@@ -43,7 +43,7 @@ struct CreateGroupSheet: View {
         VStack(spacing: 4) {
             Text(emoji.isEmpty ? "?" : String(emoji.prefix(1)))
                 .font(.system(size: 48))
-            Text("GROUP FORMATION")
+            Text("RECLAMATION UNIT FORMATION")
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
                 .foregroundStyle(Theme.textPrimary.opacity(0.3))
                 .tracking(2)

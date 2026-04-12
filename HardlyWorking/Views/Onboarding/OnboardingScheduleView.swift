@@ -26,7 +26,7 @@ struct OnboardingScheduleView: View {
 
                 Spacer().frame(height: 24)
 
-                Text("Register your official work schedule.\nThis helps us measure your inefficiency.")
+                Text("File your official work schedule.\nDiscrepancies will be noted.")
                     .font(.system(.subheadline, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     .multilineTextAlignment(.center)
@@ -71,7 +71,7 @@ struct OnboardingScheduleView: View {
 
                 Spacer().frame(height: 20)
 
-                Text("That's \(Text("\(Int(weeklyHours))h/week").foregroundStyle(Theme.money)) of potential reclamation.")
+                Text("Total exposure: \(Text("\(Int(weeklyHours))h/week").foregroundStyle(Theme.money)).")
                     .font(.system(.subheadline, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary.opacity(0.5))
             }
