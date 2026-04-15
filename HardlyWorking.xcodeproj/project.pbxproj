@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		A8EE36052F87CFD800B9A436 /* RapSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36042F87CFD800B9A436 /* RapSheetView.swift */; };
 		A8EE36072F87CFED00B9A436 /* BookingHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36062F87CFED00B9A436 /* BookingHeaderView.swift */; };
+		A8EE36082FAC100000B9A436 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36072FAC000000B9A436 /* SettingsView.swift */; };
 		A8EE36092F87CFF700B9A436 /* RapSheetStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36082F87CFF700B9A436 /* RapSheetStatsView.swift */; };
 		A8EE360B2F87D00300B9A436 /* CoverStoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE360A2F87D00300B9A436 /* CoverStoryView.swift */; };
 		A8EE360D2F87D02C00B9A436 /* CoverStoryEditSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE360C2F87D02C00B9A436 /* CoverStoryEditSheet.swift */; };
@@ -25,6 +26,7 @@
 		A8EE36272F88077F00B9A436 /* OnboardingPersonalityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36262F88077F00B9A436 /* OnboardingPersonalityView.swift */; };
 		A8EE36292F88079100B9A436 /* OnboardingInsightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36282F88079100B9A436 /* OnboardingInsightView.swift */; };
 		A8EE362B2F88079800B9A436 /* OnboardingCommitmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE362A2F88079800B9A436 /* OnboardingCommitmentView.swift */; };
+		A8EE362C2FA9B00000B9A436 /* OnboardingIntermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE362C2FA9A00000B9A436 /* OnboardingIntermissionView.swift */; };
 		A8EE362D2F8807A500B9A436 /* OnboardingLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE362C2F8807A500B9A436 /* OnboardingLoadingView.swift */; };
 		A8EE36302F88177800B9A436 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = A8EE362F2F88177800B9A436 /* Supabase */; };
 		A8EE36322F8817FA00B9A436 /* SupabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36312F8817FA00B9A436 /* SupabaseManager.swift */; };
@@ -43,13 +45,14 @@
 		A8EE364F2F88387100B9A436 /* AddCategorySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE364E2F88387100B9A436 /* AddCategorySheet.swift */; };
 		A8EE36512F883AA600B9A436 /* CSVExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36502F883AA600B9A436 /* CSVExporter.swift */; };
 		A8EE36532F883F4800B9A436 /* ShareCardData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36522F883F4800B9A436 /* ShareCardData.swift */; };
+		A8EE36542FAB100000B9A436 /* ClearanceLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36522FAB000000B9A436 /* ClearanceLevel.swift */; };
 		A8EE36552F883F4900B9A436 /* ShareCardRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36542F883F4900B9A436 /* ShareCardRenderer.swift */; };
 		A8EE36572F883F7B00B9A436 /* ShareCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36562F883F7B00B9A436 /* ShareCardView.swift */; };
+		A8EE36572FAB200000B9A436 /* ClearanceBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36562FAB100000B9A436 /* ClearanceBadgeView.swift */; };
 		A8EE36592F883F8C00B9A436 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36582F883F8C00B9A436 /* ShareSheet.swift */; };
 		A8EE365B2F88D21D00B9A436 /* ATTPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE365A2F88D21D00B9A436 /* ATTPromptView.swift */; };
 		A8EE365E2F88EC2400B9A436 /* RecordingLimits.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE365D2F88EC2400B9A436 /* RecordingLimits.swift */; };
 		A8EE36602F88F36500B9A436 /* RatingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE365F2F88F36500B9A436 /* RatingManager.swift */; };
-		A8EE36622F88F38100B9A436 /* SatisfactionSurveyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36612F88F38100B9A436 /* SatisfactionSurveyView.swift */; };
 		A8EE36642F89357900B9A436 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36632F89357900B9A436 /* NotificationManager.swift */; };
 		A8EE36662F89358100B9A436 /* ProUpgradeBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36652F89358100B9A436 /* ProUpgradeBanner.swift */; };
 		AA00000000000000000B0001 /* HardlyWorkingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0001 /* HardlyWorkingApp.swift */; };
@@ -86,6 +89,7 @@
 		A8B93AA22F8B7EF400B35E0D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A8EE36042F87CFD800B9A436 /* RapSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RapSheetView.swift; sourceTree = "<group>"; };
 		A8EE36062F87CFED00B9A436 /* BookingHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookingHeaderView.swift; sourceTree = "<group>"; };
+		A8EE36072FAC000000B9A436 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A8EE36082F87CFF700B9A436 /* RapSheetStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RapSheetStatsView.swift; sourceTree = "<group>"; };
 		A8EE360A2F87D00300B9A436 /* CoverStoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverStoryView.swift; sourceTree = "<group>"; };
 		A8EE360C2F87D02C00B9A436 /* CoverStoryEditSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverStoryEditSheet.swift; sourceTree = "<group>"; };
@@ -103,6 +107,7 @@
 		A8EE36282F88079100B9A436 /* OnboardingInsightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingInsightView.swift; sourceTree = "<group>"; };
 		A8EE362A2F88079800B9A436 /* OnboardingCommitmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCommitmentView.swift; sourceTree = "<group>"; };
 		A8EE362C2F8807A500B9A436 /* OnboardingLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingLoadingView.swift; sourceTree = "<group>"; };
+		A8EE362C2FA9A00000B9A436 /* OnboardingIntermissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingIntermissionView.swift; sourceTree = "<group>"; };
 		A8EE36312F8817FA00B9A436 /* SupabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseManager.swift; sourceTree = "<group>"; };
 		A8EE36332F88207700B9A436 /* BenchmarkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkViewModel.swift; sourceTree = "<group>"; };
 		A8EE36362F88269000B9A436 /* GroupsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsViewModel.swift; sourceTree = "<group>"; };
@@ -120,14 +125,15 @@
 		A8EE364E2F88387100B9A436 /* AddCategorySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategorySheet.swift; sourceTree = "<group>"; };
 		A8EE36502F883AA600B9A436 /* CSVExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVExporter.swift; sourceTree = "<group>"; };
 		A8EE36522F883F4800B9A436 /* ShareCardData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCardData.swift; sourceTree = "<group>"; };
+		A8EE36522FAB000000B9A436 /* ClearanceLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearanceLevel.swift; sourceTree = "<group>"; };
 		A8EE36542F883F4900B9A436 /* ShareCardRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCardRenderer.swift; sourceTree = "<group>"; };
 		A8EE36562F883F7B00B9A436 /* ShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCardView.swift; sourceTree = "<group>"; };
+		A8EE36562FAB100000B9A436 /* ClearanceBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearanceBadgeView.swift; sourceTree = "<group>"; };
 		A8EE36582F883F8C00B9A436 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		A8EE365A2F88D21D00B9A436 /* ATTPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ATTPromptView.swift; sourceTree = "<group>"; };
 		A8EE365C2F88E3A800B9A436 /* HardlyWorking.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HardlyWorking.entitlements; sourceTree = "<group>"; };
 		A8EE365D2F88EC2400B9A436 /* RecordingLimits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingLimits.swift; sourceTree = "<group>"; };
 		A8EE365F2F88F36500B9A436 /* RatingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingManager.swift; sourceTree = "<group>"; };
-		A8EE36612F88F38100B9A436 /* SatisfactionSurveyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatisfactionSurveyView.swift; sourceTree = "<group>"; };
 		A8EE36632F89357900B9A436 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		A8EE36652F89358100B9A436 /* ProUpgradeBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProUpgradeBanner.swift; sourceTree = "<group>"; };
 		AA00000000000000000F0001 /* HardlyWorkingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardlyWorkingApp.swift; sourceTree = "<group>"; };
@@ -189,6 +195,7 @@
 				A8EE360A2F87D00300B9A436 /* CoverStoryView.swift */,
 				A8EE360C2F87D02C00B9A436 /* CoverStoryEditSheet.swift */,
 				A8EE364A2F88336700B9A436 /* AchievementsView.swift */,
+				A8EE36072FAC000000B9A436 /* SettingsView.swift */,
 			);
 			path = RapSheet;
 			sourceTree = "<group>";
@@ -215,6 +222,7 @@
 				A8EE36262F88077F00B9A436 /* OnboardingPersonalityView.swift */,
 				A8EE36282F88079100B9A436 /* OnboardingInsightView.swift */,
 				A8EE362A2F88079800B9A436 /* OnboardingCommitmentView.swift */,
+				A8EE362C2FA9A00000B9A436 /* OnboardingIntermissionView.swift */,
 				A8EE362C2F8807A500B9A436 /* OnboardingLoadingView.swift */,
 			);
 			path = Onboarding;
@@ -239,8 +247,8 @@
 				A8EE36562F883F7B00B9A436 /* ShareCardView.swift */,
 				A8EE36582F883F8C00B9A436 /* ShareSheet.swift */,
 				A8EE365A2F88D21D00B9A436 /* ATTPromptView.swift */,
-				A8EE36612F88F38100B9A436 /* SatisfactionSurveyView.swift */,
 				A8EE36652F89358100B9A436 /* ProUpgradeBanner.swift */,
+				A8EE36562FAB100000B9A436 /* ClearanceBadgeView.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -296,6 +304,7 @@
 				A8EE36442F88329F00B9A436 /* UnlockedAchievement.swift */,
 				A8EE364C2F88385A00B9A436 /* CustomCategory.swift */,
 				A8EE36522F883F4800B9A436 /* ShareCardData.swift */,
+				A8EE36522FAB000000B9A436 /* ClearanceLevel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -479,6 +488,7 @@
 			files = (
 				A8EE36132F87EC1E00B9A436 /* OnboardingWelcomeView.swift in Sources */,
 				A8EE36092F87CFF700B9A436 /* RapSheetStatsView.swift in Sources */,
+				A8EE36082FAC100000B9A436 /* SettingsView.swift in Sources */,
 				A8EE36602F88F36500B9A436 /* RatingManager.swift in Sources */,
 				AA00000000000000000B0001 /* HardlyWorkingApp.swift in Sources */,
 				AA00000000000000000B0002 /* ContentView.swift in Sources */,
@@ -503,8 +513,8 @@
 				AA00000000000000000B000E /* AddEntrySheet.swift in Sources */,
 				A8EE36192F87EC4F00B9A436 /* OnboardingWageView.swift in Sources */,
 				A8EE361B2F87EC5800B9A436 /* OnboardingDepartmentView.swift in Sources */,
-				A8EE36622F88F38100B9A436 /* SatisfactionSurveyView.swift in Sources */,
 				A8EE362B2F88079800B9A436 /* OnboardingCommitmentView.swift in Sources */,
+				A8EE362C2FA9B00000B9A436 /* OnboardingIntermissionView.swift in Sources */,
 				A8EE364D2F88385A00B9A436 /* CustomCategory.swift in Sources */,
 				A8EE362D2F8807A500B9A436 /* OnboardingLoadingView.swift in Sources */,
 				A8EE36272F88077F00B9A436 /* OnboardingPersonalityView.swift in Sources */,
@@ -524,6 +534,8 @@
 				A8EE360D2F87D02C00B9A436 /* CoverStoryEditSheet.swift in Sources */,
 				A8EE360B2F87D00300B9A436 /* CoverStoryView.swift in Sources */,
 				A8EE36572F883F7B00B9A436 /* ShareCardView.swift in Sources */,
+				A8EE36542FAB100000B9A436 /* ClearanceLevel.swift in Sources */,
+				A8EE36572FAB200000B9A436 /* ClearanceBadgeView.swift in Sources */,
 				AA00000000000000000B0030 /* CareerStatsView.swift in Sources */,
 				AA00000000000000000B0031 /* PersonalRecordsView.swift in Sources */,
 				A8EE36322F8817FA00B9A436 /* SupabaseManager.swift in Sources */,
@@ -690,12 +702,12 @@
 				INFOPLIST_FILE = HardlyWorking/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Hardly Working";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save your share cards to Photos so you can post them wherever you like.";
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier helps us understand which ads brought you here and improve your experience.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -724,12 +736,12 @@
 				INFOPLIST_FILE = HardlyWorking/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Hardly Working";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save your share cards to Photos so you can post them wherever you like.";
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier helps us understand which ads brought you here and improve your experience.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

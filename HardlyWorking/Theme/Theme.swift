@@ -17,8 +17,17 @@ enum Theme {
     static let timer = bloodRed
     static let accent = deadBlue
 
+    // MARK: - Clearance Level Colors
+
+    static let clearanceGray = Color(hex: 0x9CA3AF)
+    static let clearanceBronze = Color(hex: 0xB07D4F)
+    static let clearanceSilver = Color(hex: 0x8E9AAB)
+    static let clearanceGold = Color(hex: 0xC9952D)
+    static let clearanceBlack = Color(hex: 0x1D1D1F)
+
     // MARK: - Chart Colors
 
+    /// Legacy palette — use `categoryColor(for:)` instead for consistent per-category colors.
     static let chartPalette: [Color] = [
         bloodRed, deadBlue, cautionYellow, reclaimedGreen,
         textPrimary.opacity(0.3),
@@ -26,6 +35,49 @@ enum Theme {
         cautionYellow.opacity(0.5), reclaimedGreen.opacity(0.5),
         textPrimary.opacity(0.15),
     ]
+
+    // MARK: - Fixed Category Colors
+
+    /// Fixed colors for each default category — same color every time, everywhere.
+    private static let defaultCategoryColors: [String: Color] = [
+        "Coffee Run":       Color(hex: 0x8B5E3C),  // coffee brown
+        "Bathroom Break":   Color(hex: 0x5B9BD5),  // porcelain blue
+        "Chatting":         bloodRed,               // social red
+        "Doom Scrolling":   Color(hex: 0x6C5CE7),  // screen purple
+        "Online Shopping":  cautionYellow,          // impulse yellow
+        "Errands":          Color(hex: 0xE17055),   // errand orange
+        "Looking Busy":     textPrimary.opacity(0.35), // bland gray
+        "\"Thinking\"":     reclaimedGreen,         // teal green
+        "Into the Void":    Color(hex: 0x2D3436),   // void dark
+        "Long Lunch":       Color(hex: 0xFDAA5E),   // lunch warm orange
+    ]
+
+    /// Extra colors for custom categories — cycled deterministically by name hash.
+    private static let customCategoryPalette: [Color] = [
+        Color(hex: 0xD63031),  // coral red
+        Color(hex: 0x0984E3),  // bright blue
+        Color(hex: 0x00B894),  // mint green
+        Color(hex: 0xE84393),  // hot pink
+        Color(hex: 0xFDCB6E),  // warm gold
+        Color(hex: 0x6C5CE7),  // purple
+        Color(hex: 0x00CEC9),  // cyan
+        Color(hex: 0xE17055),  // salmon
+        Color(hex: 0x55A3E8),  // sky blue
+        Color(hex: 0xA29BFE),  // lavender
+        Color(hex: 0xFF7675),  // soft red
+        Color(hex: 0x74B9FF),  // light blue
+    ]
+
+    /// Returns the chart color for a category name. Default categories get fixed colors.
+    /// Custom categories get a deterministic color based on their name (always the same).
+    static func categoryColor(for name: String) -> Color {
+        if let fixed = defaultCategoryColors[name] {
+            return fixed
+        }
+        // Deterministic hash — same name always gets same color
+        let hash = abs(name.hashValue)
+        return customCategoryPalette[hash % customCategoryPalette.count]
+    }
 
     // MARK: - Formatters
 
@@ -52,9 +104,26 @@ enum Theme {
         return "\(minutes)m"
     }
 
-    /// Money display: `$185.10`
+    /// Money display using the user's selected currency: `$185.10`, `€185.10`, etc.
     static func formatMoney(_ amount: Double) -> String {
-        String(format: "$%.2f", amount)
+        let symbol = currencySymbol(for: UserDefaults.standard.string(forKey: "currency") ?? "USD")
+        return "\(symbol)\(String(format: "%.2f", amount))"
+    }
+
+    static func currencySymbol(for code: String) -> String {
+        switch code {
+        case "EUR": return "\u{20AC}"
+        case "GBP": return "\u{00A3}"
+        case "CAD": return "C$"
+        case "AUD": return "A$"
+        case "JPY": return "\u{00A5}"
+        case "CHF": return "Fr"
+        case "INR": return "\u{20B9}"
+        case "BRL": return "R$"
+        case "KRW": return "\u{20A9}"
+        case "MXN": return "Mex$"
+        default: return "$"
+        }
     }
 }
 

@@ -24,8 +24,17 @@ struct AddCategorySheet: View {
             .background(Color.white)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { Haptics.light(); dismiss() }
-                        .font(.system(.body, design: .monospaced))
+                    Button {
+                        Haptics.light()
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .frame(width: 30, height: 30)
+                            .background(Theme.bloodRed, in: Circle())
+                    }
+                    .buttonStyle(.plain)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add") {
@@ -46,7 +55,7 @@ struct AddCategorySheet: View {
                 .font(.system(size: 48))
             Text("NEW ACTIVITY CODE")
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(2)
         }
         .frame(maxWidth: .infinity)
@@ -73,7 +82,7 @@ struct AddCategorySheet: View {
 
                 Text("\(name.count)/25")
                     .font(.system(.caption2, design: .monospaced))
-                    .foregroundStyle(name.count >= 25 ? Theme.timer.opacity(0.6) : Theme.textPrimary.opacity(0.3))
+                    .foregroundStyle(name.count >= 25 ? Theme.timer.opacity(0.6) : Theme.textPrimary.opacity(0.5))
                     .padding(.horizontal, 24)
             }
 
@@ -96,7 +105,7 @@ struct AddCategorySheet: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Select parent activity code.")
                         .font(.system(.caption, design: .monospaced))
-                        .foregroundStyle(Theme.textPrimary.opacity(0.4))
+                        .foregroundStyle(Theme.textPrimary.opacity(0.5))
                         .padding(.horizontal, 24)
 
                     ScrollView(.horizontal) {
@@ -142,7 +151,7 @@ struct AddCategorySheet: View {
         VStack(alignment: .leading, spacing: 10) {
             Text(title)
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(1.5)
                 .padding(.horizontal, 24)
             content()

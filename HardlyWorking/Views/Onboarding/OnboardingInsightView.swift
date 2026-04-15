@@ -8,6 +8,8 @@ struct OnboardingInsightView: View {
     let userIndustry: String
     let userCountry: String
 
+    @State private var showMascot = false
+    @State private var showSubtitle = false
     @State private var visibleRows: Int = 0
 
     private var dailyPotential: Double {
@@ -16,14 +18,14 @@ struct OnboardingInsightView: View {
 
     private var weeklyUnreclaimed: Double {
         let weeklyTotal = hourlyRate * workHoursPerDay * Double(workDaysPerWeek)
-        return weeklyTotal * (1.0 - Double(estimatedProductivity) / 100.0)
+        return weeklyTotal * (Double(estimatedProductivity) / 100.0)
     }
 
     private var industryAvgHours: String {
-        if let industry = MockBenchmarkData.industries.first(where: { $0.industry.rawValue == userIndustry }) {
+        if let industry = EmptyBenchmarkData.industries.first(where: { $0.industry.rawValue == userIndustry }) {
             return Theme.formatDuration(industry.avgSecondsPerDay)
         }
-        return Theme.formatDuration(MockBenchmarkData.global.globalAvgSecondsPerDay)
+        return Theme.formatDuration(EmptyBenchmarkData.global.globalAvgSecondsPerDay)
     }
 
     private var locationLabel: String {
@@ -39,12 +41,14 @@ struct OnboardingInsightView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                Spacer().frame(height: 16)
+                Spacer().frame(height: 20)
 
                 Image("mascot_aha")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 200)
+                    .offset(y: showMascot ? 0 : 30)
+                    .opacity(showMascot ? 1 : 0)
 
                 Spacer().frame(height: 24)
 
@@ -52,6 +56,7 @@ struct OnboardingInsightView: View {
                     .font(.system(.subheadline, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     .multilineTextAlignment(.center)
+                    .opacity(showSubtitle ? 1 : 0)
 
                 Spacer().frame(height: 24)
 
@@ -78,7 +83,7 @@ struct OnboardingInsightView: View {
                     if visibleRows >= 3 {
                         Divider().opacity(0.06).padding(.vertical, 4)
                         insightRow(
-                            text: "At \(estimatedProductivity)% declared productivity, weekly unreclaimed wages: ",
+                            text: "At \(estimatedProductivity)% declared non-productivity, weekly reclaimable wages: ",
                             highlight: Theme.formatMoney(weeklyUnreclaimed),
                             suffix: "."
                         )
@@ -95,7 +100,7 @@ struct OnboardingInsightView: View {
             }
         }
         .scrollIndicators(.hidden)
-        .onAppear { animateRows() }
+        .onAppear { startSequence() }
     }
 
     private func insightRow(text: String, highlight: String, suffix: String) -> some View {
@@ -105,9 +110,15 @@ struct OnboardingInsightView: View {
             .padding(.vertical, 8)
     }
 
-    private func animateRows() {
+    private func startSequence() {
+        withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+            showMascot = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            withAnimation(.easeOut(duration: 0.4)) { showSubtitle = true }
+        }
         for i in 1...3 {
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5 + Double(i) * 0.5) {
                 withAnimation(.easeOut(duration: 0.4)) {
                     visibleRows = i
                 }

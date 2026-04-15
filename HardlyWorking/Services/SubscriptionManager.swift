@@ -12,15 +12,26 @@ final class SubscriptionManager {
     private static let proStatusKey = "cachedProStatus"
     private static weak var active: SubscriptionManager?
 
-    /// Called by AppDelegate's PurchasesDelegate when subscription status changes in real time.
+    /// Called by AppDelegate's PurchasesDelegate when subscription status
+    /// changes in real time.
+    ///
+    /// Intentionally does NOT set `pendingProUpgrade` on a false → true
+    /// transition. The celebration banner should only surface when the user
+    /// *just* completed an active upgrade via `purchase()` or
+    /// `restorePurchases()` — both of which set the flag themselves. This
+    /// callback also fires on passive transitions we don't want to
+    /// celebrate:
+    ///   - App launch / reinstall where RC restores a pre-existing
+    ///     entitlement via keychain or receipt sync.
+    ///   - Cross-device sign-in where `logIn(userId)` pulls entitlement
+    ///     state from the server for an already-subscribed user.
+    ///   - Deferred / Family-Sharing grants arriving silently.
+    /// Before this fix, a returning user signing in or reinstalling would
+    /// see "PROMOTION GRANTED" pop up for no apparent reason.
     static func handleCustomerInfoUpdate(isPro: Bool) {
         guard let manager = active else { return }
-        let wasPro = manager.isProUser
         manager.isProUser = isPro
         UserDefaults.standard.set(isPro, forKey: proStatusKey)
-        if isPro && !wasPro {
-            manager.pendingProUpgrade = true
-        }
     }
 
     var weeklyPackage: Package? {
@@ -75,9 +86,15 @@ final class SubscriptionManager {
     }
 
     func restorePurchases() async throws {
+        let wasPro = isProUser
         let info = try await Purchases.shared.restorePurchases()
         let isPro = info.entitlements["pro"]?.isActive == true
         isProUser = isPro
         UserDefaults.standard.set(isPro, forKey: Self.proStatusKey)
+
+        // Flag for celebration banner if this restore genuinely upgraded the user.
+        if isPro && !wasPro {
+            pendingProUpgrade = true
+        }
     }
 }

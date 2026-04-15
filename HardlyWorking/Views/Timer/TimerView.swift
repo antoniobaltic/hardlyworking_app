@@ -43,9 +43,10 @@ struct TimerView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                formulaBar
+        VStack(spacing: 0) {
+            formulaBar
+            ScrollView {
+                VStack(spacing: 0) {
                 if let syncError = viewModel.syncError {
                     HStack(spacing: 6) {
                         Image(systemName: "exclamationmark.icloud")
@@ -67,6 +68,7 @@ struct TimerView: View {
                 categorySection
                 Divider().padding(.horizontal, 24)
                 todayLog
+                }
             }
         }
         .background(Color.white)
@@ -85,6 +87,12 @@ struct TimerView: View {
                 hasCheckedOvernightThisSession = true
                 checkOvernightTimer()
             }
+            // Check achievements on first appearance (unlocks Welcome Aboard after onboarding)
+            achievementManager.checkAll(
+                entries: allEntries,
+                hourlyRate: hourlyRate,
+                isProUser: subscriptionManager.isProUser
+            )
         }
         .onChange(of: customCategories) {
             viewModel.customCategories = customCategories
@@ -127,7 +135,14 @@ struct TimerView: View {
                     isManual: true
                 )
                 modelContext.insert(entry)
+                try? modelContext.save()
                 Haptics.success()
+                // Trigger achievement check for retroactive entries
+                achievementManager.checkAll(
+                    entries: allEntries + [entry],
+                    hourlyRate: hourlyRate,
+                    isProUser: subscriptionManager.isProUser
+                )
             }
             .presentationDetents([.medium])
             .presentationDragIndicator(.visible)
@@ -140,7 +155,7 @@ struct TimerView: View {
         HStack(spacing: 0) {
             Text("A1")
                 .font(.system(.caption2, design: .monospaced, weight: .medium))
-                .foregroundStyle(Theme.textPrimary.opacity(0.4))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .frame(width: 28)
                 .padding(.vertical, 8)
                 .background(Theme.cardBackground)
@@ -154,11 +169,11 @@ struct TimerView: View {
                 Text("fx")
                     .font(.system(.caption2, design: .serif, weight: .bold))
                     .italic()
-                    .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
 
                 Text("=SUM(today_reclaimed)")
                     .font(.system(.caption, design: .monospaced))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.65))
 
                 Spacer()
 
@@ -172,11 +187,7 @@ struct TimerView: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 8)
         }
-        .background(Theme.cardBackground)
-        .overlay(
-            Rectangle().fill(Theme.textPrimary.opacity(0.08)).frame(height: 1),
-            alignment: .top
-        )
+        .background(Theme.cardBackground.ignoresSafeArea(.all, edges: .top))
         .overlay(
             Rectangle().fill(Theme.textPrimary.opacity(0.08)).frame(height: 1),
             alignment: .bottom
@@ -193,7 +204,7 @@ struct TimerView: View {
                     .frame(width: 8, height: 8)
                 Text(isRunning ? "RECORDING" : "IDLE")
                     .font(.system(.caption2, design: .monospaced, weight: .bold))
-                    .foregroundStyle(isRunning ? Theme.timer : Theme.textPrimary.opacity(0.3))
+                    .foregroundStyle(isRunning ? Theme.timer : Theme.textPrimary.opacity(0.5))
                     .tracking(2)
             }
 
@@ -217,6 +228,11 @@ struct TimerView: View {
                             Haptics.warning()
                             viewModel.stopSlacking(entries: todayEntries)
                         }
+                        // Daily cap: auto-stop when total today exceeds work hours
+                        else if isDailyCapReached {
+                            Haptics.warning()
+                            viewModel.stopSlacking(entries: todayEntries)
+                        }
                         // Soft cap: prompt at 2 hours (once per session)
                         else if RecordingLimits.hasExceededSoftCap(entry) && !hasDismissedSoftCap && !showSoftCapAlert {
                             Haptics.light()
@@ -231,12 +247,12 @@ struct TimerView: View {
                 TimelineView(.periodic(from: .now, by: 1)) { _ in
                     Text(Theme.formatDuration(viewModel.todayTotal(entries: todayEntries)) + " today")
                         .font(.system(.caption, design: .monospaced, weight: .medium))
-                        .foregroundStyle(Theme.textPrimary.opacity(0.4))
+                        .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 }
             } else {
                 Text("today's total")
                     .font(.system(.footnote, design: .monospaced))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.35))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
             }
         }
         .padding(.vertical, 32)
@@ -251,7 +267,7 @@ struct TimerView: View {
             Text(SlackCategory.emoji(for: name, custom: customCategories))
             Text(name)
                 .font(.system(.subheadline, design: .monospaced, weight: .medium))
-                .foregroundStyle(Theme.textPrimary.opacity(0.7))
+                .foregroundStyle(Theme.textPrimary.opacity(0.75))
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 6)
@@ -296,11 +312,11 @@ struct TimerView: View {
                     } else if isRunning {
                         Text("SWITCH ACTIVITY")
                     } else {
-                        Text("WHAT ARE YOU DEFINITELY \(Text("NOT").bold().foregroundColor(Theme.textPrimary.opacity(0.5))) DOING?")
+                        Text("WHAT ARE YOU DEFINITELY \(Text("NOT").bold().foregroundColor(Theme.textPrimary.opacity(0.65))) DOING?")
                     }
                 }
                     .font(.system(.caption2, design: .monospaced, weight: .bold))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     .tracking(1.5)
                 Spacer()
             }
@@ -397,11 +413,10 @@ struct TimerView: View {
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.visible)
         }
-        .sheet(isPresented: $showPaywall, onDismiss: {
+        .fullScreenCover(isPresented: $showPaywall, onDismiss: {
             subscriptionManager.showProBannerIfPending()
         }) {
             PaywallView()
-                .presentationDragIndicator(.visible)
         }
     }
 
@@ -412,7 +427,7 @@ struct TimerView: View {
             HStack {
                 Text("TODAY'S LOG")
                     .font(.system(.caption2, design: .monospaced, weight: .bold))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     .tracking(1.5)
                 Spacer()
                 Button("Add Entry", systemImage: "plus") {
@@ -437,12 +452,12 @@ struct TimerView: View {
                 HStack {
                     Text(Theme.formatDuration(viewModel.todayTotal(entries: todayEntries)))
                         .font(.system(.caption, design: .monospaced, weight: .medium))
-                        .foregroundStyle(Theme.textPrimary.opacity(0.4))
+                        .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     Text("\u{00B7}")
-                        .foregroundStyle(Theme.textPrimary.opacity(0.2))
+                        .foregroundStyle(Theme.textPrimary.opacity(0.35))
                     Text("\(completed.count) \(completed.count == 1 ? "entry" : "entries")")
                         .font(.system(.caption, design: .monospaced, weight: .medium))
-                        .foregroundStyle(Theme.textPrimary.opacity(0.4))
+                        .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     Spacer()
                 }
                 .padding(.horizontal, 24)
@@ -457,7 +472,7 @@ struct TimerView: View {
                     Text("DURATION")
                 }
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.35))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(0.5)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 8)
@@ -480,10 +495,10 @@ struct TimerView: View {
         VStack(spacing: 6) {
             Text("#N/A")
                 .font(.system(size: 32, weight: .bold, design: .monospaced))
-                .foregroundStyle(Theme.textPrimary.opacity(0.1))
+                .foregroundStyle(Theme.textPrimary.opacity(0.3))
             Text("No entries yet. Tap an activity code above.")
                 .font(.system(.caption, design: .monospaced))
-                .foregroundStyle(Theme.textPrimary.opacity(0.35))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 48)
@@ -493,7 +508,7 @@ struct TimerView: View {
         HStack {
             Text(entry.startTime, format: .dateTime.hour().minute())
                 .font(.system(.caption, design: .monospaced))
-                .foregroundStyle(Theme.textPrimary.opacity(0.45))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .frame(width: 50, alignment: .leading)
 
             Text(SlackCategory.emoji(for: entry.category, custom: customCategories))
@@ -511,7 +526,7 @@ struct TimerView: View {
 
             Image(systemName: "chevron.right")
                 .font(.system(size: 10, weight: .semibold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.15))
+                .foregroundStyle(Theme.textPrimary.opacity(0.3))
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 11)
@@ -560,7 +575,7 @@ struct TimerView: View {
                 VStack(spacing: 16) {
                     Text("Your timer was running during\nnon-business hours. How would\nyou like to proceed?")
                         .font(.system(.subheadline, design: .monospaced))
-                        .foregroundStyle(Theme.textPrimary.opacity(0.6))
+                        .foregroundStyle(Theme.textPrimary.opacity(0.65))
                         .multilineTextAlignment(.center)
                         .padding(.top, 24)
 
@@ -600,6 +615,26 @@ struct TimerView: View {
                                 .background(
                                     RoundedRectangle(cornerRadius: 10)
                                         .stroke(Theme.accent, lineWidth: 1)
+                                )
+                        }
+
+                        Button {
+                            Haptics.medium()
+                            // Split entry at midnight boundary
+                            if let entry = allEntries.first(where: \.isRunning) {
+                                entry.endTime = .now
+                                RecordingLimits.splitAtMidnight(entry: entry, context: modelContext)
+                            }
+                            showOvernightSheet = false
+                        } label: {
+                            Text("Split at midnight")
+                                .font(.system(.subheadline, design: .monospaced, weight: .medium))
+                                .foregroundStyle(Theme.money)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(Theme.money, lineWidth: 1)
                                 )
                         }
 

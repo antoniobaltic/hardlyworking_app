@@ -20,37 +20,38 @@ struct DashboardView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                formulaBar
-                periodSelector
-                    .padding(.top, 16)
-                    .padding(.bottom, viewModel.showsNavigator ? 8 : 20)
+        VStack(spacing: 0) {
+            formulaBar
+            ScrollView {
+                VStack(spacing: 0) {
+                    periodSelector
+                        .padding(.top, 16)
+                        .padding(.bottom, viewModel.showsNavigator ? 8 : 20)
 
-                if viewModel.showsNavigator {
-                    dateNavigator
-                        .padding(.bottom, 20)
-                }
+                    if viewModel.showsNavigator {
+                        dateNavigator
+                            .padding(.bottom, 20)
+                    }
 
-                if isPeriodLocked(viewModel.selectedPeriod) {
-                    lockedPeriodContent
-                } else if viewModel.filteredEntries(allEntries).isEmpty {
-                    emptyState
-                } else if viewModel.selectedPeriod == .lifetime {
-                    lifetimeContent
-                } else {
-                    periodContent
+                    if isPeriodLocked(viewModel.selectedPeriod) {
+                        lockedPeriodContent
+                    } else if viewModel.filteredEntries(allEntries).isEmpty {
+                        emptyState
+                    } else if viewModel.selectedPeriod == .lifetime {
+                        lifetimeContent
+                    } else {
+                        periodContent
+                    }
                 }
             }
         }
         .background(Color.white)
         .onAppear { viewModel.customCategories = customCategories }
         .onChange(of: customCategories) { viewModel.customCategories = customCategories }
-        .sheet(isPresented: $showPaywall, onDismiss: {
+        .fullScreenCover(isPresented: $showPaywall, onDismiss: {
             subscriptionManager.showProBannerIfPending()
         }) {
             PaywallView()
-                .presentationDragIndicator(.visible)
         }
     }
 
@@ -142,7 +143,7 @@ struct DashboardView: View {
         HStack(spacing: 0) {
             Text("B1")
                 .font(.system(.caption2, design: .monospaced, weight: .medium))
-                .foregroundStyle(Theme.textPrimary.opacity(0.4))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .frame(width: 28)
                 .padding(.vertical, 8)
                 .background(Theme.cardBackground)
@@ -156,11 +157,11 @@ struct DashboardView: View {
                 Text("fx")
                     .font(.system(.caption2, design: .serif, weight: .bold))
                     .italic()
-                    .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
 
                 Text(viewModel.formulaText)
                     .font(.system(.caption, design: .monospaced))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.65))
 
                 Spacer()
 
@@ -171,11 +172,7 @@ struct DashboardView: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 8)
         }
-        .background(Theme.cardBackground)
-        .overlay(
-            Rectangle().fill(Theme.textPrimary.opacity(0.08)).frame(height: 1),
-            alignment: .top
-        )
+        .background(Theme.cardBackground.ignoresSafeArea(.all, edges: .top))
         .overlay(
             Rectangle().fill(Theme.textPrimary.opacity(0.08)).frame(height: 1),
             alignment: .bottom
@@ -189,6 +186,8 @@ struct DashboardView: View {
             ForEach(TimePeriod.allCases) { period in
                 let isSelected = viewModel.selectedPeriod == period
                 let isLocked = isPeriodLocked(period)
+                let isCareer = period == .lifetime
+
                 Button {
                     Haptics.selection()
                     if isLocked {
@@ -202,27 +201,20 @@ struct DashboardView: View {
                 } label: {
                     HStack(spacing: 3) {
                         Text(period.rawValue)
-                            .font(.system(size: 12, weight: isSelected ? .semibold : .regular, design: .monospaced))
+                            .font(.system(size: 12, weight: periodTextWeight(isSelected: isSelected, isCareer: isCareer), design: .monospaced))
+                            .tracking(isCareer ? 0.5 : 0)
                         if isLocked {
                             Image(systemName: "lock.fill")
                                 .font(.system(size: 7, weight: .bold))
                         }
                     }
-                    .foregroundStyle(
-                        isLocked
-                            ? Theme.textPrimary.opacity(0.2)
-                            : (isSelected ? Theme.textPrimary : Theme.textPrimary.opacity(0.4))
-                    )
+                    .foregroundStyle(periodTextColor(isLocked: isLocked, isSelected: isSelected, isCareer: isCareer))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
-                    .background(
-                        isSelected && !isLocked
-                            ? Color.white
-                            : Theme.cardBackground
-                    )
+                    .background(periodBackground(isSelected: isSelected, isLocked: isLocked, isCareer: isCareer))
                     .overlay(
                         Rectangle()
-                            .fill(isSelected && !isLocked ? Theme.accent : Color.clear)
+                            .fill(periodUnderlineColor(isSelected: isSelected, isLocked: isLocked, isCareer: isCareer))
                             .frame(height: 2),
                         alignment: .bottom
                     )
@@ -238,6 +230,51 @@ struct DashboardView: View {
         .padding(.horizontal, 24)
     }
 
+    // MARK: - Period Selector Styling
+    // Career is the headline tab — it carries more weight visually than the
+    // other period choices because it's where the app's long-term narrative
+    // lives (total reclaimed wages, records, streaks).
+
+    private func periodTextWeight(isSelected: Bool, isCareer: Bool) -> Font.Weight {
+        if isCareer && isSelected { return .bold }
+        if isCareer { return .semibold }
+        return isSelected ? .semibold : .regular
+    }
+
+    private func periodTextColor(isLocked: Bool, isSelected: Bool, isCareer: Bool) -> Color {
+        if isLocked { return Theme.textPrimary.opacity(0.4) }
+        if isCareer && isSelected { return Theme.bloodRed }
+        if isCareer { return Theme.bloodRed.opacity(0.75) }
+        return isSelected ? Theme.textPrimary : Theme.textPrimary.opacity(0.5)
+    }
+
+    @ViewBuilder
+    private func periodBackground(isSelected: Bool, isLocked: Bool, isCareer: Bool) -> some View {
+        if isCareer {
+            // Always a faint red tint for the Career tab, stronger red halo
+            // when selected — anchors the tab as the flagship premium section.
+            ZStack {
+                Theme.bloodRed.opacity(isSelected && !isLocked ? 0.14 : 0.06)
+                if isSelected && !isLocked {
+                    LinearGradient(
+                        colors: [Theme.bloodRed.opacity(0.22), Theme.bloodRed.opacity(0.08)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                }
+            }
+        } else if isSelected && !isLocked {
+            Color.white
+        } else {
+            Theme.cardBackground
+        }
+    }
+
+    private func periodUnderlineColor(isSelected: Bool, isLocked: Bool, isCareer: Bool) -> Color {
+        guard isSelected, !isLocked else { return .clear }
+        return isCareer ? Theme.bloodRed : Theme.accent
+    }
+
     // MARK: - Date Navigator
 
     private var dateNavigator: some View {
@@ -250,7 +287,7 @@ struct DashboardView: View {
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.system(.caption, weight: .bold))
-                    .foregroundStyle(viewModel.canGoBack ? Theme.accent : Theme.textPrimary.opacity(0.15))
+                    .foregroundStyle(viewModel.canGoBack ? Theme.accent : Theme.textPrimary.opacity(0.3))
                     .frame(width: 32, height: 32)
                     .background(
                         viewModel.canGoBack
@@ -278,7 +315,7 @@ struct DashboardView: View {
             } label: {
                 Image(systemName: "chevron.right")
                     .font(.system(.caption, weight: .bold))
-                    .foregroundStyle(viewModel.canGoForward ? Theme.accent : Theme.textPrimary.opacity(0.15))
+                    .foregroundStyle(viewModel.canGoForward ? Theme.accent : Theme.textPrimary.opacity(0.3))
                     .frame(width: 32, height: 32)
                     .background(
                         viewModel.canGoForward
@@ -303,7 +340,7 @@ struct DashboardView: View {
         return VStack(alignment: .leading, spacing: 16) {
             Text("EXECUTIVE SUMMARY")
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(1.5)
 
             HStack(alignment: .firstTextBaseline) {
@@ -312,12 +349,12 @@ struct DashboardView: View {
                     .foregroundStyle(Theme.textPrimary)
                 Text("reclaimed")
                     .font(.system(.caption, design: .monospaced))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.4))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 Text("\u{00B7}")
-                    .foregroundStyle(Theme.textPrimary.opacity(0.2))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.35))
                 Text("\(count) \(count == 1 ? "entry" : "entries")")
                     .font(.system(.caption, design: .monospaced))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.4))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
             }
 
             if percentage > 0 {
@@ -325,7 +362,7 @@ struct DashboardView: View {
                     HStack {
                         Text("RECLAIM RATE (\(Int(workHoursPerDay))H/DAY)")
                             .font(.system(.caption2, design: .monospaced, weight: .bold))
-                            .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                            .foregroundStyle(Theme.textPrimary.opacity(0.5))
                             .tracking(1.5)
                         Spacer()
                         Text("\(Int(percentage * 100))%")
@@ -359,46 +396,31 @@ struct DashboardView: View {
             HStack {
                 Text(viewModel.timelineHeader)
                     .font(.system(.caption2, design: .monospaced, weight: .bold))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     .tracking(1.5)
                 Spacer()
                 Text("\(entries.count) \(entries.count == 1 ? "entry" : "entries")")
                     .font(.system(.caption2, design: .monospaced))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.25))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.4))
             }
 
+            VStack(spacing: 2) {
             ForEach(Array(entries.enumerated()), id: \.element.persistentModelID) { index, entry in
                 HStack(spacing: 10) {
                     // Time column
                     VStack(spacing: 2) {
                         Text(entry.startTime, format: .dateTime.hour().minute())
                         Text(entry.endTime ?? .now, format: .dateTime.hour().minute())
-                            .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                            .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     }
                     .font(.system(.caption2, design: .monospaced))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.45))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     .frame(width: 44, alignment: .trailing)
-
-                    // Dot + line
-                    VStack(spacing: 0) {
-                        Circle()
-                            .fill(Theme.accent)
-                            .frame(width: 8, height: 8)
-                        if index < entries.count - 1 {
-                            Rectangle()
-                                .fill(Theme.textPrimary.opacity(0.15))
-                                .frame(width: 2)
-                                .frame(maxHeight: .infinity)
-                        }
-                    }
-                    .frame(width: 8)
 
                     // Entry details
                     HStack {
-                        if let cat = SlackCategory.defaults.first(where: { $0.name == entry.category }) {
-                            Text(cat.emoji)
-                                .font(.caption)
-                        }
+                        Text(SlackCategory.emoji(for: entry.category, custom: customCategories))
+                            .font(.caption)
                         Text(entry.category)
                             .font(.system(.subheadline, design: .monospaced))
                             .foregroundStyle(Theme.textPrimary)
@@ -407,14 +429,14 @@ struct DashboardView: View {
                             .font(.system(.caption, design: .monospaced, weight: .medium))
                             .foregroundStyle(Theme.accent)
                     }
-                    .padding(.vertical, 8)
-                    .padding(.horizontal, 10)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(index.isMultiple(of: 2) ? Theme.cardBackground.opacity(0.4) : Color.clear)
-                    )
                 }
-                .frame(minHeight: 44)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(index.isMultiple(of: 2) ? Theme.cardBackground.opacity(0.4) : Color.clear)
+                )
+            }
             }
         }
         .padding(.horizontal, 24)
@@ -426,13 +448,13 @@ struct DashboardView: View {
         VStack(spacing: 8) {
             Text("#REF!")
                 .font(.system(size: 48, weight: .bold, design: .monospaced))
-                .foregroundStyle(Theme.textPrimary.opacity(0.06))
+                .foregroundStyle(Theme.textPrimary.opacity(0.3))
             Text("Insufficient data for analysis.")
                 .font(.system(.caption, design: .monospaced))
-                .foregroundStyle(Theme.textPrimary.opacity(0.25))
+                .foregroundStyle(Theme.textPrimary.opacity(0.45))
             Text("Get back to not working.")
                 .font(.system(.caption, design: .monospaced))
-                .foregroundStyle(Theme.textPrimary.opacity(0.2))
+                .foregroundStyle(Theme.textPrimary.opacity(0.4))
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 100)

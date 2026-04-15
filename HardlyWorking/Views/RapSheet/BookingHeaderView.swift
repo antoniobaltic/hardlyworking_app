@@ -6,11 +6,19 @@ struct BookingHeaderView: View {
     let userIndustry: String
     let firstEntryDate: Date?
     let isActive: Bool
+    let isProUser: Bool
 
+    /// Server-assigned globally-unique Employee ID, cached from
+    /// `profiles.employee_id`. 0 means "not yet fetched from Supabase" —
+    /// the view's `.task` refreshes it on appear if needed.
+    @AppStorage("employeeId") private var employeeId: Int = 0
+
+    /// Renders the cached Employee ID as "#HW-XXXXX". Pads to 5 digits for
+    /// IDs < 100,000 so the format stays tight, but `%05d` gracefully falls
+    /// back to the natural digit count once we cross that threshold.
     private var caseNumber: String {
-        guard let date = firstEntryDate else { return "#HW-00000" }
-        let hash = abs(date.timeIntervalSince1970.hashValue) % 100000
-        return String(format: "#HW-%05d", hash)
+        guard employeeId > 0 else { return "#HW-—————" }
+        return String(format: "#HW-%05d", employeeId)
     }
 
     private var industryDisplay: (label: String, emoji: String?) {
@@ -31,7 +39,7 @@ struct BookingHeaderView: View {
         VStack(alignment: .leading, spacing: 14) {
             Text("PERSONNEL FILE")
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(1.5)
 
             VStack(spacing: 0) {
@@ -48,14 +56,10 @@ struct BookingHeaderView: View {
                 rowDivider
 
                 fieldRow(label: "DEPARTMENT") {
-                    HStack(spacing: 6) {
+                    HStack {
                         Text(industryDisplay.label)
                             .font(.system(.subheadline, design: .monospaced, weight: .medium))
-                            .foregroundStyle(userIndustry.isEmpty ? Theme.textPrimary.opacity(0.3) : Theme.textPrimary)
-                        if let emoji = industryDisplay.emoji {
-                            Text(emoji)
-                                .font(.subheadline)
-                        }
+                            .foregroundStyle(userIndustry.isEmpty ? Theme.textPrimary.opacity(0.5) : Theme.textPrimary)
                         Spacer()
                     }
                 }
@@ -66,7 +70,7 @@ struct BookingHeaderView: View {
                     HStack(spacing: 6) {
                         Text(userCountry.isEmpty ? "Unspecified" : userCountry)
                             .font(.system(.subheadline, design: .monospaced, weight: .medium))
-                            .foregroundStyle(userCountry.isEmpty ? Theme.textPrimary.opacity(0.3) : Theme.textPrimary)
+                            .foregroundStyle(userCountry.isEmpty ? Theme.textPrimary.opacity(0.5) : Theme.textPrimary)
                         Spacer()
                     }
                 }
@@ -74,17 +78,23 @@ struct BookingHeaderView: View {
                 rowDivider
 
                 fieldRow(label: "COMPENSATION") {
-                    Text(Theme.formatMoney(hourlyRate) + "/hr")
-                        .font(.system(.subheadline, design: .monospaced, weight: .medium))
-                        .foregroundStyle(Theme.textPrimary)
+                    HStack {
+                        Text(Theme.formatMoney(hourlyRate) + "/hr")
+                            .font(.system(.subheadline, design: .monospaced, weight: .medium))
+                            .foregroundStyle(Theme.textPrimary)
+                        Spacer()
+                    }
                 }
 
                 rowDivider
 
                 fieldRow(label: "START DATE") {
-                    Text(startDateLabel)
-                        .font(.system(.subheadline, design: .monospaced, weight: .medium))
-                        .foregroundStyle(firstEntryDate == nil ? Theme.textPrimary.opacity(0.3) : Theme.textPrimary)
+                    HStack {
+                        Text(startDateLabel)
+                            .font(.system(.subheadline, design: .monospaced, weight: .medium))
+                            .foregroundStyle(firstEntryDate == nil ? Theme.textPrimary.opacity(0.5) : Theme.textPrimary)
+                        Spacer()
+                    }
                 }
             }
             .padding(16)
@@ -94,18 +104,29 @@ struct BookingHeaderView: View {
                     .stroke(Theme.textPrimary.opacity(0.06), lineWidth: 1)
             )
         }
+        .task {
+            // Lazy backfill for users who signed in before this feature existed
+            // (or whose local cache was cleared). If we already have a cached
+            // ID, skip the network call.
+            if employeeId == 0 {
+                if let fetched = try? await SupabaseManager.shared.fetchMyEmployeeId(),
+                   fetched > 0 {
+                    employeeId = fetched
+                }
+            }
+        }
     }
 
     // MARK: - Components
 
     private var statusBadge: some View {
-        Text(isActive ? "ON THE CLOCK" : "OUT OF OFFICE")
+        Text(isProUser ? "EXECUTIVE" : "INTERN")
             .font(.system(size: 9, weight: .bold, design: .monospaced))
             .foregroundStyle(.white)
             .padding(.horizontal, 8)
             .padding(.vertical, 3)
             .background(
-                isActive ? Theme.timer : Theme.textPrimary.opacity(0.2),
+                isProUser ? Theme.money : Theme.accent,
                 in: Capsule()
             )
     }
@@ -118,7 +139,7 @@ struct BookingHeaderView: View {
         HStack(alignment: .center, spacing: 12) {
             Text(label)
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.25))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(0.5)
                 .frame(width: 90, alignment: .leading)
 
@@ -135,7 +156,8 @@ struct BookingHeaderView: View {
             userCountry: "United States",
             userIndustry: "Tech Bro",
             firstEntryDate: Calendar.current.date(byAdding: .month, value: -3, to: .now),
-            isActive: true
+            isActive: true,
+            isProUser: true
         )
 
         BookingHeaderView(
@@ -143,7 +165,8 @@ struct BookingHeaderView: View {
             userCountry: "",
             userIndustry: "",
             firstEntryDate: nil,
-            isActive: false
+            isActive: false,
+            isProUser: false
         )
     }
     .padding(24)

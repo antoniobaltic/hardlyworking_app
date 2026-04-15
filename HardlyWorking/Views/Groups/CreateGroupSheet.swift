@@ -18,13 +18,40 @@ struct CreateGroupSheet: View {
             VStack(spacing: 0) {
                 header
                 form
+
+                if let error = viewModel.error {
+                    Text(error)
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(Theme.bloodRed)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
+                        .padding(.top, 12)
+                } else if isSaving {
+                    HStack(spacing: 6) {
+                        ProgressView().scaleEffect(0.7)
+                        Text("Filing paperwork…")
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundStyle(Theme.textPrimary.opacity(0.6))
+                    }
+                    .padding(.top, 12)
+                }
+
                 Spacer()
             }
             .background(Color.white)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { Haptics.light(); dismiss() }
-                        .font(.system(.body, design: .monospaced))
+                    Button {
+                        Haptics.light()
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .frame(width: 30, height: 30)
+                            .background(Theme.bloodRed, in: Circle())
+                    }
+                    .buttonStyle(.plain)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Establish") {
@@ -45,7 +72,7 @@ struct CreateGroupSheet: View {
                 .font(.system(size: 48))
             Text("RECLAMATION UNIT FORMATION")
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(2)
         }
         .frame(maxWidth: .infinity)
@@ -70,7 +97,8 @@ struct CreateGroupSheet: View {
 
             formSection("EMOJI") {
                 TextField("Enter one emoji", text: $emoji)
-                    .font(.system(.title2))
+                    .font(.system(.body, design: .monospaced))
+                    .foregroundStyle(Theme.textPrimary)
                     .padding(.horizontal, 24)
                     .onChange(of: emoji) {
                         if emoji.count > 1 {
@@ -94,7 +122,7 @@ struct CreateGroupSheet: View {
         VStack(alignment: .leading, spacing: 10) {
             Text(title)
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(1.5)
                 .padding(.horizontal, 24)
             content()

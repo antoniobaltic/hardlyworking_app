@@ -6,11 +6,25 @@ struct JoinGroupSheet: View {
     var prefillCode: String?
     var onDismiss: (() -> Void)?
 
-    @State private var inviteCode = ""
+    @State private var rawInput = ""
     @State private var lookedUpGroup: FriendGroupRecord?
     @State private var isLookingUp = false
     @State private var isJoining = false
     @State private var errorMessage: String?
+    @FocusState private var isInputFocused: Bool
+
+    private var cleanCode: String {
+        String(rawInput.lowercased().filter { $0.isLetter || $0.isNumber }.prefix(12))
+    }
+
+    private var isCodeComplete: Bool {
+        cleanCode.count == 12
+    }
+
+    private var codeCharacters: [Character?] {
+        let chars = Array(cleanCode)
+        return (0..<12).map { $0 < chars.count ? chars[$0] : nil }
+    }
 
     var body: some View {
         NavigationStack {
@@ -20,20 +34,43 @@ struct JoinGroupSheet: View {
                 Spacer()
             }
             .background(Color.white)
+            .scrollDismissesKeyboard(.interactively)
+            .onTapGesture { isInputFocused = false }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button {
                         Haptics.light()
                         onDismiss?()
                         dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .frame(width: 30, height: 30)
+                            .background(Theme.bloodRed, in: Circle())
                     }
-                    .font(.system(.body, design: .monospaced))
+                    .buttonStyle(.plain)
                 }
             }
             .onAppear {
                 if let prefillCode, !prefillCode.isEmpty {
-                    inviteCode = prefillCode
+                    rawInput = prefillCode
+                    if isCodeComplete {
+                        Task { await lookupGroup() }
+                    }
+                } else {
+                    isInputFocused = true
+                }
+            }
+            .onChange(of: rawInput) {
+                // Auto-lookup when 12 hex chars entered
+                if isCodeComplete && lookedUpGroup == nil && !isLookingUp {
                     Task { await lookupGroup() }
+                }
+                // Reset lookup if user edits after a failed attempt
+                if !isCodeComplete {
+                    lookedUpGroup = nil
+                    errorMessage = nil
                 }
             }
         }
@@ -45,7 +82,7 @@ struct JoinGroupSheet: View {
                 .font(.system(size: 48))
             Text("RECLAMATION UNIT ENROLLMENT")
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(2)
         }
         .frame(maxWidth: .infinity)
@@ -59,35 +96,17 @@ struct JoinGroupSheet: View {
 
     private var form: some View {
         VStack(spacing: 20) {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 12) {
                 Text("INVITE CODE")
                     .font(.system(.caption2, design: .monospaced, weight: .bold))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     .tracking(1.5)
                     .padding(.horizontal, 24)
 
-                HStack {
-                    TextField("Authorization code", text: $inviteCode)
-                        .font(.system(.body, design: .monospaced))
-                        .foregroundStyle(Theme.textPrimary)
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.never)
-
-                    if !inviteCode.isEmpty && lookedUpGroup == nil {
-                        Button {
-                            Haptics.light()
-                            Task { await lookupGroup() }
-                        } label: {
-                            Text("Look Up")
-                                .font(.system(.caption, design: .monospaced, weight: .semibold))
-                                .foregroundStyle(Theme.accent)
-                        }
-                        .disabled(isLookingUp)
-                    }
-                }
-                .padding(.horizontal, 24)
+                codeDisplay
+                    .padding(.horizontal, 24)
             }
-            .padding(.vertical, 16)
+            .padding(.top, 16)
 
             if isLookingUp {
                 ProgressView()
@@ -108,6 +127,72 @@ struct JoinGroupSheet: View {
         }
     }
 
+    // MARK: - Code Display
+
+    private var codeDisplay: some View {
+        ZStack {
+            // Hidden single TextField for keyboard input
+            TextField("", text: $rawInput)
+                .focused($isInputFocused)
+                .keyboardType(.asciiCapable)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .foregroundStyle(.clear)
+                .tint(.clear)
+                .frame(width: 1, height: 1)
+                .opacity(0.01)
+
+            // Visual cells
+            HStack(spacing: 0) {
+                cellGroup(range: 0..<4)
+
+                Text("·")
+                    .font(.system(.caption, design: .monospaced, weight: .bold))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.25))
+                    .padding(.horizontal, 4)
+
+                cellGroup(range: 4..<8)
+
+                Text("·")
+                    .font(.system(.caption, design: .monospaced, weight: .bold))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.25))
+                    .padding(.horizontal, 4)
+
+                cellGroup(range: 8..<12)
+            }
+            .contentShape(Rectangle())
+            .onTapGesture { isInputFocused = true }
+        }
+    }
+
+    private func cellGroup(range: Range<Int>) -> some View {
+        HStack(spacing: 3) {
+            ForEach(range, id: \.self) { index in
+                let char = codeCharacters[index]
+                let isCursor = index == cleanCode.count && isInputFocused
+
+                ZStack {
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(char != nil ? Theme.accent.opacity(0.06) : Theme.cardBackground.opacity(0.5))
+                        .stroke(
+                            isCursor ? Theme.accent : Theme.textPrimary.opacity(char != nil ? 0.15 : 0.08),
+                            lineWidth: isCursor ? 2 : 1
+                        )
+
+                    if let char {
+                        Text(String(char))
+                            .font(.system(.body, design: .monospaced, weight: .semibold))
+                            .foregroundStyle(Theme.textPrimary)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 40)
+            }
+        }
+    }
+
+    // MARK: - Group Preview
+
     private func groupPreview(_ group: FriendGroupRecord) -> some View {
         VStack(spacing: 8) {
             Text(group.emoji)
@@ -117,7 +202,7 @@ struct JoinGroupSheet: View {
                 .foregroundStyle(Theme.textPrimary)
             Text("\(group.memberCount ?? 0) participants")
                 .font(.system(.caption, design: .monospaced))
-                .foregroundStyle(Theme.textPrimary.opacity(0.4))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 20)
@@ -128,6 +213,8 @@ struct JoinGroupSheet: View {
         )
         .padding(.horizontal, 24)
     }
+
+    // MARK: - Join Button
 
     private var joinButton: some View {
         Button {
@@ -151,11 +238,13 @@ struct JoinGroupSheet: View {
         .padding(.horizontal, 24)
     }
 
+    // MARK: - Network
+
     private func lookupGroup() async {
         isLookingUp = true
         errorMessage = nil
 
-        let group = await viewModel.lookupGroup(inviteCode: inviteCode.trimmingCharacters(in: .whitespaces))
+        let group = await viewModel.lookupGroup(inviteCode: cleanCode)
 
         if let group {
             lookedUpGroup = group
@@ -170,7 +259,7 @@ struct JoinGroupSheet: View {
         isJoining = true
         errorMessage = nil
 
-        let success = await viewModel.joinGroup(inviteCode: inviteCode.trimmingCharacters(in: .whitespaces))
+        let success = await viewModel.joinGroup(inviteCode: cleanCode)
 
         if success {
             Haptics.success()

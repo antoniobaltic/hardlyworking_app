@@ -27,7 +27,14 @@ struct HardlyWorkingApp: App {
                         .environment(achievementManager)
                         .environment(ratingManager)
                         .environment(notificationManager)
-                        .onAppear { ratingManager.recordInstallIfNeeded() }
+                        .onAppear {
+                            ratingManager.recordInstallIfNeeded()
+                            // Fire the post-onboarding rating prompt the
+                            // first time ContentView appears. Internally
+                            // gated to once-per-user so it doesn't refire
+                            // on every app launch.
+                            ratingManager.recordOnboardingCompleted()
+                        }
                         .transition(.opacity)
                         .onOpenURL { url in
                             handleDeepLink(url)
@@ -73,18 +80,20 @@ struct HardlyWorkingApp: App {
                 let hourlyRate: Double?
                 let workHoursPerDay: Double?
                 let workDaysPerWeek: Int?
+                let employeeId: Int?
 
                 enum CodingKeys: String, CodingKey {
                     case industry, country
                     case hourlyRate = "hourly_rate"
                     case workHoursPerDay = "work_hours_per_day"
                     case workDaysPerWeek = "work_days_per_week"
+                    case employeeId = "employee_id"
                 }
             }
 
             let profiles: [ProfileRow] = try await SupabaseManager.shared.client
                 .from("profiles")
-                .select("industry, country, hourly_rate, work_hours_per_day, work_days_per_week")
+                .select("industry, country, hourly_rate, work_hours_per_day, work_days_per_week, employee_id")
                 .eq("id", value: userId.uuidString)
                 .execute()
                 .value
@@ -95,6 +104,7 @@ struct HardlyWorkingApp: App {
                 if let rate = profile.hourlyRate { UserDefaults.standard.set(rate, forKey: "hourlyRate") }
                 if let hours = profile.workHoursPerDay { UserDefaults.standard.set(hours, forKey: "workHoursPerDay") }
                 if let days = profile.workDaysPerWeek { UserDefaults.standard.set(days, forKey: "workDaysPerWeek") }
+                if let empId = profile.employeeId { UserDefaults.standard.set(empId, forKey: "employeeId") }
             }
         } catch {
             print("[Restore] Profile restore failed: \(error)")

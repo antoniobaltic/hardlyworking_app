@@ -2,18 +2,27 @@ import Foundation
 
 @Observable @MainActor
 final class BenchmarkViewModel {
-    private(set) var globalStats: GlobalBenchmark = MockBenchmarkData.global
-    private(set) var countries: [BenchmarkCountry] = MockBenchmarkData.countries
-    private(set) var industries: [BenchmarkIndustry] = MockBenchmarkData.industries
+    private(set) var globalStats: GlobalBenchmark = EmptyBenchmarkData.global
+    private(set) var countries: [BenchmarkCountry] = EmptyBenchmarkData.countries
+    private(set) var industries: [BenchmarkIndustry] = EmptyBenchmarkData.industries
     private(set) var userPercentile: Int?
     private(set) var isLoading = false
     private(set) var isLiveData = false
+    private var lastFetchTime: Date?
 
-    func loadBenchmarks() async {
-        guard SupabaseManager.shared.isAuthenticated else { return }
+    /// Load benchmarks, but skip if data was fetched recently (within 2 minutes).
+    /// Use `forceRefresh: true` for pull-to-refresh.
+    func loadBenchmarks(forceRefresh: Bool = false) async {
+        // Skip if we fetched recently (unless forced)
+        if !forceRefresh, isLiveData, let lastFetch = lastFetchTime, Date.now.timeIntervalSince(lastFetch) < 120 {
+            return
+        }
 
         isLoading = true
-        defer { isLoading = false }
+        defer {
+            isLoading = false
+            lastFetchTime = .now
+        }
 
         async let globalTask = loadGlobalStats()
         async let countriesTask = loadCountries()
@@ -28,35 +37,36 @@ final class BenchmarkViewModel {
     private func loadGlobalStats() async {
         do {
             guard let response = try await SupabaseManager.shared.fetchGlobalBenchmarks() else { return }
-
-            // Only use live data if there are enough users
-            guard response.totalUsers >= 5 else { return }
+            guard response.totalUsers > 0 else { return }
 
             let categoryEmoji = categoryEmojiLookup(response.mostPopularCategory)
 
             globalStats = GlobalBenchmark(
-                totalUsersThisWeek: response.totalUsers,
+                totalUsers: response.totalUsers,
                 totalWagesReclaimed: response.totalWagesReclaimed,
+                totalHoursReclaimed: response.totalHoursReclaimed,
                 globalAvgSecondsPerDay: response.globalAvgSecondsPerDay,
-                mostPopularCategory: response.mostPopularCategory ?? "Doom Scrolling",
+                mostPopularCategory: response.mostPopularCategory ?? "",
                 mostPopularCategoryEmoji: categoryEmoji
             )
             isLiveData = true
         } catch {
-            print("[Benchmarks] Global stats failed, using mock: \(error)")
+            print("[Benchmarks] Global stats failed: \(error)")
         }
     }
 
     // MARK: - Country Rankings
 
+    /// Max number of rows shown in both Country and Industry rankings.
+    /// Server returns the full sorted list; we cap client-side so the list
+    /// stays scannable and doesn't balloon as more countries/industries sign up.
+    private static let maxRankingRows = 10
+
     private func loadCountries() async {
         do {
             let response = try await SupabaseManager.shared.fetchCountryBenchmarks()
 
-            // Only use live data if we have enough countries
-            guard response.count >= 3 else { return }
-
-            countries = response.map { country in
+            countries = response.prefix(Self.maxRankingRows).map { country in
                 BenchmarkCountry(
                     name: country.name,
                     flag: flagEmoji(for: country.name),
@@ -65,7 +75,7 @@ final class BenchmarkViewModel {
                 )
             }
         } catch {
-            print("[Benchmarks] Country rankings failed, using mock: \(error)")
+            print("[Benchmarks] Country rankings failed: \(error)")
         }
     }
 
@@ -75,19 +85,19 @@ final class BenchmarkViewModel {
         do {
             let response = try await SupabaseManager.shared.fetchIndustryBenchmarks()
 
-            // Only use live data if we have enough industries
-            guard response.count >= 3 else { return }
-
-            industries = response.compactMap { item in
-                guard let industry = Industry(rawValue: item.industry) else { return nil }
-                return BenchmarkIndustry(
-                    industry: industry,
-                    avgSecondsPerDay: item.avgSecondsPerDay,
-                    userCount: item.userCount
-                )
-            }
+            industries = response
+                .compactMap { item -> BenchmarkIndustry? in
+                    guard let industry = Industry(rawValue: item.industry) else { return nil }
+                    return BenchmarkIndustry(
+                        industry: industry,
+                        avgSecondsPerDay: item.avgSecondsPerDay,
+                        userCount: item.userCount
+                    )
+                }
+                .prefix(Self.maxRankingRows)
+                .map { $0 }
         } catch {
-            print("[Benchmarks] Industry rankings failed, using mock: \(error)")
+            print("[Benchmarks] Industry rankings failed: \(error)")
         }
     }
 
@@ -112,7 +122,6 @@ final class BenchmarkViewModel {
     }
 
     private func flagEmoji(for countryName: String) -> String {
-        // Try to find the country code from the name, then convert to flag emoji
         let locales = Locale.availableIdentifiers.compactMap { Locale(identifier: $0).language.region }
         for region in locales {
             if Locale.current.localizedString(forRegionCode: region.identifier) == countryName {
@@ -122,6 +131,6 @@ final class BenchmarkViewModel {
                 if !flag.isEmpty { return flag }
             }
         }
-        return "\u{1F30D}" // Globe fallback
+        return "\u{1F30D}"
     }
 }

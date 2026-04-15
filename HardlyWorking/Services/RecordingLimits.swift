@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 
 /// Centralized recording constraints to maintain data quality.
 enum RecordingLimits {
@@ -114,5 +115,77 @@ enum RecordingLimits {
         let startDay = Calendar.current.startOfDay(for: entry.startTime)
         let today = Calendar.current.startOfDay(for: .now)
         return startDay < today || entry.duration >= hardCapSeconds
+    }
+
+    // MARK: - Midnight Split
+
+    /// Splits an entry that crosses midnight into two entries: one ending at midnight, one starting at midnight.
+    /// The original entry is trimmed. A new entry is created for the portion after midnight.
+    /// Handles entries spanning multiple midnights by splitting at the first one.
+    @MainActor
+    static func splitAtMidnight(entry: TimeEntry, context: ModelContext) {
+        let calendar = Calendar.current
+        let midnight = calendar.startOfDay(for: entry.startTime).addingTimeInterval(86400)
+
+        // Entry must have started before midnight
+        guard entry.startTime < midnight else { return }
+
+        let endTime = entry.endTime ?? .now
+
+        // Entry must have crossed midnight
+        guard endTime > midnight else { return }
+
+        // Trim original to end at midnight
+        entry.endTime = midnight
+
+        // Create new entry from midnight onward
+        let newEntry = TimeEntry(
+            category: entry.category,
+            startTime: midnight,
+            endTime: endTime,
+            isManual: false
+        )
+        context.insert(newEntry)
+        try? context.save()
+    }
+
+    // MARK: - App-Wide Enforcement
+
+    /// Called when app returns to foreground. Enforces hard cap on any running timer.
+    /// Returns true if a timer was auto-stopped.
+    @MainActor
+    static func enforceHardCapIfNeeded(context: ModelContext) -> Bool {
+        let descriptor = FetchDescriptor<TimeEntry>(
+            predicate: #Predicate { $0.endTime == nil }
+        )
+        guard let running = (try? context.fetch(descriptor))?.first else { return false }
+        guard hasExceededHardCap(running) else { return false }
+
+        running.endTime = running.startTime.addingTimeInterval(hardCapSeconds)
+        try? context.save()
+        return true
+    }
+
+    /// Called when app returns to foreground. Enforces daily cap on any running timer.
+    /// Returns true if a timer was auto-stopped.
+    @MainActor
+    static func enforceDailyCapIfNeeded(context: ModelContext, workHoursPerDay: Double) -> Bool {
+        let descriptor = FetchDescriptor<TimeEntry>(
+            predicate: #Predicate { $0.endTime == nil }
+        )
+        guard let running = (try? context.fetch(descriptor))?.first else { return false }
+
+        let start = Calendar.current.startOfDay(for: .now)
+        let allDescriptor = FetchDescriptor<TimeEntry>(
+            predicate: #Predicate { $0.startTime >= start }
+        )
+        let todayEntries = (try? context.fetch(allDescriptor)) ?? []
+        let total = todayEntries.reduce(0.0) { $0 + $1.duration }
+
+        guard total >= dailyCapSeconds(workHoursPerDay: workHoursPerDay) else { return false }
+
+        running.endTime = .now
+        try? context.save()
+        return true
     }
 }

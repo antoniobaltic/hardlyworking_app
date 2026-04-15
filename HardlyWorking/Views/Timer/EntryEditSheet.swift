@@ -8,6 +8,9 @@ struct EntryEditSheet: View {
     @Query(sort: \TimeEntry.startTime, order: .reverse)
     private var allEntries: [TimeEntry]
     @AppStorage("workHoursPerDay") private var workHoursPerDay: Double = 8.0
+    @AppStorage("hourlyRate") private var hourlyRate: Double = 15.0
+    @Environment(AchievementManager.self) private var achievementManager
+    @Environment(SubscriptionManager.self) private var subscriptionManager
     @Bindable var entry: TimeEntry
     var onDelete: () -> Void
 
@@ -40,8 +43,17 @@ struct EntryEditSheet: View {
             .background(Color.white)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { Haptics.light(); dismiss() }
-                        .font(.system(.body, design: .monospaced))
+                    Button {
+                        Haptics.light()
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .frame(width: 30, height: 30)
+                            .background(Theme.bloodRed, in: Circle())
+                    }
+                    .buttonStyle(.plain)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
@@ -75,7 +87,7 @@ struct EntryEditSheet: View {
         VStack(spacing: 4) {
             Text("AMEND RECORD")
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(2)
             Text(Theme.formatDuration(endTime.timeIntervalSince(startTime)))
                 .font(.system(size: 36, weight: .light, design: .monospaced))
@@ -141,7 +153,7 @@ struct EntryEditSheet: View {
 
                     Text("\u{2192}")
                         .font(.system(.caption, design: .monospaced, weight: .medium))
-                        .foregroundStyle(Theme.textPrimary.opacity(0.4))
+                        .foregroundStyle(Theme.textPrimary.opacity(0.5))
 
                     DatePicker(
                         "",
@@ -171,7 +183,7 @@ struct EntryEditSheet: View {
         VStack(alignment: .leading, spacing: 10) {
             Text(title)
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(1.5)
                 .padding(.horizontal, 24)
             content()
@@ -227,6 +239,12 @@ struct EntryEditSheet: View {
         entry.endTime = endTime
         try? entry.modelContext?.save()
         AchievementManager.markEntryEdited()
+        // Trigger achievement check (catches edits that push into new thresholds + process_improvement)
+        achievementManager.checkAll(
+            entries: allEntries,
+            hourlyRate: hourlyRate,
+            isProUser: subscriptionManager.isProUser
+        )
         dismiss()
     }
 }

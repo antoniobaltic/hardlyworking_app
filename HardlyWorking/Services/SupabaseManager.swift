@@ -1,5 +1,6 @@
 import AuthenticationServices
 import Foundation
+import RevenueCat
 import Supabase
 
 @Observable @MainActor
@@ -14,7 +15,8 @@ final class SupabaseManager {
     private init() {
         client = SupabaseClient(
             supabaseURL: URL(string: "https://earykashrprnkagzriyb.supabase.co")!,
-            supabaseKey: "sb_publishable_zx0VYnM5xS8_-7-xW-iW3w_9QL3-r6c"
+            supabaseKey: "sb_publishable_zx0VYnM5xS8_-7-xW-iW3w_9QL3-r6c",
+            options: .init(auth: .init(emitLocalSessionAsInitialSession: true))
         )
 
         Task { await listenForAuthChanges() }
@@ -27,7 +29,44 @@ final class SupabaseManager {
             if [.initialSession, .signedIn, .signedOut].contains(state.event) {
                 isAuthenticated = state.session != nil
                 userId = state.session?.user.id
+
+                // Keep RevenueCat's identity in lockstep with Supabase's.
+                // Without this, RC stays anonymous and a single user gets a
+                // different RC ID per device/install — subscription state
+                // works (via receipt sync) but is harder to track and can
+                // briefly desync between devices after refunds/upgrades.
+                await syncRevenueCatIdentity(userId: state.session?.user.id)
             }
+        }
+    }
+
+    /// Mirror the current Supabase user into RevenueCat. Called on every
+    /// auth state transition (initial session restore, sign-in, sign-out).
+    ///
+    /// On `logIn`, RevenueCat aliases the previous (often anonymous) user
+    /// onto the new identified user — meaning a Pro subscription bought
+    /// before sign-in carries through to the signed-in identity. On
+    /// `logOut`, RC drops back to a fresh anonymous user.
+    ///
+    /// All RC errors are swallowed and logged: the receipt-sync path
+    /// remains the source of truth for subscription state, so identity
+    /// failures here are non-fatal — the user keeps their entitlement
+    /// either way.
+    private func syncRevenueCatIdentity(userId: UUID?) async {
+        do {
+            if let userId {
+                _ = try await Purchases.shared.logIn(userId.uuidString)
+                print("[RevenueCat] Identity synced to user \(userId.uuidString)")
+            } else if !Purchases.shared.isAnonymous {
+                // Guard the logOut: RC throws `logOutAnonymousUserError`
+                // if you call logOut on an already-anonymous user. This
+                // happens routinely on fresh installs where the
+                // .initialSession event fires with no session.
+                _ = try await Purchases.shared.logOut()
+                print("[RevenueCat] Identity reset to anonymous")
+            }
+        } catch {
+            print("[RevenueCat] Identity sync failed (non-fatal): \(error)")
         }
     }
 
@@ -56,25 +95,59 @@ final class SupabaseManager {
 
     // MARK: - Delete Account
 
-    /// Delete all user data from Supabase and sign out.
-    /// Removes profile, daily stats, group memberships, and auth session.
+    /// Fully delete the caller's Supabase account.
+    ///
+    /// Invokes the `delete_account` Edge Function which uses the service role
+    /// key to remove app data (group_members, daily_stats, friend_groups,
+    /// profiles) AND the underlying `auth.users` row. The client cannot delete
+    /// the auth user directly — that requires admin privileges.
+    ///
+    /// Falls back to legacy per-table deletes if the function call fails so
+    /// users can still purge their app data even if the Edge Function isn't
+    /// deployed yet.
     func deleteAccount() async throws {
         guard let userId else { return }
-        let uid = userId.uuidString
 
-        // Delete user data from all tables (order matters: memberships before groups)
-        _ = try? await client.from("group_members").delete().eq("user_id", value: uid).execute()
-        _ = try? await client.from("daily_stats").delete().eq("user_id", value: uid).execute()
-        _ = try? await client.from("profiles").delete().eq("id", value: uid).execute()
+        do {
+            try await client.functions.invoke("delete_account")
+        } catch {
+            print("[Supabase] delete_account function failed, falling back to client-side cleanup: \(error)")
+            let uid = userId.uuidString
+            _ = try? await client.from("group_members").delete().eq("user_id", value: uid).execute()
+            _ = try? await client.from("daily_stats").delete().eq("user_id", value: uid).execute()
+            _ = try? await client.from("profiles").delete().eq("id", value: uid).execute()
+            _ = try? await client.from("friend_groups").delete().eq("created_by", value: uid).execute()
+        }
 
-        // Delete owned groups (cascade will remove their members)
-        _ = try? await client.from("friend_groups").delete().eq("created_by", value: uid).execute()
-
-        // Sign out to clear the session
-        try await client.auth.signOut()
+        // Always clear the local session, even if remote deletion partially failed.
+        try? await client.auth.signOut()
     }
 
     // MARK: - Profile
+
+    /// Fetch the current user's globally-unique Employee ID from the profiles
+    /// table. Returns nil if the user isn't signed in or the row isn't there
+    /// yet (the `handle_new_user` trigger is synchronous so this is extremely
+    /// rare — but treat it as "not ready yet, try again later").
+    func fetchMyEmployeeId() async throws -> Int? {
+        guard let userId else { return nil }
+
+        struct EmployeeIdRow: Decodable {
+            let employeeId: Int
+            enum CodingKeys: String, CodingKey {
+                case employeeId = "employee_id"
+            }
+        }
+
+        let rows: [EmployeeIdRow] = try await client
+            .from("profiles")
+            .select("employee_id")
+            .eq("id", value: userId.uuidString)
+            .execute()
+            .value
+
+        return rows.first?.employeeId
+    }
 
     func syncProfile(
         industry: String?,
@@ -255,12 +328,58 @@ final class SupabaseManager {
             .execute()
     }
 
+    /// Update a unit's mutable metadata (name, emoji, description). Only the
+    /// group creator can successfully call this — enforced by the
+    /// `"Creator can update own group"` RLS policy on `friend_groups`.
+    ///
+    /// The returned record has `memberCount == nil`: we use a plain
+    /// `.select()` (no nested aggregate) because the joined `group_members(count)`
+    /// form comes back as `[{"count": N}]`, which doesn't decode into our
+    /// flat `Int?` field. Callers should preserve the previous member_count
+    /// in their local cache — UPDATE never changes membership anyway.
+    func updateGroup(groupId: UUID, name: String, emoji: String, description: String?) async throws -> FriendGroupRecord {
+        let payload: [String: AnyJSON] = [
+            "name": AnyJSON.string(name),
+            "emoji": AnyJSON.string(emoji),
+            "description": description.map { AnyJSON.string($0) } ?? .null,
+        ]
+
+        let updated: FriendGroupRecord = try await client
+            .from("friend_groups")
+            .update(payload)
+            .eq("id", value: groupId.uuidString)
+            .select()
+            .single()
+            .execute()
+            .value
+
+        return updated
+    }
+
     func removeGroupMember(groupId: UUID, memberId: UUID) async throws {
         try await client
             .from("group_members")
             .delete()
             .eq("group_id", value: groupId.uuidString)
             .eq("user_id", value: memberId.uuidString)
+            .execute()
+    }
+
+    /// Set (or clear) the current user's per-unit display name. Pass `nil` to
+    /// revert to the default Employee ID label. The server enforces a 1–24
+    /// character length constraint on non-null values.
+    func updateMyDisplayName(groupId: UUID, name: String?) async throws {
+        guard let userId else { throw SupabaseAuthError.missingIdentityToken }
+
+        let payload: [String: AnyJSON] = [
+            "display_name": name.map { AnyJSON.string($0) } ?? .null,
+        ]
+
+        try await client
+            .from("group_members")
+            .update(payload)
+            .eq("group_id", value: groupId.uuidString)
+            .eq("user_id", value: userId.uuidString)
             .execute()
     }
 
@@ -279,6 +398,14 @@ final class SupabaseManager {
             .value
         return result ?? []
     }
+
+    func fetchGroupLeaderboardMonth(groupId: UUID) async throws -> [GroupLeaderboardMonthEntry] {
+        let result: [GroupLeaderboardMonthEntry]? = try await client
+            .rpc("get_group_leaderboard_month", params: ["group_id_param": AnyJSON.string(groupId.uuidString)])
+            .execute()
+            .value
+        return result ?? []
+    }
 }
 
 // MARK: - Response Types
@@ -287,12 +414,14 @@ struct GlobalBenchmarkResponse: Decodable {
     let totalUsers: Int
     let globalAvgSecondsPerDay: Double
     let totalWagesReclaimed: Double
+    let totalHoursReclaimed: Double
     let mostPopularCategory: String?
 
     enum CodingKeys: String, CodingKey {
         case totalUsers = "total_users"
         case globalAvgSecondsPerDay = "global_avg_seconds_per_day"
         case totalWagesReclaimed = "total_wages_reclaimed"
+        case totalHoursReclaimed = "total_hours_reclaimed"
         case mostPopularCategory = "most_popular_category"
     }
 }
@@ -358,6 +487,8 @@ struct GroupLeaderboardEntry: Identifiable, Decodable {
     let userId: UUID
     let industry: String?
     let reclaimerTitle: String?
+    let employeeId: Int?
+    let displayName: String?
     let totalSecondsThisWeek: Int
     let sessionCountThisWeek: Int
 
@@ -367,6 +498,8 @@ struct GroupLeaderboardEntry: Identifiable, Decodable {
         case userId = "user_id"
         case industry
         case reclaimerTitle = "reclaimer_title"
+        case employeeId = "employee_id"
+        case displayName = "display_name"
         case totalSecondsThisWeek = "total_seconds_this_week"
         case sessionCountThisWeek = "session_count_this_week"
     }
@@ -376,6 +509,8 @@ struct GroupLeaderboardAllTimeEntry: Identifiable, Decodable {
     let userId: UUID
     let industry: String?
     let reclaimerTitle: String?
+    let employeeId: Int?
+    let displayName: String?
     let totalSecondsAllTime: Int
     let sessionCountAllTime: Int
 
@@ -385,8 +520,32 @@ struct GroupLeaderboardAllTimeEntry: Identifiable, Decodable {
         case userId = "user_id"
         case industry
         case reclaimerTitle = "reclaimer_title"
+        case employeeId = "employee_id"
+        case displayName = "display_name"
         case totalSecondsAllTime = "total_seconds_all_time"
         case sessionCountAllTime = "session_count_all_time"
+    }
+}
+
+struct GroupLeaderboardMonthEntry: Identifiable, Decodable {
+    let userId: UUID
+    let industry: String?
+    let reclaimerTitle: String?
+    let employeeId: Int?
+    let displayName: String?
+    let totalSecondsThisMonth: Int
+    let sessionCountThisMonth: Int
+
+    var id: UUID { userId }
+
+    enum CodingKeys: String, CodingKey {
+        case userId = "user_id"
+        case industry
+        case reclaimerTitle = "reclaimer_title"
+        case employeeId = "employee_id"
+        case displayName = "display_name"
+        case totalSecondsThisMonth = "total_seconds_this_month"
+        case sessionCountThisMonth = "session_count_this_month"
     }
 }
 

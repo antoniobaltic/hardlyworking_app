@@ -4,15 +4,16 @@ struct ShareCardData {
     let totalMoney: Double
     let totalHours: Double
     let totalSessions: Int
-    let daysActive: Int
     let topCategory: TopCategoryInfo?
     let longestSession: SessionRecord?
     let laziestDay: DayRecord?
-    let percentile: Int?
     let industry: String?
     let country: String?
     let hourlyRate: Double
     let recentAchievement: AchievementInfo?
+    /// Current consecutive-workday streak (Mon–Fri, skips weekends). Sourced
+    /// from `AchievementCatalog.calculateStreak`.
+    let currentStreak: Int
 
     struct TopCategoryInfo {
         let name: String
@@ -43,11 +44,11 @@ struct ShareCardData {
     static func build(
         stats: DashboardViewModel.CareerStats,
         rankings: [DashboardViewModel.CategoryRank],
-        percentile: Int?,
         industry: String?,
         country: String?,
         hourlyRate: Double,
         customCategories: [CustomCategory],
+        currentStreak: Int = 0,
         recentAchievement: AchievementUnlockEvent? = nil
     ) -> ShareCardData {
         let topCategory: TopCategoryInfo? = rankings.first.map { rank in
@@ -68,56 +69,86 @@ struct ShareCardData {
         }
 
         let achievementInfo: AchievementInfo? = recentAchievement.map { event in
-            AchievementInfo(name: event.definition.name, emoji: event.definition.emoji, rarity: event.rarity, detail: "Level \(event.level)")
+            AchievementInfo(name: event.definition.name, emoji: event.definition.emoji, rarity: event.rarity, detail: "Tier \(romanNumeral(event.level))")
         }
 
+        // Apply the Budget Variance ratchet to `totalMoney` so the share-card
+        // number can't be inflated (or deflated) by hourly-rate changes —
+        // matches the Budget Variance achievement's monotonic behaviour.
+        let ratchetedMoney = max(
+            stats.totalMoney,
+            UserDefaults.standard.double(forKey: "budgetVarianceRatchet")
+        )
+
         return ShareCardData(
-            totalMoney: stats.totalMoney,
+            totalMoney: ratchetedMoney,
             totalHours: stats.totalTime / 3600.0,
             totalSessions: stats.totalSessions,
-            daysActive: stats.daysActive,
             topCategory: topCategory,
             longestSession: longestSession,
             laziestDay: laziestDay,
-            percentile: percentile,
             industry: industry,
             country: country,
             hourlyRate: hourlyRate,
-            recentAchievement: achievementInfo
+            recentAchievement: achievementInfo,
+            currentStreak: currentStreak
         )
+    }
+
+    private static func romanNumeral(_ n: Int) -> String {
+        switch n {
+        case 1: "I"
+        case 2: "II"
+        case 3: "III"
+        case 4: "IV"
+        case 5: "V"
+        case 6: "VI"
+        case 7: "VII"
+        default: "\(n)"
+        }
     }
 }
 
 enum ShareCardType: String, CaseIterable, Identifiable {
     case money = "Performance Review"
-    case percentile = "Benchmark Report"
     case category = "Incident Report"
     case record = "Personal Best"
     case achievement = "Commendation"
+    case laziestDay = "Peak Inactivity"
+    case streak = "Attendance Record"
 
     var id: String { rawValue }
 
     var sectionHeader: String {
         switch self {
         case .money: "ANNUAL PERFORMANCE REVIEW"
-        case .percentile: "BENCHMARK REPORT"
         case .category: "INCIDENT REPORT"
         case .record: "PERSONAL BEST"
         case .achievement: "COMMENDATION ISSUED"
+        case .laziestDay: "PEAK INACTIVITY REPORT"
+        case .streak: "ATTENDANCE VERIFICATION"
+        }
+    }
+
+    /// Small glyph shown on the type-picker pill so users can see intent
+    /// before committing to a selection.
+    var previewEmoji: String {
+        switch self {
+        case .money: "\u{1F4B0}"                // 💰
+        case .category: "\u{1F4CB}"             // 📋
+        case .record: "\u{1F3C6}"               // 🏆
+        case .achievement: "\u{1F396}\u{FE0F}"  // 🎖️
+        case .laziestDay: "\u{1F6CB}\u{FE0F}"   // 🛋️
+        case .streak: "\u{1F4C5}"               // 📅
         }
     }
 }
 
-enum ShareCardFormat: String, CaseIterable, Identifiable {
-    case stories = "Stories"
-    case square = "Square"
-
-    var id: String { rawValue }
-
-    var logicalSize: CGSize {
-        switch self {
-        case .stories: CGSize(width: 360, height: 640)
-        case .square: CGSize(width: 360, height: 360)
-        }
-    }
+/// Shared logical canvas for every share card. We render at @3x for a
+/// final image of 1080 × 1440 (4:3 portrait), which fits Instagram's
+/// 4:5 feed crop generously, prints cleanly, and reads well in WhatsApp /
+/// Messages previews. Kept as a free-standing constant rather than an
+/// enum case because there is only one supported format.
+enum ShareCardCanvas {
+    static let logicalSize = CGSize(width: 360, height: 480)
 }

@@ -5,7 +5,7 @@ enum TimePeriod: String, CaseIterable, Identifiable {
     case week = "Week"
     case month = "Month"
     case year = "Year"
-    case lifetime = "All"
+    case lifetime = "Career"
 
     var id: String { rawValue }
 }
@@ -140,7 +140,7 @@ final class DashboardViewModel {
         case .week: return "=SUM(weekly_reclaimed)"
         case .month: return "=SUM(monthly_reclaimed)"
         case .year: return "=SUM(annual_reclaimed)"
-        case .lifetime: return "=SUM(lifetime_reclaimed)"
+        case .lifetime: return "=SUM(career_reclaimed)"
         }
     }
 
@@ -209,12 +209,20 @@ final class DashboardViewModel {
         let totalMoney: Double
         let totalSessions: Int
         let daysActive: Int
+        /// Average reclaimed time per weekday (Mon–Fri) in the user's career
+        /// window, spread across every workday from their first session to
+        /// today — so zero-activity workdays drag the average down.
         let avgPerWorkDay: TimeInterval
         let longestSession: (duration: TimeInterval, category: String, date: Date)?
         let laziestDay: (duration: TimeInterval, date: Date)?
         let mostSessionsDay: (count: Int, date: Date)?
-        let biggestPayday: (money: Double, date: Date)?
         let mostCategoriesDay: (count: Int, date: Date)?
+        /// Date of the user's first recorded session. Nil if no sessions yet.
+        let firstSessionDate: Date?
+        /// Current consecutive-workday streak (from AchievementCatalog).
+        let currentStreak: Int
+        /// Longest consecutive-workday streak the user ever reached.
+        let longestStreakEver: Int
     }
 
     func careerStats(_ entries: [TimeEntry], hourlyRate: Double) -> CareerStats {
@@ -229,8 +237,18 @@ final class DashboardViewModel {
             uniqueDays.insert(dayFormatter.string(from: entry.startTime))
         }
 
-        // Average per work day
-        let avgPerDay = uniqueDays.isEmpty ? 0 : total / Double(uniqueDays.count)
+        // Average per weekday (Mon–Fri): total time divided by the count of
+        // weekdays between the user's first session and today. Weekends are
+        // excluded from the denominator; empty weekdays still count, so the
+        // average reflects real-world career density, not just active days.
+        let avgPerDay: TimeInterval
+        if let earliest = filtered.min(by: { $0.startTime < $1.startTime })?.startTime {
+            let spanDays = max(1, (calendar.dateComponents([.day], from: earliest, to: .now).day ?? 0) + 1)
+            let weekdays = countWeekdays(from: earliest, days: spanDays)
+            avgPerDay = weekdays > 0 ? total / Double(weekdays) : 0
+        } else {
+            avgPerDay = 0
+        }
 
         // Longest single session
         let longest = filtered.max(by: { $0.duration < $1.duration })
@@ -253,11 +271,6 @@ final class DashboardViewModel {
         }
         let mostSessions = dayCounts.values.max(by: { $0.count < $1.count })
 
-        // Biggest payday (highest single-day earnings)
-        let biggestPayday = dayTotals.values.max(by: { $0.duration < $1.duration }).map {
-            (money: $0.duration / 3600.0 * hourlyRate, date: $0.date)
-        }
-
         // Most categories in one day
         var dayCategorySets: [String: (categories: Set<String>, date: Date)] = [:]
         for entry in filtered {
@@ -269,17 +282,33 @@ final class DashboardViewModel {
         let mostCategories = dayCategorySets.values.map { (count: $0.categories.count, date: $0.date) }
             .max(by: { $0.count < $1.count })
 
+        // Streak metrics — Mon–Fri only, 1-day grace, shared with the
+        // Perfect Attendance achievement so the UI reads the same values.
+        let currentStreak = AchievementCatalog.calculateStreak(entries: entries)
+        let longestStreak = AchievementCatalog.calculateLongestStreakEver(entries: entries)
+
+        // Apply the Budget Variance ratchet so the All-Time wage figure never
+        // regresses when the user lowers their hourly rate — matches the
+        // share-card + Budget Variance achievement behaviour.
+        let computedMoney = total / 3600.0 * hourlyRate
+        let ratchetedMoney = max(
+            computedMoney,
+            UserDefaults.standard.double(forKey: "budgetVarianceRatchet")
+        )
+
         return CareerStats(
             totalTime: total,
-            totalMoney: total / 3600.0 * hourlyRate,
+            totalMoney: ratchetedMoney,
             totalSessions: filtered.count,
             daysActive: uniqueDays.count,
             avgPerWorkDay: avgPerDay,
             longestSession: longest.map { ($0.duration, $0.category, $0.startTime) },
             laziestDay: laziest,
             mostSessionsDay: mostSessions,
-            biggestPayday: biggestPayday,
-            mostCategoriesDay: mostCategories
+            mostCategoriesDay: mostCategories,
+            firstSessionDate: filtered.min(by: { $0.startTime < $1.startTime })?.startTime,
+            currentStreak: currentStreak,
+            longestStreakEver: longestStreak
         )
     }
 
@@ -293,8 +322,8 @@ final class DashboardViewModel {
         let percentage: Double
     }
 
-    func categoryRankings(_ entries: [TimeEntry], hourlyRate: Double) -> [CategoryRank] {
-        let categories = categoryBreakdown(entries)
+    func categoryRankings(_ entries: [TimeEntry], hourlyRate: Double, custom: [CustomCategory]? = nil) -> [CategoryRank] {
+        let categories = categoryBreakdown(entries, custom: custom)
         return categories.enumerated().map { index, cat in
             CategoryRank(
                 rank: index + 1,
@@ -527,7 +556,7 @@ final class DashboardViewModel {
 
     // MARK: - Category Breakdown
 
-    func categoryBreakdown(_ entries: [TimeEntry]) -> [CategorySlack] {
+    func categoryBreakdown(_ entries: [TimeEntry], custom: [CustomCategory]? = nil) -> [CategorySlack] {
         let filtered = filteredEntries(entries)
         let total = filtered.reduce(0.0) { $0 + $1.duration }
         guard total > 0 else { return [] }
@@ -537,10 +566,15 @@ final class DashboardViewModel {
             grouped[entry.category, default: 0] += entry.duration
         }
 
+        // Fall back to the view model's stored customCategories if the caller
+        // didn't explicitly pass a list — fixes the "❓" emoji bug when custom
+        // categories are used and the caller forgot to thread them through.
+        let resolvedCustom = custom ?? customCategories
+
         return grouped
             .sorted { $0.value > $1.value }
             .map { name, duration in
-                let emoji = SlackCategory.defaults.first { $0.name == name }?.emoji ?? "\u{2753}"
+                let emoji = SlackCategory.emoji(for: name, custom: resolvedCustom)
                 return CategorySlack(
                     name: name,
                     emoji: emoji,
@@ -643,7 +677,7 @@ final class DashboardViewModel {
         let dailyRate = (total / 3600.0 * hourlyRate) / Double(periodDays)
         let annualProjection = dailyRate * 260
         if annualProjection > 100 {
-            insights.append(Insight(text: "At this rate, you'll reclaim $\(Int(annualProjection).formatted()) this year."))
+            insights.append(Insight(text: "At this rate, you'll reclaim \(Theme.formatMoney(annualProjection)) this year."))
         }
 
         let categories = categoryBreakdown(allEntries)
@@ -767,7 +801,7 @@ final class DashboardViewModel {
         let dailyRate = (total / 3600.0 * hourlyRate) / Double(periodDays)
         let annualProjection = dailyRate * 260
         if annualProjection > 100 {
-            insights.append(Insight(text: "At this rate, you'll reclaim $\(Int(annualProjection).formatted()) this year."))
+            insights.append(Insight(text: "At this rate, you'll reclaim \(Theme.formatMoney(annualProjection)) this year."))
         }
 
         let categories = categoryBreakdown(allEntries)

@@ -1,34 +1,31 @@
 import SwiftUI
 
-struct OnboardingPersonalityView: View {
-    let estimatedProductivity: Int
-    @Binding var reclaimerLevel: Int
-    @Binding var reclaimerTitle: String
+struct OnboardingIntermissionView: View {
+    @Binding var isComplete: Bool
 
     @State private var showMascot = false
     @State private var showBubble = false
     @State private var dialogueStage = 0
     @State private var showReplyButton = false
     @State private var replyPulse = false
-    @State private var showIntro = false
-    @State private var hasAppeared = false
-
-    private var clearanceLevel: ClearanceLevel {
-        ClearanceLevel.from(estimatedProductivity: estimatedProductivity)
-    }
 
     private var bubbleText: String {
         switch dialogueStage {
-        case 1: "Because our unfathomable\nCSO didn't program it."
-        case 2: "It's coming in an\nupdate he said."
-        default: "Hahaha, your clearance\nlevel will never change!"
+        case 0: "So, how are you\ndoing so far?"
+        case 1: "Yeah, haha.\nWe all had to go through that."
+        case 2: "Ohhhh, we got a\nhigh performer here!"
+        case 3: "High performer alarm!"
+        case 4: "Alright, let's continue."
+        default: ""
         }
     }
 
     private var replyText: String {
         switch dialogueStage {
-        case 0: "Okay, why?"
-        case 1: "That's bad design."
+        case 0: "I just answered\ntwo questions."
+        case 1: "It wasn't\nthat hard."
+        case 2: "?"
+        case 3: "?"
         default: ""
         }
     }
@@ -38,19 +35,21 @@ struct OnboardingPersonalityView: View {
             Spacer()
 
             ZStack(alignment: .top) {
-                Image("mascot_badge")
+                Image("mascot_welcome")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(height: 200)
+                    .frame(height: 320)
                     .padding(.top, 56)
                     .offset(x: -30)
 
+                // John D.'s speech bubble
                 if showBubble {
                     speechBubble
                         .offset(x: 30)
                         .transition(.scale(scale: 0, anchor: .bottom).combined(with: .opacity))
                 }
 
+                // Reply button
                 if showReplyButton {
                     replyButton
                         .scaleEffect(replyPulse ? 1.08 : 1.0)
@@ -58,30 +57,13 @@ struct OnboardingPersonalityView: View {
                         .transition(.scale(scale: 0, anchor: .topLeading).combined(with: .opacity))
                 }
             }
-            .offset(y: showMascot ? 0 : 30)
+            .offset(y: showMascot ? 0 : 40)
             .opacity(showMascot ? 1 : 0)
-
-            Spacer().frame(height: 24)
-
-            Text("Based on your intake assessment:")
-                .font(.system(.caption, design: .monospaced))
-                .foregroundStyle(Theme.textPrimary.opacity(0.45))
-                .opacity(showIntro ? 1 : 0)
-
-            Spacer().frame(height: 16)
-
-            ClearanceBadgeView(level: clearanceLevel, size: .large, showDescription: true)
-                .scaleEffect(hasAppeared ? 1 : 0.9)
-                .opacity(hasAppeared ? 1 : 0)
 
             Spacer()
         }
         .padding(.horizontal, 24)
-        .onAppear {
-            reclaimerLevel = clearanceLevel.rawValue
-            reclaimerTitle = clearanceLevel.title
-            startSequence()
-        }
+        .onAppear { startSequence() }
     }
 
     // MARK: - Speech Bubble
@@ -94,12 +76,12 @@ struct OnboardingPersonalityView: View {
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
             .background {
-                PersonalityBubbleShape(tailOffset: -20)
+                IntermissionBubbleShape(tailOffset: -20)
                     .fill(.white)
                     .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
             }
             .background {
-                PersonalityBubbleShape(tailOffset: -20)
+                IntermissionBubbleShape(tailOffset: -20)
                     .stroke(Theme.textPrimary.opacity(0.12), lineWidth: 1)
             }
             .animation(.easeInOut(duration: 0.3), value: dialogueStage)
@@ -112,17 +94,20 @@ struct OnboardingPersonalityView: View {
             Haptics.light()
             let nextStage = dialogueStage + 1
 
+            // Hide button
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                 showReplyButton = false
                 replyPulse = false
             }
 
+            // Update John D.'s response
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                     dialogueStage = nextStage
                 }
 
-                if nextStage < 2 {
+                // Show next reply button or mark complete
+                if nextStage < 4 {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                         withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                             showReplyButton = true
@@ -133,12 +118,18 @@ struct OnboardingPersonalityView: View {
                             }
                         }
                     }
+                } else {
+                    // Final stage — activate Continue
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        isComplete = true
+                    }
                 }
             }
         } label: {
             Text(replyText)
                 .font(.system(.caption, design: .monospaced, weight: .medium))
                 .foregroundStyle(.white)
+                .multilineTextAlignment(.center)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
                 .background {
@@ -157,34 +148,26 @@ struct OnboardingPersonalityView: View {
             showMascot = true
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) { showBubble = true }
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                showBubble = true
+            }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) { showReplyButton = true }
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                showReplyButton = true
+            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                 withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
                     replyPulse = true
                 }
             }
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-            withAnimation(.easeOut(duration: 0.3)) { showIntro = true }
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
-                hasAppeared = true
-            }
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
-            Haptics.success()
-        }
     }
-
 }
 
 // MARK: - Bubble Shape
 
-private struct PersonalityBubbleShape: Shape {
+private struct IntermissionBubbleShape: Shape {
     var tailOffset: CGFloat = 0
     var cornerRadius: CGFloat = 10
     var tailWidth: CGFloat = 12

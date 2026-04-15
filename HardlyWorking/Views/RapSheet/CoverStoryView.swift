@@ -24,12 +24,12 @@ struct CoverStoryView: View {
         VStack(alignment: .leading, spacing: 14) {
             Text("PREFERENCES")
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(1.5)
 
             Text("Keep your records up to date.")
                 .font(.system(.caption, design: .monospaced))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
 
             VStack(spacing: 0) {
                 settingRow(
@@ -95,17 +95,17 @@ struct CoverStoryView: View {
             HStack {
                 Text(label)
                     .font(.system(.caption, design: .monospaced))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.65))
 
                 Spacer()
 
                 Text(value)
                     .font(.system(.subheadline, design: .monospaced, weight: .medium))
-                    .foregroundStyle(isEmpty ? Theme.textPrimary.opacity(0.3) : Theme.textPrimary)
+                    .foregroundStyle(isEmpty ? Theme.textPrimary.opacity(0.5) : Theme.textPrimary)
 
                 Image(systemName: "chevron.right")
                     .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.15))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.3))
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
@@ -118,7 +118,7 @@ struct CoverStoryView: View {
         HStack {
             Text("Include Weekends")
                 .font(.system(.caption, design: .monospaced))
-                .foregroundStyle(Theme.textPrimary.opacity(0.5))
+                .foregroundStyle(Theme.textPrimary.opacity(0.65))
 
             Spacer()
 

@@ -17,11 +17,11 @@ struct ProLockedView: View {
 
                 Text(title)
                     .font(.system(.subheadline, design: .monospaced, weight: .semibold))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.65))
 
                 Text(description)
                     .font(.system(.caption2, design: .monospaced))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     .multilineTextAlignment(.center)
             }
 
@@ -32,7 +32,7 @@ struct ProLockedView: View {
                 HStack(spacing: 6) {
                     Image(systemName: "lock.fill")
                         .font(.system(.caption, weight: .bold))
-                    Text("Request Clearance")
+                    Text("Request Promotion")
                         .font(.system(.caption, design: .monospaced, weight: .semibold))
                 }
                 .foregroundStyle(Theme.accent)

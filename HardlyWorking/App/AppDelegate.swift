@@ -81,7 +81,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
             print("[AppDelegate] Failed to create ModelContainer for notification action: \(error)")
             // Best effort: still clear pending reminders
             UNUserNotificationCenter.current().removePendingNotificationRequests(
-                withIdentifiers: ["timer-reminder-1h", "timer-reminder-2h"]
+                withIdentifiers: ["timer-reminder-2h", "timer-reminder-3h"]
             )
             return
         }
@@ -101,7 +101,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
 
         // Clear pending reminders
         UNUserNotificationCenter.current().removePendingNotificationRequests(
-            withIdentifiers: ["timer-reminder-1h", "timer-reminder-2h"]
+            withIdentifiers: ["timer-reminder-2h", "timer-reminder-3h"]
         )
     }
 }

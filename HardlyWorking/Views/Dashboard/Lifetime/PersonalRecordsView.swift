@@ -1,7 +1,10 @@
+import SwiftData
 import SwiftUI
 
 struct PersonalRecordsView: View {
     let stats: DashboardViewModel.CareerStats
+    @Query(sort: \CustomCategory.createdAt)
+    private var customCategories: [CustomCategory]
 
     private let dateFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -11,19 +14,32 @@ struct PersonalRecordsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("PERSONAL RECORDS")
+            Text("PERFORMANCE HIGHLIGHTS")
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(1.5)
 
-            let records = buildRecords()
+            let sections = buildSections()
+            let nonEmpty = sections.filter { !$0.records.isEmpty }
 
-            if records.isEmpty {
+            if nonEmpty.isEmpty {
                 emptyState
             } else {
-                VStack(spacing: 0) {
-                    ForEach(Array(records.enumerated()), id: \.offset) { index, record in
-                        recordRow(record, isEven: index.isMultiple(of: 2))
+                VStack(alignment: .leading, spacing: 18) {
+                    ForEach(nonEmpty) { section in
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(section.title)
+                                .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                                .foregroundStyle(Theme.textPrimary.opacity(0.4))
+                                .tracking(1.2)
+                                .padding(.leading, 4)
+
+                            VStack(spacing: 0) {
+                                ForEach(Array(section.records.enumerated()), id: \.offset) { index, record in
+                                    recordRow(record, isEven: index.isMultiple(of: 2))
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -42,7 +58,7 @@ struct PersonalRecordsView: View {
                     .foregroundStyle(Theme.textPrimary)
                 Text(record.detail)
                     .font(.system(.caption, design: .monospaced))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.4))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
             }
 
             Spacer()
@@ -60,10 +76,10 @@ struct PersonalRecordsView: View {
         VStack(spacing: 4) {
             Text("#N/A")
                 .font(.system(.title3, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.08))
+                .foregroundStyle(Theme.textPrimary.opacity(0.3))
             Text("Not enough data for records yet.")
                 .font(.system(.caption2, design: .monospaced))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.45))
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 32)
@@ -78,11 +94,59 @@ struct PersonalRecordsView: View {
         let detail: String
     }
 
-    private func buildRecords() -> [Record] {
+    private struct Section: Identifiable {
+        let id = UUID()
+        let title: String
+        let records: [Record]
+    }
+
+    private func buildSections() -> [Section] {
+        [
+            Section(title: "TENURE", records: tenureRecords),
+            Section(title: "CONSISTENCY", records: consistencyRecords),
+            Section(title: "RECORDS", records: notableRecords),
+        ]
+    }
+
+    private var tenureRecords: [Record] {
+        var records: [Record] = []
+        if let firstSession = stats.firstSessionDate {
+            records.append(Record(
+                icon: "\u{1F4BC}", // 💼
+                title: "Employment Start",
+                value: dateFormatter.string(from: firstSession),
+                detail: employmentDetail(from: firstSession)
+            ))
+        }
+        return records
+    }
+
+    private var consistencyRecords: [Record] {
+        var records: [Record] = []
+        if stats.currentStreak > 0 {
+            records.append(Record(
+                icon: "\u{1F525}", // 🔥
+                title: "Current Streak",
+                value: "\(stats.currentStreak)",
+                detail: stats.currentStreak == 1 ? "workday" : "consecutive workdays"
+            ))
+        }
+        if stats.longestStreakEver > 0 {
+            records.append(Record(
+                icon: "\u{1F4C5}", // 📅
+                title: "Longest Streak",
+                value: "\(stats.longestStreakEver)",
+                detail: stats.longestStreakEver == 1 ? "workday on record" : "consecutive workdays on record"
+            ))
+        }
+        return records
+    }
+
+    private var notableRecords: [Record] {
         var records: [Record] = []
 
         if let longest = stats.longestSession {
-            let emoji = SlackCategory.defaults.first { $0.name == longest.category }?.emoji ?? "\u{23F1}"
+            let emoji = SlackCategory.emoji(for: longest.category, custom: customCategories)
             records.append(Record(
                 icon: emoji,
                 title: "Longest Session",
@@ -94,7 +158,7 @@ struct PersonalRecordsView: View {
         if let laziest = stats.laziestDay {
             records.append(Record(
                 icon: "\u{1F3C6}",
-                title: "Laziest Single Day",
+                title: "Peak Inactivity",
                 value: Theme.formatDuration(laziest.duration),
                 detail: dateFormatter.string(from: laziest.date)
             ))
@@ -103,39 +167,33 @@ struct PersonalRecordsView: View {
         if let most = stats.mostSessionsDay, most.count >= 3 {
             records.append(Record(
                 icon: "\u{1F4CA}",
-                title: "Most Sessions (1 Day)",
+                title: "\"Busiest\" Workday",
                 value: "\(most.count)",
                 detail: dateFormatter.string(from: most.date)
-            ))
-        }
-
-        if let payday = stats.biggestPayday, payday.money > 0 {
-            records.append(Record(
-                icon: "\u{1F4B5}",
-                title: "Biggest Payday",
-                value: Theme.formatMoney(payday.money),
-                detail: dateFormatter.string(from: payday.date)
             ))
         }
 
         if let variety = stats.mostCategoriesDay, variety.count >= 3 {
             records.append(Record(
                 icon: "\u{1F500}",
-                title: "Most Activity Codes (1 Day)",
+                title: "Greatest Variety",
                 value: "\(variety.count)",
                 detail: dateFormatter.string(from: variety.date)
             ))
         }
 
-        if stats.daysActive > 0 {
-            records.append(Record(
-                icon: "\u{1F4C5}",
-                title: "Days Active",
-                value: "\(stats.daysActive)",
-                detail: stats.daysActive == 1 ? "Just getting started" : "A seasoned professional"
-            ))
-        }
-
         return records
+    }
+
+    /// Human-readable tenure descriptor under the Employment Start record.
+    /// Shows "Day one" on the first day, otherwise "N days on the books".
+    private func employmentDetail(from firstSession: Date) -> String {
+        let days = Calendar.current.dateComponents(
+            [.day],
+            from: Calendar.current.startOfDay(for: firstSession),
+            to: Calendar.current.startOfDay(for: .now)
+        ).day ?? 0
+        if days <= 0 { return "Day one" }
+        return "\(days) day\(days == 1 ? "" : "s") on the books"
     }
 }

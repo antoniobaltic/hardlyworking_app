@@ -9,7 +9,7 @@ struct PeriodChartView: View {
         VStack(alignment: .leading, spacing: 14) {
             Text(header)
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(1.5)
 
             if data.isEmpty || data.allSatisfy({ $0.totalDuration == 0 }) {
@@ -32,7 +32,7 @@ struct PeriodChartView: View {
                 if bar.totalDuration > 0 {
                     Text(Theme.formatDuration(bar.totalDuration))
                         .font(.system(size: 11, weight: .medium, design: .monospaced))
-                        .foregroundStyle(Theme.textPrimary.opacity(0.5))
+                        .foregroundStyle(Theme.textPrimary.opacity(0.65))
                 }
             }
         }
@@ -44,7 +44,7 @@ struct PeriodChartView: View {
                     if let hours = value.as(Double.self) {
                         Text("\(Int(hours))h")
                             .font(.system(size: 10, design: .monospaced))
-                            .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                            .foregroundStyle(Theme.textPrimary.opacity(0.5))
                     }
                 }
             }
@@ -55,7 +55,7 @@ struct PeriodChartView: View {
                     if let label = value.as(String.self) {
                         Text(label)
                             .font(.system(size: 12, weight: .medium, design: .monospaced))
-                            .foregroundStyle(Theme.textPrimary.opacity(0.5))
+                            .foregroundStyle(Theme.textPrimary.opacity(0.65))
                     }
                 }
             }
@@ -67,10 +67,10 @@ struct PeriodChartView: View {
         VStack(spacing: 4) {
             Text("####")
                 .font(.system(.title3, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.08))
+                .foregroundStyle(Theme.textPrimary.opacity(0.3))
             Text("Column too narrow to display")
                 .font(.system(.caption2, design: .monospaced))
-                .foregroundStyle(Theme.textPrimary.opacity(0.2))
+                .foregroundStyle(Theme.textPrimary.opacity(0.4))
         }
         .frame(maxWidth: .infinity)
         .frame(height: 140)

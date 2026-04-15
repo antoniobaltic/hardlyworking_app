@@ -15,13 +15,19 @@ struct WallOfShameView: View {
 
     private var userAvgPerDay: TimeInterval {
         let calendar = Calendar.current
-        let weekAgo = calendar.date(byAdding: .day, value: -7, to: .now) ?? .now
-        let recentEntries = allEntries.filter { !$0.isRunning && $0.startTime >= weekAgo }
+        let thirtyDaysAgo = calendar.date(byAdding: .day, value: -30, to: .now) ?? .now
+
+        // Only count entries on weekdays within the last 30 days
+        let recentEntries = allEntries.filter { entry in
+            guard !entry.isRunning && entry.startTime >= thirtyDaysAgo else { return false }
+            let wd = calendar.component(.weekday, from: entry.startTime)
+            return wd != 1 && wd != 7 // exclude Sat (7) and Sun (1)
+        }
         let total = recentEntries.reduce(0.0) { $0 + $1.duration }
 
-        // Count weekdays in the last 7 days
+        // Count weekdays in the last 30 days
         var weekdays = 0
-        for i in 0..<7 {
+        for i in 0..<30 {
             if let date = calendar.date(byAdding: .day, value: -i, to: .now) {
                 let wd = calendar.component(.weekday, from: date)
                 if wd != 1 && wd != 7 { weekdays += 1 }
@@ -31,67 +37,81 @@ struct WallOfShameView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                formulaBar
-
-                VStack(spacing: 28) {
-                    YourPositionView(
-                        userAvgPerDay: userAvgPerDay,
-                        globalAvgPerDay: viewModel.globalStats.globalAvgSecondsPerDay
-                    )
-                    .padding(.horizontal, 24)
-
-                    Divider().padding(.horizontal, 24)
-
-                    if isProUser {
-                        CountryRankingsView(
-                            countries: viewModel.countries,
-                            userCountry: userCountry
-                        )
-                        .padding(.horizontal, 24)
+        VStack(spacing: 0) {
+            formulaBar
+            ScrollView {
+                VStack(spacing: 0) {
+                    if viewModel.isLoading && !viewModel.isLiveData {
+                        VStack(spacing: 12) {
+                            ProgressView()
+                            Text("Compiling benchmark data...")
+                                .font(.system(.caption, design: .monospaced))
+                                .foregroundStyle(Theme.textPrimary.opacity(0.4))
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 80)
                     } else {
-                        lockedSection(
-                            title: "Country Rankings",
-                            description: "International slacking data is\nclassified. Executive clearance required.",
-                            icon: "globe"
+                    VStack(spacing: 28) {
+                        YourPositionView(
+                            userAvgPerDay: userAvgPerDay,
+                            countryAvgPerDay: viewModel.countries.first(where: { $0.name == userCountry })?.avgSecondsPerDay ?? 0,
+                            countryName: userCountry,
+                            globalAvgPerDay: viewModel.globalStats.globalAvgSecondsPerDay
                         )
                         .padding(.horizontal, 24)
+
+                        Divider().padding(.horizontal, 24)
+
+                        GlobalStatsView(stats: viewModel.globalStats)
+                            .padding(.horizontal, 24)
+
+                        Divider().padding(.horizontal, 24)
+
+                        if isProUser {
+                            CountryRankingsView(
+                                countries: viewModel.countries,
+                                userCountry: userCountry
+                            )
+                            .padding(.horizontal, 24)
+                        } else {
+                            lockedSection(
+                                title: "Country Rankings",
+                                description: "International slacking data is\nclassified. Executive clearance required.",
+                                icon: "globe"
+                            )
+                            .padding(.horizontal, 24)
+                        }
+
+                        Divider().padding(.horizontal, 24)
+
+                        if isProUser {
+                            IndustryRankingsView(
+                                industries: viewModel.industries,
+                                userIndustry: userIndustry
+                            )
+                            .padding(.horizontal, 24)
+                        } else {
+                            lockedSection(
+                                title: "Industry Rankings",
+                                description: "Sector-level intelligence is classified.\nExecutive clearance required.",
+                                icon: "building.2.fill"
+                            )
+                            .padding(.horizontal, 24)
+                        }
                     }
-
-                    Divider().padding(.horizontal, 24)
-
-                    if isProUser {
-                        IndustryRankingsView(
-                            industries: viewModel.industries,
-                            userIndustry: userIndustry
-                        )
-                        .padding(.horizontal, 24)
-                    } else {
-                        lockedSection(
-                            title: "Industry Rankings",
-                            description: "Sector-level intelligence requires\nPro authorization.",
-                            icon: "building.2.fill"
-                        )
-                        .padding(.horizontal, 24)
+                    .padding(.top, 20)
+                    .padding(.bottom, 60)
                     }
-
-                    Divider().padding(.horizontal, 24)
-
-                    GlobalStatsView(stats: viewModel.globalStats)
-                        .padding(.horizontal, 24)
                 }
-                .padding(.top, 20)
-                .padding(.bottom, 60)
             }
         }
         .background(Color.white)
+        .refreshable { await viewModel.loadBenchmarks(forceRefresh: true) }
         .task { await viewModel.loadBenchmarks() }
-        .sheet(isPresented: $showPaywall, onDismiss: {
+        .fullScreenCover(isPresented: $showPaywall, onDismiss: {
             subscriptionManager.showProBannerIfPending()
         }) {
             PaywallView()
-                .presentationDragIndicator(.visible)
         }
     }
 
@@ -109,7 +129,7 @@ struct WallOfShameView: View {
         HStack(spacing: 0) {
             Text("C1")
                 .font(.system(.caption2, design: .monospaced, weight: .medium))
-                .foregroundStyle(Theme.textPrimary.opacity(0.4))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .frame(width: 28)
                 .padding(.vertical, 8)
                 .background(Theme.cardBackground)
@@ -123,11 +143,11 @@ struct WallOfShameView: View {
                 Text("fx")
                     .font(.system(.caption2, design: .serif, weight: .bold))
                     .italic()
-                    .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
 
                 Text("=PERCENTILE(you, everyone)")
                     .font(.system(.caption, design: .monospaced))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.65))
 
                 Spacer()
 
@@ -138,11 +158,7 @@ struct WallOfShameView: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 8)
         }
-        .background(Theme.cardBackground)
-        .overlay(
-            Rectangle().fill(Theme.textPrimary.opacity(0.08)).frame(height: 1),
-            alignment: .top
-        )
+        .background(Theme.cardBackground.ignoresSafeArea(.all, edges: .top))
         .overlay(
             Rectangle().fill(Theme.textPrimary.opacity(0.08)).frame(height: 1),
             alignment: .bottom

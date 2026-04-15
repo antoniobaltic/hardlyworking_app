@@ -30,8 +30,17 @@ struct CoverStoryEditSheet: View {
             .background(Color.white)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { Haptics.light(); dismiss() }
-                        .font(.system(.body, design: .monospaced))
+                    Button {
+                        Haptics.light()
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .frame(width: 30, height: 30)
+                            .background(Theme.bloodRed, in: Circle())
+                    }
+                    .buttonStyle(.plain)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
@@ -54,7 +63,7 @@ struct CoverStoryEditSheet: View {
         VStack(spacing: 4) {
             Text(headerTitle)
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(2)
             Text(headerValue)
                 .font(.system(size: 36, weight: .light, design: .monospaced))
@@ -87,7 +96,7 @@ struct CoverStoryEditSheet: View {
             if let rate = Double(rateText), rate > 0 {
                 return Theme.formatMoney(rate)
             }
-            return "$0.00"
+            return "\(Theme.currencySymbol(for: UserDefaults.standard.string(forKey: "currency") ?? "USD"))0.00"
         case .workSchedule:
             return "\(Int(editHours))h \u{00D7} \(editDays)d"
         case .industry:
@@ -117,9 +126,9 @@ struct CoverStoryEditSheet: View {
     private var hourlyRateContent: some View {
         formSection("AMOUNT") {
             HStack(spacing: 8) {
-                Text("$")
+                Text(Theme.currencySymbol(for: UserDefaults.standard.string(forKey: "currency") ?? "USD"))
                     .font(.system(.title3, design: .monospaced, weight: .medium))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
 
                 TextField("0.00", text: $rateText)
                     .font(.system(.title3, design: .monospaced, weight: .medium))
@@ -130,7 +139,7 @@ struct CoverStoryEditSheet: View {
 
                 Text("/hr")
                     .font(.system(.subheadline, design: .monospaced))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
             }
             .padding(.horizontal, 24)
         }
@@ -230,7 +239,7 @@ struct CoverStoryEditSheet: View {
             HStack {
                 Image(systemName: "magnifyingglass")
                     .font(.system(.caption, weight: .medium))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 TextField("Search countries...", text: $countrySearch)
                     .font(.system(.subheadline, design: .monospaced))
                     .foregroundStyle(Theme.textPrimary)
@@ -306,7 +315,7 @@ struct CoverStoryEditSheet: View {
                                 .foregroundStyle(selectedCurrency == curr.code ? .white : Theme.textPrimary)
                             Text(curr.code)
                                 .font(.system(size: 10, weight: .medium, design: .monospaced))
-                                .foregroundStyle(selectedCurrency == curr.code ? .white.opacity(0.7) : Theme.textPrimary.opacity(0.4))
+                                .foregroundStyle(selectedCurrency == curr.code ? .white.opacity(0.7) : Theme.textPrimary.opacity(0.5))
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
@@ -331,7 +340,7 @@ struct CoverStoryEditSheet: View {
         VStack(alignment: .leading, spacing: 10) {
             Text(title)
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(1.5)
                 .padding(.horizontal, 24)
             content()

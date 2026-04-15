@@ -2,48 +2,40 @@ import SwiftUI
 
 struct YourPositionView: View {
     let userAvgPerDay: TimeInterval
+    let countryAvgPerDay: TimeInterval
+    let countryName: String
     let globalAvgPerDay: TimeInterval
 
-    private var percentageDiff: Int {
-        guard globalAvgPerDay > 0 else { return 0 }
-        return Int(((userAvgPerDay - globalAvgPerDay) / globalAvgPerDay) * 100)
-    }
-
-    private var comment: String {
-        if userAvgPerDay == 0 {
-            return "No data yet. Get to work. Or don't."
-        }
-        let diff = percentageDiff
-        if diff > 50 { return "A prodigy. HR is watching." }
-        if diff > 20 { return "Overachiever." }
-        if diff > 0 { return "Above average. Not bad." }
-        if diff > -20 { return "Below average. Room for improvement." }
-        return "Suspiciously productive. Are you okay?"
-    }
-
     private var maxValue: TimeInterval {
-        max(userAvgPerDay, globalAvgPerDay, 1)
+        max(userAvgPerDay, countryAvgPerDay, globalAvgPerDay, 1)
+    }
+
+    private var countryLabel: String {
+        countryName.isEmpty ? "Region Avg." : "\(countryName) Avg."
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("YOUR POSITION")
+            Text("HOW YOU COMPARE (LAST 30 DAYS)")
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(1.5)
 
             VStack(alignment: .leading, spacing: 12) {
                 barRow(
-                    label: "You",
+                    label: "Your Avg.",
                     value: userAvgPerDay,
-                    color: Theme.timer,
-                    isBold: true
+                    color: Theme.timer
                 )
                 barRow(
-                    label: "Global Avg",
+                    label: countryLabel,
+                    value: countryAvgPerDay,
+                    color: Theme.cautionYellow
+                )
+                barRow(
+                    label: "Global Avg.",
                     value: globalAvgPerDay,
-                    color: Theme.textPrimary.opacity(0.2),
-                    isBold: false
+                    color: Theme.accent
                 )
             }
             .padding(16)
@@ -52,30 +44,19 @@ struct YourPositionView: View {
                     .fill(Theme.cardBackground.opacity(0.5))
                     .stroke(Theme.textPrimary.opacity(0.06), lineWidth: 1)
             )
-
-            HStack(spacing: 6) {
-                if percentageDiff != 0 {
-                    Text(percentageDiff > 0 ? "+\(percentageDiff)%" : "\(percentageDiff)%")
-                        .font(.system(.caption, design: .monospaced, weight: .bold))
-                        .foregroundStyle(percentageDiff > 0 ? Theme.timer : Theme.accent)
-                }
-                Text(comment)
-                    .font(.system(.caption, design: .monospaced))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.4))
-            }
         }
     }
 
-    private func barRow(label: String, value: TimeInterval, color: Color, isBold: Bool) -> some View {
+    private func barRow(label: String, value: TimeInterval, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Text(label)
-                    .font(.system(.caption, design: .monospaced, weight: isBold ? .bold : .regular))
-                    .foregroundStyle(Theme.textPrimary.opacity(isBold ? 0.7 : 0.4))
+                    .font(.system(.caption, design: .monospaced, weight: .bold))
+                    .foregroundStyle(Theme.textPrimary.opacity(0.7))
                 Spacer()
                 Text(Theme.formatDuration(value) + "/day")
                     .font(.system(.caption, design: .monospaced, weight: .semibold))
-                    .foregroundStyle(isBold ? Theme.textPrimary : Theme.textPrimary.opacity(0.4))
+                    .foregroundStyle(Theme.textPrimary)
             }
 
             GeometryReader { geo in

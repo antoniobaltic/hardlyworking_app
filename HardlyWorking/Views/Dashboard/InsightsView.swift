@@ -7,7 +7,7 @@ struct InsightsView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("AUDIT FINDINGS")
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(1.5)
 
             if insights.isEmpty {
@@ -28,7 +28,7 @@ struct InsightsView: View {
                 .frame(width: 20)
             Text(text)
                 .font(.system(.caption, design: .monospaced))
-                .foregroundStyle(Theme.textPrimary.opacity(0.6))
+                .foregroundStyle(Theme.textPrimary.opacity(0.65))
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(12)
@@ -44,11 +44,11 @@ struct InsightsView: View {
         HStack(alignment: .top, spacing: 10) {
             Image(systemName: "info.circle")
                 .font(.system(.subheadline))
-                .foregroundStyle(Theme.textPrimary.opacity(0.25))
+                .foregroundStyle(Theme.textPrimary.opacity(0.4))
                 .frame(width: 20)
             Text("Insufficient data for analysis. Get back to not working.")
                 .font(.system(.caption, design: .monospaced))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.45))
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)

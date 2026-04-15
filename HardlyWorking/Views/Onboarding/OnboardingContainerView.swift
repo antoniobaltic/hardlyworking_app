@@ -14,29 +14,32 @@ struct OnboardingContainerView: View {
     @AppStorage("reclaimerLevel") private var reclaimerLevel: Int = 0
     @AppStorage("reclaimerTitle") private var reclaimerTitle: String = ""
     @AppStorage("hasCommitted") private var hasCommitted: Bool = false
+    @AppStorage("isSignedIn") private var isSignedIn: Bool = false
 
     @State private var currentPage = 0
     @State private var showPaywall = false
+    @State private var buttonScale: CGFloat = 1.0
+    @State private var intermissionComplete = false
 
     private let totalPages = 11
 
     // Deceleration curve — faster at start, slower at end
     private let progressValues: [Double] = [
-        0.15, 0.27, 0.38, 0.48, 0.56, 0.63, 0.70, 0.78, 0.86, 0.93, 1.0,
+        0.13, 0.24, 0.34, 0.42, 0.50, 0.58, 0.66, 0.74, 0.82, 0.91, 1.0,
     ]
 
     private let sectionHeaders = [
-        "",
-        "FORM HR-1: INTENT DECLARATION",
-        "FORM HR-2: GRIEVANCE INTAKE",
-        "FORM HR-3: COMPENSATION RECORD",
-        "FORM HR-4: SCHEDULE ON FILE",
-        "FORM HR-5: SELF-ASSESSMENT",
-        "FORM HR-6: DEPARTMENT FILING",
-        "CLEARANCE LEVEL ASSIGNED",
-        "PRELIMINARY AUDIT FINDINGS",
-        "FORM HR-7: EMPLOYEE PLEDGE",
-        "DOSSIER COMPILATION",
+        "",                                    // 0: Welcome
+        "FORM HR-1: INTENT DECLARATION",       // 1: Motivation
+        "FORM HR-2: GRIEVANCE INTAKE",         // 2: Frustration
+        "EMPLOYEE CHECK-IN",                   // 3: Intermission
+        "FORM HR-3: SCHEDULE ON FILE",         // 4: Schedule
+        "FORM HR-4: COMPENSATION RECORD",      // 5: Wage
+        "FORM HR-5: SELF-ASSESSMENT",          // 6: Honesty
+        "FORM HR-6: DEPARTMENT FILING",        // 7: Department
+        "CLEARANCE LEVEL ASSIGNED",            // 8: Personality
+        "FORM HR-7: EMPLOYEE PLEDGE",          // 9: Commitment
+        "DOSSIER COMPILATION",                 // 10: Loading
     ]
 
     private var isLoadingScreen: Bool { currentPage == 10 }
@@ -53,6 +56,7 @@ struct OnboardingContainerView: View {
                     .foregroundStyle(Theme.textPrimary.opacity(0.3))
                     .tracking(1.5)
                     .padding(.top, 12)
+                    .padding(.bottom, 4)
             }
 
             screenContent
@@ -65,12 +69,11 @@ struct OnboardingContainerView: View {
             }
         }
         .background(Color.white)
-        .sheet(isPresented: $showPaywall, onDismiss: {
+        .fullScreenCover(isPresented: $showPaywall, onDismiss: {
             hasCompletedOnboarding = true
             syncProfileToSupabase()
         }) {
             PaywallView()
-                .presentationDragIndicator(.visible)
         }
     }
 
@@ -86,37 +89,31 @@ struct OnboardingContainerView: View {
         case 2:
             OnboardingFrustrationView(userFrustration: $userFrustration)
         case 3:
-            OnboardingWageView(
-                hourlyRate: $hourlyRate,
-                currency: $currency,
-                workHoursPerDay: $workHoursPerDay
-            )
+            OnboardingIntermissionView(isComplete: $intermissionComplete)
         case 4:
             OnboardingScheduleView(
                 workHoursPerDay: $workHoursPerDay,
                 workDaysPerWeek: $workDaysPerWeek
             )
         case 5:
-            OnboardingHonestyView(estimatedProductivity: $estimatedProductivity)
+            OnboardingWageView(
+                hourlyRate: $hourlyRate,
+                currency: $currency,
+                workHoursPerDay: $workHoursPerDay,
+                workDaysPerWeek: $workDaysPerWeek
+            )
         case 6:
+            OnboardingHonestyView(estimatedProductivity: $estimatedProductivity)
+        case 7:
             OnboardingDepartmentView(
                 userIndustry: $userIndustry,
                 userCountry: $userCountry
             )
-        case 7:
+        case 8:
             OnboardingPersonalityView(
                 estimatedProductivity: estimatedProductivity,
                 reclaimerLevel: $reclaimerLevel,
                 reclaimerTitle: $reclaimerTitle
-            )
-        case 8:
-            OnboardingInsightView(
-                hourlyRate: hourlyRate,
-                workHoursPerDay: workHoursPerDay,
-                workDaysPerWeek: workDaysPerWeek,
-                estimatedProductivity: estimatedProductivity,
-                userIndustry: userIndustry,
-                userCountry: userCountry
             )
         case 9:
             OnboardingCommitmentView(hasCommitted: $hasCommitted)
@@ -135,7 +132,7 @@ struct OnboardingContainerView: View {
         GeometryReader { geo in
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 2)
-                    .fill(Theme.cardBackground)
+                    .fill(Theme.cardBackground) 
                     .frame(height: 4)
 
                 RoundedRectangle(cornerRadius: 2)
@@ -166,6 +163,18 @@ struct OnboardingContainerView: View {
                     )
             }
             .disabled(!canContinue)
+            .scaleEffect(buttonScale)
+            .onReceive(NotificationCenter.default.publisher(for: .onboardingButtonPulse)) { _ in
+                guard currentPage == 0 else { return }
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                    buttonScale = 1.06
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        buttonScale = 1.0
+                    }
+                }
+            }
 
             if currentPage > 0 {
                 Button {
@@ -191,9 +200,7 @@ struct OnboardingContainerView: View {
     private var continueButtonText: String {
         switch currentPage {
         case 0: return "Begin Orientation"
-        case 6:
-            let filled = !userIndustry.isEmpty && !userCountry.isEmpty
-            return filled ? "Continue" : "Skip for now"
+        case 7: return "Continue"
         case 9: return "Complete Enrollment"
         default: return "Continue"
         }
@@ -203,8 +210,10 @@ struct OnboardingContainerView: View {
         switch currentPage {
         case 1: !userMotivation.isEmpty
         case 2: !userFrustration.isEmpty
-        case 3: hourlyRate > 0
-        case 9: hasCommitted
+        case 3: intermissionComplete
+        case 5: hourlyRate > 0
+        case 7: !userIndustry.isEmpty && !userCountry.isEmpty
+        case 9: hasCommitted && isSignedIn
         default: true
         }
     }

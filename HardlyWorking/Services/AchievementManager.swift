@@ -19,6 +19,15 @@ final class AchievementManager {
     private var unlocksShownThisSession = 0
     private var bannerTask: Task<Void, Never>?
 
+    /// Set once the user has become Pro and seen (or been offered) the reveal of
+    /// every silently-tracked Pro-only achievement earned during their free era.
+    /// Survives across sessions so we only fire the reveal once per user, ever.
+    private static let proBacklogAnnouncedKey = "proBacklogAnnounced"
+
+    /// While true, `showNextBanner` bypasses the per-session cap so the full
+    /// Pro-upgrade reveal plays regardless of how many banners already shown.
+    private var isShowingProBacklog = false
+
     /// Reset the per-session unlock counter (call on app foreground)
     func resetForNewSession() {
         unlocksShownThisSession = 0
@@ -77,6 +86,45 @@ final class AchievementManager {
         if !newUnlocks.isEmpty {
             enqueueUnlocks(newUnlocks)
         }
+
+        // First checkAll after upgrade (or first time a Pro user ever runs this
+        // code path) reveals silently-tracked Pro-only achievements as banners.
+        // Gated by UserDefaults so it fires at most once per user, ever.
+        if isProUser && !UserDefaults.standard.bool(forKey: Self.proBacklogAnnouncedKey) {
+            announceProBacklog()
+            UserDefaults.standard.set(true, forKey: Self.proBacklogAnnouncedKey)
+        }
+    }
+
+    /// Reveal all Pro-only achievements the user silently earned while free.
+    /// Called when a free→Pro upgrade is detected during the session.
+    private func announceProBacklog() {
+        guard let modelContext else { return }
+        let descriptor = FetchDescriptor<UnlockedAchievement>()
+        let existing = (try? modelContext.fetch(descriptor)) ?? []
+        let map = Dictionary(
+            existing.map { ($0.achievementId, $0.level) },
+            uniquingKeysWith: max
+        )
+
+        var backlog: [AchievementUnlockEvent] = []
+        for definition in AchievementCatalog.all where definition.isProOnly {
+            guard let level = map[definition.id], level > 0 else { continue }
+            let rarity = definition.rarityForLevel(level)
+            backlog.append(AchievementUnlockEvent(
+                definition: definition,
+                level: level,
+                rarity: rarity
+            ))
+        }
+
+        guard !backlog.isEmpty else { return }
+
+        // Show highest rarity first so the reveal crescendos correctly.
+        let sorted = backlog.sorted { $0.rarity > $1.rarity }
+        isShowingProBacklog = true
+        unlockQueue.append(contentsOf: sorted)
+        showNextBanner()
     }
 
     // MARK: - Unlock Queue + Drip Feed
@@ -98,21 +146,27 @@ final class AchievementManager {
 
     private func showNextBanner() {
         guard !isShowingBanner, !unlockQueue.isEmpty else { return }
-        guard unlocksShownThisSession < maxUnlocksPerSession else { return }
+        // Pro-upgrade reveals bypass the 3-per-session cap so the full
+        // backlog plays back regardless of how many banners already shown.
+        if !isShowingProBacklog {
+            guard unlocksShownThisSession < maxUnlocksPerSession else { return }
+        }
 
         isShowingBanner = true
         let event = unlockQueue.removeFirst()
-        unlocksShownThisSession += 1
+        if !isShowingProBacklog {
+            unlocksShownThisSession += 1
+        }
 
         Haptics.success()
         withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
             recentUnlock = event
         }
 
-        // Auto-dismiss after 4 seconds, then show next
+        // Auto-dismiss after 5.5 seconds, then show next
         bannerTask?.cancel()
         bannerTask = Task { @MainActor in
-            try? await Task.sleep(for: .seconds(4.0))
+            try? await Task.sleep(for: .seconds(5.5))
             guard !Task.isCancelled else { return }
 
             withAnimation(.easeOut(duration: 0.3)) {
@@ -125,6 +179,9 @@ final class AchievementManager {
                 try? await Task.sleep(for: .seconds(1.0))
                 guard !Task.isCancelled else { return }
                 showNextBanner()
+            } else {
+                // Queue drained — end Pro backlog reveal mode if active
+                isShowingProBacklog = false
             }
         }
     }

@@ -12,7 +12,7 @@ struct RapSheetStatsView: View {
         VStack(alignment: .leading, spacing: 14) {
             Text("PERFORMANCE REVIEW")
                 .font(.system(.caption2, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.3))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
                 .tracking(1.5)
 
             if stats.totalSessions == 0 {
@@ -60,10 +60,10 @@ struct RapSheetStatsView: View {
         VStack(spacing: 4) {
             Text("#N/A")
                 .font(.system(.title3, design: .monospaced, weight: .bold))
-                .foregroundStyle(Theme.textPrimary.opacity(0.08))
+                .foregroundStyle(Theme.textPrimary.opacity(0.25))
             Text("No activity on record.")
                 .font(.system(.caption2, design: .monospaced))
-                .foregroundStyle(Theme.textPrimary.opacity(0.2))
+                .foregroundStyle(Theme.textPrimary.opacity(0.4))
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 32)
@@ -76,7 +76,7 @@ struct RapSheetStatsView: View {
                 .foregroundStyle(color)
             Text(label)
                 .font(.system(.caption2, design: .monospaced))
-                .foregroundStyle(Theme.textPrimary.opacity(0.35))
+                .foregroundStyle(Theme.textPrimary.opacity(0.5))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
