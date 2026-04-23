@@ -29,6 +29,11 @@ final class SubscriptionManager {
     /// Before this fix, a returning user signing in or reinstalling would
     /// see "PROMOTION GRANTED" pop up for no apparent reason.
     static func handleCustomerInfoUpdate(isPro: Bool) {
+        #if DEBUG
+        // Screenshot mode forces Pro on — ignore RevenueCat's live reports so
+        // they can't flip us back to free mid-capture.
+        if ScreenshotSeeder.isActive { return }
+        #endif
         guard let manager = active else { return }
         manager.isProUser = isPro
         UserDefaults.standard.set(isPro, forKey: proStatusKey)
@@ -43,6 +48,16 @@ final class SubscriptionManager {
     }
 
     init() {
+        #if DEBUG
+        // Force Pro on for App Store screenshot capture. Skips all RevenueCat
+        // calls so nothing hits the network or touches real entitlement state.
+        if ScreenshotSeeder.isActive {
+            isProUser = true
+            Self.active = self
+            return
+        }
+        #endif
+
         // Start with cached value so Pro users aren't locked out offline
         isProUser = UserDefaults.standard.bool(forKey: Self.proStatusKey)
         Self.active = self

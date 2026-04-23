@@ -17,11 +17,11 @@ struct PaywallView: View {
     // MARK: - Localized Pricing
 
     private var weeklyPrice: String {
-        subscriptionManager.weeklyPackage?.localizedPriceString ?? "$4.99"
+        subscriptionManager.weeklyPackage?.localizedPriceString ?? "$2.99"
     }
 
     private var annualPrice: String {
-        subscriptionManager.annualPackage?.localizedPriceString ?? "$39.99"
+        subscriptionManager.annualPackage?.localizedPriceString ?? "$24.99"
     }
 
     private var annualPerWeek: String {
@@ -31,9 +31,9 @@ struct PaywallView: View {
             formatter.numberStyle = .currency
             formatter.currencyCode = pkg.storeProduct.currencyCode
             formatter.maximumFractionDigits = 2
-            return formatter.string(from: weekly as NSDecimalNumber) ?? "$0.77"
+            return formatter.string(from: weekly as NSDecimalNumber) ?? "$0.48"
         }
-        return "$0.77"
+        return "$0.48"
     }
 
     private var weeklyAnnualized: String {
@@ -43,9 +43,9 @@ struct PaywallView: View {
             formatter.numberStyle = .currency
             formatter.currencyCode = pkg.storeProduct.currencyCode
             formatter.maximumFractionDigits = 0
-            return formatter.string(from: yearly as NSDecimalNumber) ?? "$259"
+            return formatter.string(from: yearly as NSDecimalNumber) ?? "$155"
         }
-        return "$259"
+        return "$155"
     }
 
     var body: some View {

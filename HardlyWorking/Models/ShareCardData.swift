@@ -72,16 +72,15 @@ struct ShareCardData {
             AchievementInfo(name: event.definition.name, emoji: event.definition.emoji, rarity: event.rarity, detail: "Tier \(romanNumeral(event.level))")
         }
 
-        // Apply the Budget Variance ratchet to `totalMoney` so the share-card
-        // number can't be inflated (or deflated) by hourly-rate changes —
-        // matches the Budget Variance achievement's monotonic behaviour.
-        let ratchetedMoney = max(
-            stats.totalMoney,
-            UserDefaults.standard.double(forKey: "budgetVarianceRatchet")
-        )
-
+        // Honest total — matches what the user sees on the Career tab's
+        // Employment Summary card. We used to floor this at the Budget Variance
+        // ratchet so share cards couldn't be "deflated" by hourly-rate changes,
+        // but that produced the opposite problem: cards kept showing the
+        // historical-max figure even when the user's actual reclaimed total
+        // was lower. The ratchet stays in `AchievementCatalog.budgetVarianceProgress`
+        // where it's genuinely needed to preserve unlocked achievement tiers.
         return ShareCardData(
-            totalMoney: ratchetedMoney,
+            totalMoney: stats.totalMoney,
             totalHours: stats.totalTime / 3600.0,
             totalSessions: stats.totalSessions,
             topCategory: topCategory,

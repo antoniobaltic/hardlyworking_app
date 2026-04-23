@@ -1,188 +1,205 @@
 # Hardly Working
 
-A tongue-in-cheek iOS app that tracks time spent not working at work. Users run timers when slacking, categorize activities, input their hourly wage, and see how much they "reclaimed" from their employer. German localization: "Arbeitszeitbetrug". Inspired by David Graeber's "Bullshit Jobs."
+> **Status (April 2026)**: V1 complete. Build uploaded to App Store Connect. Metadata configuration in progress. Target: manual release, Tuesday/Wednesday morning once Apple approves.
 
-## Brand Direction: "Soulless"
+A satirical iOS break timer that tracks time spent NOT working and calculates its dollar value at the user's hourly rate. Framed as the fictional "Hardly Working Corp." — every surface reads like a corporate memo. Inspired by David Graeber's *Bullshit Jobs*.
 
-Corporate training video meets children's toy. Friendly on the surface. Dead inside. The visual language is cheerful and innocent (wooden-toy characters, bold colors, white backgrounds) but the content is dark (tracking wage theft, existential corporate dread). The tension between the two is the brand.
+---
 
-Think: Fisher-Price made a playset called "My First Existential Crisis." Every design choice answers: "What would HR approve?" — but the data is absurd.
+## Role context for assistants
 
-References: Untitled Goose Game (cute style, antisocial behavior), Papers Please (mundane aesthetic, dark content), Human Resource Machine.
+This project operates with two coexisting AI roles:
 
-## Mascot
+- **Engineering assistant** — helps with SwiftUI, SwiftData, Supabase, RevenueCat, Xcode project issues
+- **CMO** — handles brand voice, App Store Connect setup, launch strategy, marketing content
 
-A low-poly / wooden-toy office worker with dead black dot eyes, blue dress shirt, black tie. Soulless, blocky, slightly unsettling. Appears in onboarding, empty states, achievements, marketing.
+When in doubt about tone, branding, or marketing strategy: **read `marketing.md` first.** It is the source of truth for voice, character canon, political positioning, and launch strategy. Don't re-derive decisions already made there.
 
-App icon: cropped tight to just the head/face on a bold background. The dead eyes are the hook.
+When in doubt about code or features: code state is authoritative. Read the relevant Swift file.
 
-## Color Palette
+---
 
-Slightly-off primaries. Like primary colors that have been sitting under fluorescent office lighting too long and faded.
+## One-paragraph brand summary
+
+Corporate training video meets children's toy. Visuals are cheerful and innocent (wooden-toy mascot, bold colors, white backgrounds); content is dark (tracking wage theft as "reclamation," referencing Bullshit Jobs). Two named characters: **J. Pemberton, CSO** (written voice — all memos/official copy) and **John D.** (the mascot — performative/visual). Dry institutional bureaucratic tone. No snark, no crime metaphors ("reclaimed" not "stolen"). **Full brand rules in `marketing.md`.**
+
+## Visual language (quick reference)
 
 ```
-Background:         #FFFFFF  (pure white)
-"Blood" Red:        #E63946  (slightly warm, not Google red)
-"Dead" Blue:        #457B9D  (muted, desaturated - faded dress shirt)
-"Caution" Yellow:   #F4A261  (mustard/amber - aged sticky note)
-"Reclaimed" Green:  #2A9D8F  (institutional, not neon - for money amounts)
-Text:               #1D3557  (dark navy, not pure black)
-Card Background:    #F1FAEE  (slight warmth, off-white)
+Background:         #FFFFFF
+"Blood" Red:        #E63946   — stamps, destructive actions
+"Dead" Blue:        #457B9D   — accent, John D.'s shirt
+"Caution" Yellow:   #F4A261   — highlights, gold podium tier
+"Reclaimed" Green:  #2A9D8F   — MONEY, always and only
+Text Navy:          #1D3557   — body text (never pure black)
+Card Background:    #F1FAEE   — off-white warm
 ```
 
-Money amounts are ALWAYS in Reclaimed Green. That color = money throughout the app. Use "reclaimed" not "stolen" — empowering, not criminal.
+**Money is always green (`#2A9D8F`). No exceptions across app, share cards, marketing.**
 
-Dark mode = "after hours" — same layout but the lights are off in the office.
+Light mode only — `HardlyWorkingApp.swift` forces `.preferredColorScheme(.light)`. Dark mode is not supported in V1.
 
-## Typography
+## Language rules (quick reference)
 
-- Body: clean, corporate, slightly characterless on purpose (Inter or IBM Plex Sans)
-- Numbers/money: monospace or tabular font (receipt/invoice feel)
-- Calibri-like for any spreadsheet-themed elements (share cards, wrapped)
+- ✅ Reclaimed, Activity, Session, Employee, Reclamation Unit, Orientation, Promotion, Executive tier
+- ❌ Stolen, Offense, Incident, Perpetrator, Group, Signup, Upgrade, Pro
+- ❌ Crime/cop metaphors entirely (no "booking," "suspect," "rap sheet")
+- ❌ Moralizing at users or at specific named employers
+- Money shown in exactly one place per screen (never duplicated)
 
-## Spreadsheet DNA (Seasoning, Not the Meal)
+---
 
-The core UI is clean, white, native iOS. Spreadsheet personality shows up in specific moments:
+## Tech stack
 
-- Formula bar as status header: `=SUM(time_reclaimed)` -> `2h 34m`
-- Excel error codes for empty states: `#N/A`, `####`, `#REF!`
-- Share cards styled as spreadsheet printouts / corporate memos
-- Achievement notifications as Excel pop-ups: "Circular reference detected in your work ethic"
-- Year-end Wrapped styled as an annual report
+- **SwiftUI + SwiftData** — local-first, offline capable
+- **Supabase** — auth (Sign in with Apple), profile sync, aggregate stats, Reclamation Unit leaderboards
+- **RevenueCat** — subscription management; identity synced to Supabase user via `logIn/logOut` in `SupabaseManager.listenForAuthChanges`
+- **iOS 26+** deployment target
+- **Swift 6.0**
 
-## Language Rules
+No attribution SDK and no ATT prompt — the app does not track users.
 
-- "reclaimed" never "stolen" — empowering, not criminal
-- "slacking" is fine for actions ("Start Slacking", "Stop Slacking")
-- Section headers: ALL CAPS, monospaced, bold, letter-spaced (tracking 1.5), opacity 0.3
-- Money shows in exactly ONE place per screen (formula bar), never duplicated
-- Formula bar formula must match what it's computing (e.g. `=SUM(today_reclaimed)` for money)
-- **Corporate-ironic voice throughout.** Tab names and section headers use bland corporate jargon (HR-speak, audit language, performance review terminology). The humor comes from the tension between professional language and absurd content — not from crime/police metaphors. No "booking," "suspect," "criminal," "expunge," "offense," etc. Think: what would appear on a soulless corporate intranet portal?
+## Data residency
 
-## In-App Copy Tone
+| Data | Lives in | Synced across devices? |
+|---|---|---|
+| Raw `TimeEntry` records | SwiftData (on-device) | ❌ No |
+| `UnlockedAchievement` records | SwiftData (on-device) | ❌ No |
+| `CustomCategory` records | SwiftData (on-device) | ❌ No |
+| Profile (wage, country, industry, schedule, Employee ID) | Supabase `profiles` | ✅ Yes via SIWA |
+| Daily aggregated stats | Supabase `daily_stats` | ✅ Yes |
+| Reclamation Units (groups, memberships, display names) | Supabase | ✅ Yes |
+| Subscription state | RevenueCat (keychain-backed + receipt sync) | ✅ Yes |
 
-Corporate-ironic. Bland HR language on the surface, absurd data underneath.
+The app explicitly does NOT use CloudKit sync. No iCloud container. Cross-device continuity comes from Supabase (profile + aggregates) and iCloud Backup (device-level snapshots only).
 
-- Time Sheet tab: "Time Sheet"
-- Dashboard tab: "Performance"
-- Benchmarks tab: "Benchmarks"
-- Profile tab: "Profile"
-- Settings section: "Preferences"
-- Premium: "Career Criminal" (product name, not a UI label)
+## File layout
 
-## Key Screens
+```
+HardlyWorking/
+  App/             HardlyWorkingApp, AppDelegate, ContentView
+  Models/          SwiftData models + ShareCardData + ClearanceLevel
+  Services/        SupabaseManager, SubscriptionManager, RatingManager,
+                   AchievementManager, NotificationManager, ShareCardRenderer,
+                   CSVExporter, RecordingLimits, AchievementCatalog, MockBenchmarkData
+  Theme/           Theme.swift (colors/money formatting), Haptics
+  Views/
+    Timer/         TimerView, TimerViewModel, AddEntrySheet, EntryEditSheet, AddCategorySheet
+    Dashboard/     DashboardView, daily/category charts, Insights, Lifetime/*
+    WallOfShame/   BenchmarkViewModel + country/industry/global views (Intel tab)
+    Groups/        GroupsView, GroupsViewModel, Create/Join/Detail sheets (Units tab)
+    RapSheet/      RapSheetView + Settings + BookingHeader + Achievements + CoverStory (Dossier tab)
+    Onboarding/    OnboardingContainerView + 10 step views + PaywallView
+    Shared/        ShareSheet, ShareCardView, ClearanceBadgeView, ProUpgradeBanner, ProLockedView
+supabase/          Edge Functions (delete_account)
+web/               (gitignored) Next.js landing page — lives at hardlyworking.app
+marketing.md       CMO playbook — brand bible + launch strategy
+```
 
-1. **Time Sheet** — category-first flow (tap a category to start), live timer, today's log with edit/delete/retroactive add
-2. **Performance** — Day/Week/Month/Year/All dashboards. Day has timeline, Week has daily bars (Mon-Fri), Month has weekly bars (split at month boundaries), Year has monthly bars (Jan-Dec), All has career stats grid + category rankings + personal records
-3. **Benchmarks** — NOT individual leaderboards (self-reported data can't be trusted). Shows anonymous aggregate benchmarks: your position vs global average, country rankings, industry rankings, global stats. Mock data for now, Supabase later.
-4. **Profile** — personnel file (identity card), performance review (career stats), commendations (achievements placeholder), preferences (settings)
+## Tab names (in ContentView)
 
-## Benchmarks Design Decisions
+Time Sheet · Reports · Intel · Units · Dossier
 
-- Individual leaderboards are broken because data is self-reported — users can just let the timer run overnight
-- Instead: aggregate benchmarks that can't be gamed (individual outliers wash out in averages)
-- Country and industry comparisons answer "Am I normal?" which is more compelling than "Am I #1?"
-- Future feature: private friend groups where coworkers can hold each other accountable. This is separate from Benchmarks and requires Supabase + persistent identities.
+---
 
-## Categories (ordered by escalation: innocent → existential)
+## Monetization (as shipped)
+
+Free tier ("Intern"): full timer, all 10 categories, Today + This Week dashboards, benchmarks summary, joining existing Reclamation Units, basic share cards (with watermark), 10 achievements.
+
+Paid tier ("Executive"): $2.99/week OR $24.99/year (7-day free trial on annual).
+
+Pro unlocks: Month/Year/Lifetime dashboards, Audit Findings (insights), personal records + category rankings, full country/industry benchmarks, creating Reclamation Units, custom activity codes, CSV export, premium share cards (no watermark), 5 executive-only achievements.
+
+Product IDs (ASC ↔ RevenueCat):
+- Weekly: `hw_weekly`
+- Annual: `hw_annual`
+
+---
+
+## Activity codes (ordered innocent → existential)
 
 Coffee Run, Bathroom Break, Chatting, Doom Scrolling, Online Shopping, Errands, Looking Busy, "Thinking", Into the Void, Long Lunch
 
-## Industry List (fun labels)
+## Industries
 
 Office Drone, Tech Bro, Suit & Tie, Scrubs, Teacher's Lounge, Bureaucrat, Retail Warrior, Blue Collar, Creative, Call Center Survivor, Hospitality, Other
 
-## Tech Stack
+## User profile fields (collected during onboarding)
 
-- SwiftUI + SwiftData (local-first, offline capable)
-- Supabase backend (auth, aggregate stats, benchmarks) — NOT YET SET UP
-- RevenueCat (in-app purchases) — SDK integrated, no products configured
-- AppsFlyer (attribution) — SDK integrated, placeholder keys
-- iOS 26+, Swift 6
-- Raw TimeEntry data stays on-device. Only aggregated stats sync for privacy.
+| Field | AppStorage key |
+|---|---|
+| Hourly rate | `hourlyRate` |
+| Currency | `currency` |
+| Work hours/day | `workHoursPerDay` |
+| Work days/week | `workDaysPerWeek` |
+| Country | `userCountry` |
+| Industry | `userIndustry` |
+| Include weekends in charts | `includeWeekends` |
+| Employee ID | `employeeId` (server-assigned on `handle_new_user`) |
 
-## User Data Needed (for onboarding)
+Profile data syncs to Supabase via `SupabaseManager.syncProfile` and restores on new devices via `HardlyWorkingApp.restoreProfileFromSupabase`.
 
-| Field | AppStorage Key | Status |
-|-------|---------------|--------|
-| Hourly rate | `hourlyRate` | Exists, defaults to $15 |
-| Currency | `currency` | Exists, defaults to "USD" |
-| Work hours/day | `workHoursPerDay` | Exists, defaults to 8 |
-| Work days/week | `workDaysPerWeek` | Exists, defaults to 5 |
-| Country | `userCountry` | Exists, defaults to "" |
-| Industry | `userIndustry` | Exists, defaults to "" |
-| Include weekends in charts | `includeWeekends` | Exists, defaults to false |
+---
 
-## Monetization: Freemium
+## What's shipped in V1
 
-**Pricing:** $4.99/week (no trial) or $39.99/year (7-day free trial). Annual saves 85%.
+- Full timer + all 10 activity codes + retroactive add + edit/delete
+- Day / Week / Month / Year / Lifetime dashboards
+- Benchmarks (live Supabase data, not mocks)
+- Reclamation Units (create, join, leaderboards weekly/monthly/all-time with `joined_at` filtering, per-unit display names, server-assigned `#HW-XXXXX` Employee IDs)
+- Achievements (15 definitions × 5 rarity tiers, with drip-feed banner queue)
+- Share cards (6 card types, 4:3 format = 1080×1440 final)
+- Onboarding (10 steps + SIWA + paywall)
+- Rating system (5 trigger points, iOS-3/year cap respected, Settings "Rate" button + App Store fallback URL)
+- Sign in with Apple → Supabase auth → RevenueCat identity sync (all three in lockstep via `listenForAuthChanges`)
+- Account deletion via Supabase Edge Function
+- Privacy manifest (`PrivacyInfo.xcprivacy`)
 
-**Principle:** Free users are your marketing department. Gate depth, not breadth. Never restrict the daily habit loop or anything that puts the app on someone else's social feed.
+## App Store Connect state (as of April 2026)
 
-### Free (the viral engine)
-- Full timer (start/stop, all 10 categories, retroactive add, edit/delete)
-- Today + This Week dashboard (daily stats, weekly bar chart, category breakdown)
-- Benchmarks summary (your position vs. global average — "Top 30%" tease only)
-- Personnel File + Preferences (full settings access)
-- Join friend groups (via link/QR, view leaderboard, submit data)
-- Share cards — basic, with app watermark (when built)
-- Wrapped — basic shareable version (when built)
+Locked:
+- **Name**: `Hardly Working: Slacking Timer`
+- **Subtitle**: `Calculate your reclaimed wages`
+- **Keywords**: `break,paycheck,pomodoro,anti work,office,hourly,tracker,coffee,lunch,employee,shift,desk,meeting`
+- **Promotional text**: launch-day "NOW HIRING" version (150 chars)
+- **Description**: 3,750-char full memo voice, J. Pemberton signature
+- **Support URL + Marketing URL**: `https://hardlyworking.app`
+- **Version**: `1.0`
+- **Copyright**: `© 2026 Hardly Working Corp. All rights reclaimed.`
+- **Primary Category**: Lifestyle
+- **Secondary Category**: Productivity
+- **Content Rights**: No third-party content
+- **Age Rating**: 4+ (all NO on questionnaire)
+- **Privacy Nutrition Label**: 5 data types, 0 declared as tracking (PurchaseHistory, ProductInteraction, OtherUsageData, UserID, CoarseLocation — all `NSPrivacyTracking=false`). ASC-side nutrition label needs to be updated to match — previous declaration included Device ID + Advertising Data as tracking, both dropped when AppsFlyer was removed.
+- **Apple Silicon Mac + Vision Pro availability**: OFF
+- **Billing Grace Period**: 16 days
+- **Streamlined Purchasing**: ON
+- **Release**: Manual
+- **App Accessibility declarations**: skipped (no audit yet)
 
-### Pro ("Hardly Working Pro")
+In progress:
+- Subscription products — Reference Names set, product IDs (`hw_weekly`, `hw_annual`) verified, but pricing + intro offer + localization + paywall review screenshot still to complete
+- App Store screenshots — not started (saved for last)
+- App Review Information notes — drafted, ~900 chars, ready to paste
 
-**Dashboard depth:**
-- Month, Year, and Lifetime dashboards
-- Insights engine ("Audit Findings")
-- Personal Records
-- Category Rankings
+---
 
-**Benchmarks depth:**
-- Full country rankings
-- Full industry rankings
-- Global stats detail
+## Post-launch backlog (not blocking V1)
 
-**Friend groups:**
-- Create groups (unlimited)
-- Customize (name, emoji, description)
-- Generate invite links / QR codes
-- Manage members
+- **Rename `First Offense` + `Repeat Offender` achievements** — violate our "no crime metaphors" rule. Candidates: `Initial Filing` / `Pattern of Conduct`.
+- **Typo in MEMO-2026-009**: "reduce the guilt of your colleagues is also doing" — either fix or leave as authentic-document texture.
+- **Accessibility audit + implementation** — Dynamic Type support, VoiceOver labels throughout, respect Reduce Motion, WCAG contrast review. Then claim on ASC accessibility section.
+- **Real CloudKit sync for `TimeEntry` records** — currently local-only, users lose raw history on device change unless iCloud Backup restored.
+- **Support page** at `hardlyworking.app/support` — currently we rely on the landing page footer Contact link.
+- **`User Privacy Choices URL`** (ASC privacy section, optional) — only needed if we add CCPA-style in-app opt-out flows.
 
-**Extras:**
-- Achievements & titles
-- Custom categories (beyond 10 defaults)
-- CSV export
-- Premium share cards (custom themes, no watermark)
-- Premium Wrapped (detailed version)
+---
 
-### Why this split
-- Free tier = complete daily tool. Timer + Today + This Week is genuinely useful. Users form habits, see value daily, tell friends.
-- Paywall triggers naturally at ~2 weeks when users want Month view. They've accumulated data and the upgrade feels like unlocking their own analysis.
-- Share cards + Wrapped stay free = viral loop intact. Every share with watermark = free ad.
-- Friend groups: joining is free (every invite = new user), creating is Pro (one paying user brings in 5-10 free users).
-- Benchmarks tease creates curiosity. "Top 30%" is free. Full rankings are Pro.
+## Launch operating principles
 
-## Build Roadmap
+- **Manual release** on approved build — hit the button on a Tuesday/Wednesday morning.
+- **Social-led growth** — primary channel is TikTok/Reels featuring John D. as a character. Not App Store search.
+- **Volume > star average** for ratings. Every meaningful positive moment calls `AppStore.requestReview` directly. No satisfaction-survey gating.
+- **Brand-voice consistency is the whole product.** If copy sounds like a Hardly Working Corp. memo, ship it. If it sounds like a startup marketing bro, kill it.
 
-### Done
-- [x] Time Sheet screen (fully functional)
-- [x] Performance screen (Day/Week/Month/Year/All)
-- [x] Benchmarks (UI with mock data)
-- [x] Profile screen (personnel file, performance review, preferences)
-- [x] RevenueCat + AppsFlyer SDK integration
-- [x] App icon + asset catalog
-- [x] Brand theme (colors, fonts, haptics)
-
-### Next
-1. **Onboarding** — collect wage, country, industry, work schedule
-2. **Supabase backend** — anonymous auth, aggregate sync, live Benchmarks
-3. **Benchmarks live data** — replace mocks with Supabase queries
-5. **Friend groups** — private group leaderboards (premium)
-6. **Premium paywall** — RevenueCat product setup, gate features
-7. **Polish** — dark mode, animations, share cards, German localization, Wrapped
-
-## Viral Mechanics
-
-- Wrapped-style year/month-end review (styled as corporate annual report)
-- Share cards: personalized stats as identity ("I reclaimed $4,200 this year")
-- Country/industry rankings as shareable content
-- Achievement badges with dark humor
+For full launch strategy, content pillars, channel strategy, and the "first 90 days" sequencing: see `marketing.md` §9–11 and §15.

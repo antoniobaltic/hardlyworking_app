@@ -10,17 +10,25 @@ final class DeepLinkHandler {
 struct HardlyWorkingApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
-    @AppStorage("hasSeenATTPrompt") private var hasSeenATTPrompt = false
+    @Environment(\.scenePhase) private var scenePhase
     @State private var subscriptionManager = SubscriptionManager()
     @State private var deepLinkHandler = DeepLinkHandler()
     @State private var achievementManager = AchievementManager()
     @State private var ratingManager = RatingManager()
     @State private var notificationManager = NotificationManager()
 
+    init() {
+        #if DEBUG
+        // Launched with -SCREENSHOT_MODE? Seed UserDefaults BEFORE @AppStorage
+        // reads them, so routing lands on ContentView (skipping onboarding).
+        ScreenshotSeeder.prepareUserDefaultsIfNeeded()
+        #endif
+    }
+
     var body: some Scene {
         WindowGroup {
             Group {
-                if hasCompletedOnboarding && hasSeenATTPrompt {
+                if hasCompletedOnboarding {
                     ContentView()
                         .environment(subscriptionManager)
                         .environment(deepLinkHandler)
@@ -35,13 +43,34 @@ struct HardlyWorkingApp: App {
                             // on every app launch.
                             ratingManager.recordOnboardingCompleted()
                         }
+                        .task {
+                            await reattachLiveActivity()
+                            // Recover any daily_stats rows that missed their
+                            // original sync (app killed mid-session, Dynamic
+                            // Island stop before the fix shipped, etc.). A
+                            // week's sweep on every cold launch is enough.
+                            await backfillOnLaunch()
+                        }
+                        .onChange(of: scenePhase) { _, newPhase in
+                            // Repeat the sweep on every foreground transition so
+                            // cross-device edits and earlier missed syncs keep
+                            // converging without the user having to do anything.
+                            if newPhase == .active {
+                                Task { await backfillOnLaunch() }
+                            }
+                        }
+                        .background {
+                            #if DEBUG
+                            // Invisible trigger — reads modelContext from the
+                            // env provided by .modelContainer() below, then
+                            // seeds the SwiftData store on first appear.
+                            ScreenshotSeederBootstrap()
+                            #endif
+                        }
                         .transition(.opacity)
                         .onOpenURL { url in
                             handleDeepLink(url)
                         }
-                } else if hasCompletedOnboarding && !hasSeenATTPrompt {
-                    ATTPromptView()
-                        .transition(.opacity)
                 } else {
                     OnboardingContainerView()
                         .environment(subscriptionManager)
@@ -65,7 +94,6 @@ struct HardlyWorkingApp: App {
             // Restore profile data from Supabase to local AppStorage
             await restoreProfileFromSupabase()
             hasCompletedOnboarding = true
-            hasSeenATTPrompt = true // They already saw it on the other device
         }
     }
 
@@ -109,6 +137,64 @@ struct HardlyWorkingApp: App {
         } catch {
             print("[Restore] Profile restore failed: \(error)")
         }
+    }
+
+    /// Reconciles the Live Activity with SwiftData on app launch / foreground.
+    /// Runs once per ContentView appearance via `.task`.
+    @MainActor
+    private func reattachLiveActivity() async {
+        let container: ModelContainer
+        do {
+            container = try ModelContainer(
+                for: TimeEntry.self, UnlockedAchievement.self, CustomCategory.self
+            )
+        } catch {
+            return
+        }
+
+        let context = container.mainContext
+        let descriptor = FetchDescriptor<TimeEntry>(
+            predicate: #Predicate { $0.endTime == nil }
+        )
+
+        let customDescriptor = FetchDescriptor<CustomCategory>()
+        let customs = (try? context.fetch(customDescriptor)) ?? []
+
+        if let running = (try? context.fetch(descriptor))?.first {
+            let emoji = SlackCategory.emoji(for: running.category, custom: customs)
+            let allDescriptor = FetchDescriptor<TimeEntry>()
+            let historical = (try? context.fetch(allDescriptor)) ?? []
+            let substitutes = SubstituteResolver.compute(
+                excluding: running.category,
+                historicalEntries: historical,
+                customCategories: customs
+            )
+            await LiveActivityService.reattach(
+                runningCategory: running.category,
+                runningEmoji: emoji,
+                runningStart: running.startTime,
+                substitutes: substitutes
+            )
+        } else {
+            await LiveActivityService.reattach(
+                runningCategory: nil,
+                runningEmoji: nil,
+                runningStart: nil,
+                substitutes: []
+            )
+        }
+    }
+
+    /// Back-fills `daily_stats` for the last 7 days so the server's company-wide
+    /// view catches up on anything that missed its original sync (most commonly:
+    /// sessions ended via the Dynamic Island END button before this helper
+    /// existed). Safe to call repeatedly — upserts on (user_id, date).
+    @MainActor
+    private func backfillOnLaunch() async {
+        guard let container = try? ModelContainer(
+            for: TimeEntry.self, UnlockedAchievement.self, CustomCategory.self
+        ) else { return }
+        await SupabaseSync.backfillRecentDays(context: container.mainContext)
     }
 
     private func handleDeepLink(_ url: URL) {

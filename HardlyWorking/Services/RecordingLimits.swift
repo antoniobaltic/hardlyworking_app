@@ -163,6 +163,10 @@ enum RecordingLimits {
 
         running.endTime = running.startTime.addingTimeInterval(hardCapSeconds)
         try? context.save()
+        Task { await LiveActivityService.end() }
+        // Capped entry may span two calendar days — back-fill the week so both
+        // are covered without us having to reason about the exact date.
+        Task { await SupabaseSync.backfillRecentDays(context: context) }
         return true
     }
 
@@ -186,6 +190,8 @@ enum RecordingLimits {
 
         running.endTime = .now
         try? context.save()
+        Task { await LiveActivityService.end() }
+        Task { await SupabaseSync.syncTodayStats(context: context) }
         return true
     }
 }

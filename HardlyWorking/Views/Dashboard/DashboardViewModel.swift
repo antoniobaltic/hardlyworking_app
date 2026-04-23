@@ -287,18 +287,17 @@ final class DashboardViewModel {
         let currentStreak = AchievementCatalog.calculateStreak(entries: entries)
         let longestStreak = AchievementCatalog.calculateLongestStreakEver(entries: entries)
 
-        // Apply the Budget Variance ratchet so the All-Time wage figure never
-        // regresses when the user lowers their hourly rate — matches the
-        // share-card + Budget Variance achievement behaviour.
-        let computedMoney = total / 3600.0 * hourlyRate
-        let ratchetedMoney = max(
-            computedMoney,
-            UserDefaults.standard.double(forKey: "budgetVarianceRatchet")
-        )
+        // Honest wage total — time × current rate, no ratcheting. The Budget
+        // Variance achievement *does* ratchet (to protect its unlock tier
+        // from rate decreases), but that's an achievement concern. The UI
+        // stat card should always reflect reality so it stays consistent with
+        // the formula bar, the Month card, and the Year card — all of which
+        // compute the same way via `totalMoney(_:hourlyRate:)`.
+        let totalMoney = total / 3600.0 * hourlyRate
 
         return CareerStats(
             totalTime: total,
-            totalMoney: ratchetedMoney,
+            totalMoney: totalMoney,
             totalSessions: filtered.count,
             daysActive: uniqueDays.count,
             avgPerWorkDay: avgPerDay,

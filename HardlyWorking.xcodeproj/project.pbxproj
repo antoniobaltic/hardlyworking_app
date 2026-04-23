@@ -7,6 +7,28 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A8B93AA42F90E06100B35E0D /* ScreenshotSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B93AA32F90E06100B35E0D /* ScreenshotSeeder.swift */; };
+		A8B93B032F90F00000B35E0D /* HardlyWorkingActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B93B022F90F00000B35E0D /* HardlyWorkingActivityAttributes.swift */; };
+		A8B93B052F90F00000B35E0D /* LiveActivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B93B042F90F00000B35E0D /* LiveActivityService.swift */; };
+		A8B93B082F90F00000B35E0D /* EndSessionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B93B072F90F00000B35E0D /* EndSessionIntent.swift */; };
+		A8B93B0A2F90F00000B35E0D /* SwitchActivityIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B93B092F90F00000B35E0D /* SwitchActivityIntent.swift */; };
+		A8B93B0D2F90F00000B35E0D /* HardlyWorkingWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B93B0C2F90F00000B35E0D /* HardlyWorkingWidgetsBundle.swift */; };
+		A8B93B0F2F90F00000B35E0D /* HardlyWorkingActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B93B0E2F90F00000B35E0D /* HardlyWorkingActivityWidget.swift */; };
+		A8B93B1C2F90F00000B35E0D /* HardlyWorkingActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B93B022F90F00000B35E0D /* HardlyWorkingActivityAttributes.swift */; };
+		A8B93B1D2F90F00000B35E0D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0003 /* Theme.swift */; };
+		A8B93B1E2F90F00000B35E0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F000A /* Assets.xcassets */; };
+		A8B93B1F2F90F00000B35E0D /* HardlyWorkingWidgets.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = A8B93B112F90F00000B35E0D /* HardlyWorkingWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A8B93B202F90F00000B35E0D /* EndSessionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B93B072F90F00000B35E0D /* EndSessionIntent.swift */; };
+		A8B93B212F90F00000B35E0D /* SwitchActivityIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B93B092F90F00000B35E0D /* SwitchActivityIntent.swift */; };
+		A8B93B222F90F00000B35E0D /* LiveActivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B93B042F90F00000B35E0D /* LiveActivityService.swift */; };
+		A8B93B232F90F00000B35E0D /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36632F89357900B9A436 /* NotificationManager.swift */; };
+		A8B93B242F90F00000B35E0D /* TimeEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0004 /* TimeEntry.swift */; };
+		A8B93B252F90F00000B35E0D /* UnlockedAchievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36442F88329F00B9A436 /* UnlockedAchievement.swift */; };
+		A8B93B262F90F00000B35E0D /* CustomCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE364C2F88385A00B9A436 /* CustomCategory.swift */; };
+		A8B93B282F90F00000B35E0D /* SubstituteResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B93B272F90F00000B35E0D /* SubstituteResolver.swift */; };
+		A8B93B292F90F00000B35E0D /* SubstituteResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B93B272F90F00000B35E0D /* SubstituteResolver.swift */; };
+		A8B93B2A2F90F00000B35E0D /* SlackCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0005 /* SlackCategory.swift */; };
+		A8B93B2B2F90F00000B35E0D /* SupabaseSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B93B2C2F90F00000B35E0D /* SupabaseSync.swift */; };
 		A8EE36052F87CFD800B9A436 /* RapSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36042F87CFD800B9A436 /* RapSheetView.swift */; };
 		A8EE36072F87CFED00B9A436 /* BookingHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36062F87CFED00B9A436 /* BookingHeaderView.swift */; };
 		A8EE36082FAC100000B9A436 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36072FAC000000B9A436 /* SettingsView.swift */; };
@@ -50,7 +72,6 @@
 		A8EE36572F883F7B00B9A436 /* ShareCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36562F883F7B00B9A436 /* ShareCardView.swift */; };
 		A8EE36572FAB200000B9A436 /* ClearanceBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36562FAB100000B9A436 /* ClearanceBadgeView.swift */; };
 		A8EE36592F883F8C00B9A436 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36582F883F8C00B9A436 /* ShareSheet.swift */; };
-		A8EE365B2F88D21D00B9A436 /* ATTPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE365A2F88D21D00B9A436 /* ATTPromptView.swift */; };
 		A8EE365E2F88EC2400B9A436 /* RecordingLimits.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE365D2F88EC2400B9A436 /* RecordingLimits.swift */; };
 		A8EE36602F88F36500B9A436 /* RatingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE365F2F88F36500B9A436 /* RatingManager.swift */; };
 		A8EE36642F89357900B9A436 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EE36632F89357900B9A436 /* NotificationManager.swift */; };
@@ -69,7 +90,6 @@
 		AA00000000000000000B000E /* AddEntrySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0010 /* AddEntrySheet.swift */; };
 		AA00000000000000000B000F /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0011 /* Haptics.swift */; };
 		AA00000000000000000B0010 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000000000000000E0010 /* RevenueCat */; };
-		AA00000000000000000B0011 /* AppsFlyerLib in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000000000000000E0011 /* AppsFlyerLib */; };
 		AA00000000000000000B0020 /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0020 /* DashboardViewModel.swift */; };
 		AA00000000000000000B0021 /* DailyChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0021 /* DailyChartView.swift */; };
 		AA00000000000000000B0022 /* CategoryChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0022 /* CategoryChartView.swift */; };
@@ -85,8 +105,43 @@
 		AA00000000000000000B0045 /* MockBenchmarkData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0045 /* MockBenchmarkData.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A8B93B1B2F90F00000B35E0D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA00000000000000000E0002 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A8B93B122F90F00000B35E0D;
+			remoteInfo = HardlyWorkingWidgets;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A8B93B192F90F00000B35E0D /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				A8B93B1F2F90F00000B35E0D /* HardlyWorkingWidgets.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		A8B93AA22F8B7EF400B35E0D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		A8B93AA32F90E06100B35E0D /* ScreenshotSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotSeeder.swift; sourceTree = "<group>"; };
+		A8B93B022F90F00000B35E0D /* HardlyWorkingActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardlyWorkingActivityAttributes.swift; sourceTree = "<group>"; };
+		A8B93B042F90F00000B35E0D /* LiveActivityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityService.swift; sourceTree = "<group>"; };
+		A8B93B072F90F00000B35E0D /* EndSessionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndSessionIntent.swift; sourceTree = "<group>"; };
+		A8B93B092F90F00000B35E0D /* SwitchActivityIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchActivityIntent.swift; sourceTree = "<group>"; };
+		A8B93B0C2F90F00000B35E0D /* HardlyWorkingWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardlyWorkingWidgetsBundle.swift; sourceTree = "<group>"; };
+		A8B93B0E2F90F00000B35E0D /* HardlyWorkingActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardlyWorkingActivityWidget.swift; sourceTree = "<group>"; };
+		A8B93B102F90F00000B35E0D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A8B93B112F90F00000B35E0D /* HardlyWorkingWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HardlyWorkingWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A8B93B272F90F00000B35E0D /* SubstituteResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubstituteResolver.swift; sourceTree = "<group>"; };
+		A8B93B2C2F90F00000B35E0D /* SupabaseSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseSync.swift; sourceTree = "<group>"; };
 		A8EE36042F87CFD800B9A436 /* RapSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RapSheetView.swift; sourceTree = "<group>"; };
 		A8EE36062F87CFED00B9A436 /* BookingHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookingHeaderView.swift; sourceTree = "<group>"; };
 		A8EE36072FAC000000B9A436 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -130,7 +185,6 @@
 		A8EE36562F883F7B00B9A436 /* ShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCardView.swift; sourceTree = "<group>"; };
 		A8EE36562FAB100000B9A436 /* ClearanceBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearanceBadgeView.swift; sourceTree = "<group>"; };
 		A8EE36582F883F8C00B9A436 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
-		A8EE365A2F88D21D00B9A436 /* ATTPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ATTPromptView.swift; sourceTree = "<group>"; };
 		A8EE365C2F88E3A800B9A436 /* HardlyWorking.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HardlyWorking.entitlements; sourceTree = "<group>"; };
 		A8EE365D2F88EC2400B9A436 /* RecordingLimits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingLimits.swift; sourceTree = "<group>"; };
 		A8EE365F2F88F36500B9A436 /* RatingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingManager.swift; sourceTree = "<group>"; };
@@ -166,12 +220,18 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		A8B93B142F90F00000B35E0D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AA00000000000000000D0002 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				AA00000000000000000B0010 /* RevenueCat in Frameworks */,
-				AA00000000000000000B0011 /* AppsFlyerLib in Frameworks */,
 				A8EE36302F88177800B9A436 /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -179,6 +239,42 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A8B93AA52F90E06100B35E0D /* Debug */ = {
+			isa = PBXGroup;
+			children = (
+				A8B93AA32F90E06100B35E0D /* ScreenshotSeeder.swift */,
+			);
+			path = Debug;
+			sourceTree = "<group>";
+		};
+		A8B93B012F90F00000B35E0D /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				A8B93B022F90F00000B35E0D /* HardlyWorkingActivityAttributes.swift */,
+				A8B93B272F90F00000B35E0D /* SubstituteResolver.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		A8B93B062F90F00000B35E0D /* Intents */ = {
+			isa = PBXGroup;
+			children = (
+				A8B93B072F90F00000B35E0D /* EndSessionIntent.swift */,
+				A8B93B092F90F00000B35E0D /* SwitchActivityIntent.swift */,
+			);
+			path = Intents;
+			sourceTree = "<group>";
+		};
+		A8B93B0B2F90F00000B35E0D /* HardlyWorkingWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				A8B93B0C2F90F00000B35E0D /* HardlyWorkingWidgetsBundle.swift */,
+				A8B93B0E2F90F00000B35E0D /* HardlyWorkingActivityWidget.swift */,
+				A8B93B102F90F00000B35E0D /* Info.plist */,
+			);
+			path = HardlyWorkingWidgets;
+			sourceTree = "<group>";
+		};
 		A8EE36022F87CF8500B9A436 /* RapSheet 2 */ = {
 			isa = PBXGroup;
 			children = (
@@ -246,7 +342,6 @@
 				A8EE36422F882BCE00B9A436 /* ProLockedView.swift */,
 				A8EE36562F883F7B00B9A436 /* ShareCardView.swift */,
 				A8EE36582F883F8C00B9A436 /* ShareSheet.swift */,
-				A8EE365A2F88D21D00B9A436 /* ATTPromptView.swift */,
 				A8EE36652F89358100B9A436 /* ProUpgradeBanner.swift */,
 				A8EE36562FAB100000B9A436 /* ClearanceBadgeView.swift */,
 			);
@@ -257,6 +352,7 @@
 			isa = PBXGroup;
 			children = (
 				AA00000000000000000C0002 /* HardlyWorking */,
+				A8B93B0B2F90F00000B35E0D /* HardlyWorkingWidgets */,
 				AA00000000000000000C0008 /* Products */,
 				A8B93AA22F8B7EF400B35E0D /* PrivacyInfo.xcprivacy */,
 			);
@@ -273,6 +369,9 @@
 				AA00000000000000000C000E /* Services */,
 				AA00000000000000000C0006 /* Views */,
 				AA00000000000000000C0007 /* Resources */,
+				A8B93AA52F90E06100B35E0D /* Debug */,
+				A8B93B012F90F00000B35E0D /* Shared */,
+				A8B93B062F90F00000B35E0D /* Intents */,
 			);
 			path = HardlyWorking;
 			sourceTree = "<group>";
@@ -337,6 +436,7 @@
 			isa = PBXGroup;
 			children = (
 				AA00000000000000000F000B /* HardlyWorking.app */,
+				A8B93B112F90F00000B35E0D /* HardlyWorkingWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -402,6 +502,8 @@
 				A8EE365D2F88EC2400B9A436 /* RecordingLimits.swift */,
 				A8EE365F2F88F36500B9A436 /* RatingManager.swift */,
 				A8EE36632F89357900B9A436 /* NotificationManager.swift */,
+				A8B93B042F90F00000B35E0D /* LiveActivityService.swift */,
+				A8B93B2C2F90F00000B35E0D /* SupabaseSync.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -409,6 +511,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		A8B93B122F90F00000B35E0D /* HardlyWorkingWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A8B93B162F90F00000B35E0D /* Build configuration list for PBXNativeTarget "HardlyWorkingWidgets" */;
+			buildPhases = (
+				A8B93B132F90F00000B35E0D /* Sources */,
+				A8B93B142F90F00000B35E0D /* Frameworks */,
+				A8B93B152F90F00000B35E0D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HardlyWorkingWidgets;
+			packageProductDependencies = (
+			);
+			productName = HardlyWorkingWidgets;
+			productReference = A8B93B112F90F00000B35E0D /* HardlyWorkingWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		AA00000000000000000E0001 /* HardlyWorking */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AA00000000000000000A0006 /* Build configuration list for PBXNativeTarget "HardlyWorking" */;
@@ -416,15 +537,16 @@
 				AA00000000000000000D0001 /* Sources */,
 				AA00000000000000000D0002 /* Frameworks */,
 				AA00000000000000000D0003 /* Resources */,
+				A8B93B192F90F00000B35E0D /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				A8B93B1A2F90F00000B35E0D /* PBXTargetDependency */,
 			);
 			name = HardlyWorking;
 			packageProductDependencies = (
 				AA00000000000000000E0010 /* RevenueCat */,
-				AA00000000000000000E0011 /* AppsFlyerLib */,
 				A8EE362F2F88177800B9A436 /* Supabase */,
 			);
 			productName = HardlyWorking;
@@ -441,6 +563,9 @@
 				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 2640;
 				TargetAttributes = {
+					A8B93B122F90F00000B35E0D = {
+						CreatedOnToolsVersion = 16.0;
+					};
 					AA00000000000000000E0001 = {
 						CreatedOnToolsVersion = 16.0;
 					};
@@ -458,7 +583,6 @@
 			mainGroup = AA00000000000000000C0001;
 			packageReferences = (
 				AA00000000000000000E0020 /* XCRemoteSwiftPackageReference "purchases-ios" */,
-				AA00000000000000000E0021 /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */,
 				A8EE362E2F88177800B9A436 /* XCRemoteSwiftPackageReference "supabase-swift" */,
 			);
 			productRefGroup = AA00000000000000000C0008 /* Products */;
@@ -466,11 +590,20 @@
 			projectRoot = "";
 			targets = (
 				AA00000000000000000E0001 /* HardlyWorking */,
+				A8B93B122F90F00000B35E0D /* HardlyWorkingWidgets */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		A8B93B152F90F00000B35E0D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A8B93B1E2F90F00000B35E0D /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AA00000000000000000D0003 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -482,6 +615,26 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		A8B93B132F90F00000B35E0D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A8B93B0D2F90F00000B35E0D /* HardlyWorkingWidgetsBundle.swift in Sources */,
+				A8B93B0F2F90F00000B35E0D /* HardlyWorkingActivityWidget.swift in Sources */,
+				A8B93B1C2F90F00000B35E0D /* HardlyWorkingActivityAttributes.swift in Sources */,
+				A8B93B1D2F90F00000B35E0D /* Theme.swift in Sources */,
+				A8B93B202F90F00000B35E0D /* EndSessionIntent.swift in Sources */,
+				A8B93B212F90F00000B35E0D /* SwitchActivityIntent.swift in Sources */,
+				A8B93B222F90F00000B35E0D /* LiveActivityService.swift in Sources */,
+				A8B93B232F90F00000B35E0D /* NotificationManager.swift in Sources */,
+				A8B93B242F90F00000B35E0D /* TimeEntry.swift in Sources */,
+				A8B93B252F90F00000B35E0D /* UnlockedAchievement.swift in Sources */,
+				A8B93B262F90F00000B35E0D /* CustomCategory.swift in Sources */,
+				A8B93B292F90F00000B35E0D /* SubstituteResolver.swift in Sources */,
+				A8B93B2A2F90F00000B35E0D /* SlackCategory.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AA00000000000000000D0001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -499,6 +652,7 @@
 				AA00000000000000000B0004 /* TimeEntry.swift in Sources */,
 				A8EE36492F88334800B9A436 /* AchievementCatalog.swift in Sources */,
 				AA00000000000000000B0005 /* SlackCategory.swift in Sources */,
+				A8B93AA42F90E06100B35E0D /* ScreenshotSeeder.swift in Sources */,
 				AA00000000000000000B0006 /* TimerView.swift in Sources */,
 				AA00000000000000000B0007 /* DashboardView.swift in Sources */,
 				AA00000000000000000B000B /* AppDelegate.swift in Sources */,
@@ -546,7 +700,6 @@
 				A8EE36252F88076A00B9A436 /* OnboardingHonestyView.swift in Sources */,
 				A8EE36512F883AA600B9A436 /* CSVExporter.swift in Sources */,
 				AA00000000000000000B0032 /* CategoryRankingsView.swift in Sources */,
-				A8EE365B2F88D21D00B9A436 /* ATTPromptView.swift in Sources */,
 				AA00000000000000000B0040 /* WallOfShameView.swift in Sources */,
 				AA00000000000000000B0041 /* YourPositionView.swift in Sources */,
 				AA00000000000000000B0042 /* CountryRankingsView.swift in Sources */,
@@ -558,12 +711,89 @@
 				AA00000000000000000B0045 /* MockBenchmarkData.swift in Sources */,
 				A8EE361D2F87EC6600B9A436 /* OnboardingContainerView.swift in Sources */,
 				A8EE36232F88076100B9A436 /* OnboardingFrustrationView.swift in Sources */,
+				A8B93B032F90F00000B35E0D /* HardlyWorkingActivityAttributes.swift in Sources */,
+				A8B93B052F90F00000B35E0D /* LiveActivityService.swift in Sources */,
+				A8B93B082F90F00000B35E0D /* EndSessionIntent.swift in Sources */,
+				A8B93B0A2F90F00000B35E0D /* SwitchActivityIntent.swift in Sources */,
+				A8B93B282F90F00000B35E0D /* SubstituteResolver.swift in Sources */,
+				A8B93B2B2F90F00000B35E0D /* SupabaseSync.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		A8B93B1A2F90F00000B35E0D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A8B93B122F90F00000B35E0D /* HardlyWorkingWidgets */;
+			targetProxy = A8B93B1B2F90F00000B35E0D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		A8B93B172F90F00000B35E0D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 7;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 7Z862J5PAH;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HardlyWorkingWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Hardly Working";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2026 Hardly Working Corp. All rights reclaimed.";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hardlyworking.app.HardlyWorkingWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		A8B93B182F90F00000B35E0D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 7;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 7Z862J5PAH;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HardlyWorkingWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Hardly Working";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2026 Hardly Working Corp. All rights reclaimed.";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hardlyworking.app.HardlyWorkingWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		AA00000000000000000A0001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -696,14 +926,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = HardlyWorking/HardlyWorking.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HardlyWorking/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Hardly Working";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save your share cards to Photos so you can post them wherever you like.";
-				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier helps us understand which ads brought you here and improve your experience.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -712,11 +941,12 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hardlyworking.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "MAIN_APP $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -730,14 +960,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = HardlyWorking/HardlyWorking.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HardlyWorking/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Hardly Working";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save your share cards to Photos so you can post them wherever you like.";
-				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier helps us understand which ads brought you here and improve your experience.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -746,11 +975,12 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hardlyworking.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "MAIN_APP $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -760,6 +990,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A8B93B162F90F00000B35E0D /* Build configuration list for PBXNativeTarget "HardlyWorkingWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A8B93B172F90F00000B35E0D /* Debug */,
+				A8B93B182F90F00000B35E0D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		AA00000000000000000A0005 /* Build configuration list for PBXProject "HardlyWorking" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -797,14 +1036,6 @@
 				minimumVersion = 5.0.0;
 			};
 		};
-		AA00000000000000000E0021 /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/AppsFlyerSDK/AppsFlyerFramework.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 6.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -817,11 +1048,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AA00000000000000000E0020 /* XCRemoteSwiftPackageReference "purchases-ios" */;
 			productName = RevenueCat;
-		};
-		AA00000000000000000E0011 /* AppsFlyerLib */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AA00000000000000000E0021 /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */;
-			productName = AppsFlyerLib;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

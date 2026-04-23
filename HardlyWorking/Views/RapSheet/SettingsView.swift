@@ -477,7 +477,6 @@ struct SettingsView: View {
 
         withAnimation(.easeInOut(duration: 0.3)) {
             UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
-            UserDefaults.standard.set(false, forKey: "hasSeenATTPrompt")
         }
     }
 
@@ -511,7 +510,6 @@ struct SettingsView: View {
         // Routes the app back to onboarding. UserDefaults writes don't
         // animate view transitions on their own, so no animation wrapper.
         UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
-        UserDefaults.standard.set(false, forKey: "hasSeenATTPrompt")
     }
 
     private func syncProfileToSupabase() {

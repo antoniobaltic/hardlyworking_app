@@ -10,11 +10,12 @@ final class TimerViewModel {
     var notificationManager: NotificationManager?
     var isProUser: Bool = false
     var customCategories: [CustomCategory] = []
-    var syncError: String?
     @ObservationIgnored private var hourlyRate: Double = 15.0
 
     func startSlacking(category: SlackCategory, entries: [TimeEntry]) {
         guard let modelContext else { return }
+
+        let wasRunning = entries.contains(where: \.isRunning)
 
         // Stop any running entry first and cancel its notifications
         if let running = entries.first(where: \.isRunning) {
@@ -31,6 +32,36 @@ final class TimerViewModel {
 
         // Request notification permission on first-ever timer start (2s delay so user sees timer first)
         notificationManager?.requestPermissionIfNeeded(delay: 2.0)
+
+        // Compute the 3 most-recently-used categories (excluding the one we just started)
+        // for the Dynamic Island / Lock Screen substitute chips.
+        let allDescriptor = FetchDescriptor<TimeEntry>()
+        let historical = (try? modelContext.fetch(allDescriptor)) ?? []
+        let substitutes = SubstituteResolver.compute(
+            excluding: category.name,
+            historicalEntries: historical,
+            customCategories: customCategories
+        )
+
+        // If we just stopped a previous entry as part of this switch, its
+        // duration needs to hit Supabase — otherwise the server under-reports.
+        // Capture the context weakly (it's a value-ish reference, MainActor-isolated).
+        if wasRunning {
+            let ctx = modelContext
+            Task { await SupabaseSync.syncTodayStats(context: ctx) }
+        }
+
+        // Live Activity: seamless update when switching categories, fresh start otherwise.
+        let startDate = entry.startTime
+        let emoji = category.emoji
+        let name = category.name
+        Task {
+            if wasRunning {
+                await LiveActivityService.update(categoryName: name, categoryEmoji: emoji, substitutes: substitutes, startDate: startDate)
+            } else {
+                await LiveActivityService.start(categoryName: name, categoryEmoji: emoji, substitutes: substitutes, startDate: startDate)
+            }
+        }
     }
 
     func stopSlacking(entries: [TimeEntry]) {
@@ -41,8 +72,15 @@ final class TimerViewModel {
         // Cancel pending timer reminders
         notificationManager?.cancelTimerReminder()
 
-        // Sync today's aggregated stats to Supabase
-        Task { await syncDailyStats(entries: entries) }
+        // Dismiss the Live Activity
+        Task { await LiveActivityService.end() }
+
+        // Sync today's aggregated stats to Supabase (via the shared helper so
+        // every stop-path — in-app, Dynamic Island, notification, caps —
+        // converges on one upsert routine).
+        if let ctx = modelContext {
+            Task { await SupabaseSync.syncTodayStats(context: ctx) }
+        }
 
         // Check achievements
         achievementManager?.checkAll(entries: entries, hourlyRate: hourlyRate, isProUser: isProUser)
@@ -61,50 +99,5 @@ final class TimerViewModel {
 
     func todayMoney(entries: [TimeEntry], hourlyRate: Double) -> Double {
         todayTotal(entries: entries) / 3600.0 * hourlyRate
-    }
-
-    // MARK: - Supabase Sync
-
-    func syncDailyStats(entries: [TimeEntry]) async {
-        guard SupabaseManager.shared.isAuthenticated else { return }
-
-        let today = Calendar.current.startOfDay(for: .now)
-        let todayEntries = entries.filter { !$0.isRunning && $0.startTime >= today }
-
-        guard !todayEntries.isEmpty else { return }
-
-        let rawTotal = todayEntries.reduce(0.0) { $0 + $1.duration }
-        // Cap at workHoursPerDay to prevent inflated benchmark data
-        let workHoursPerDay = UserDefaults.standard.double(forKey: "workHoursPerDay")
-        let dailyCap = RecordingLimits.dailyCapSeconds(workHoursPerDay: workHoursPerDay > 0 ? workHoursPerDay : 8)
-        let totalSeconds = Int(min(rawTotal, dailyCap))
-        let sessionCount = todayEntries.count
-
-        // Find most used category today
-        var categoryCounts: [String: Int] = [:]
-        for entry in todayEntries {
-            categoryCounts[entry.category, default: 0] += 1
-        }
-        let topCategoryRaw = categoryCounts.max(by: { $0.value < $1.value })?.key
-        // Map custom categories to their parent for benchmark data quality
-        let topCategory = topCategoryRaw.map { SlackCategory.parentName(for: $0, custom: customCategories) }
-
-        do {
-            try await SupabaseManager.shared.syncDailyStats(
-                date: today,
-                totalSeconds: totalSeconds,
-                sessionCount: sessionCount,
-                topCategory: topCategory
-            )
-            syncError = nil
-        } catch {
-            print("[Sync] Daily stats sync failed: \(error)")
-            syncError = "Sync pending — data saved locally."
-            // Auto-dismiss after 5 seconds
-            Task { @MainActor in
-                try? await Task.sleep(for: .seconds(5))
-                if syncError != nil { syncError = nil }
-            }
-        }
     }
 }

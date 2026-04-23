@@ -47,19 +47,6 @@ struct TimerView: View {
             formulaBar
             ScrollView {
                 VStack(spacing: 0) {
-                if let syncError = viewModel.syncError {
-                    HStack(spacing: 6) {
-                        Image(systemName: "exclamationmark.icloud")
-                            .font(.system(.caption2))
-                        Text(syncError)
-                            .font(.system(.caption2, design: .monospaced))
-                    }
-                    .foregroundStyle(Theme.cautionYellow)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 6)
-                    .background(Theme.cautionYellow.opacity(0.08))
-                    .transition(.move(edge: .top).combined(with: .opacity))
-                }
                 timerSection
                 if isRunning {
                     stopButton
@@ -143,6 +130,9 @@ struct TimerView: View {
                     hourlyRate: hourlyRate,
                     isProUser: subscriptionManager.isProUser
                 )
+                // Retroactive entries can land on any date — backfill a week
+                // so an entry filed for three days ago still reaches Supabase.
+                Task { await SupabaseSync.backfillRecentDays(context: modelContext) }
             }
             .presentationDetents([.medium])
             .presentationDragIndicator(.visible)
@@ -604,6 +594,8 @@ struct TimerView: View {
                             if let entry = allEntries.first(where: \.isRunning) {
                                 entry.endTime = entry.startTime.addingTimeInterval(RecordingLimits.hardCapSeconds)
                                 try? modelContext.save()
+                                // Capped entry may now belong to a past day — backfill.
+                                Task { await SupabaseSync.backfillRecentDays(context: modelContext) }
                             }
                             showOvernightSheet = false
                         } label: {
@@ -624,6 +616,9 @@ struct TimerView: View {
                             if let entry = allEntries.first(where: \.isRunning) {
                                 entry.endTime = .now
                                 RecordingLimits.splitAtMidnight(entry: entry, context: modelContext)
+                                // Split produces entries on two calendar days —
+                                // back-fill both via the week-sweep helper.
+                                Task { await SupabaseSync.backfillRecentDays(context: modelContext) }
                             }
                             showOvernightSheet = false
                         } label: {

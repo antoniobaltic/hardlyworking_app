@@ -1,5 +1,3 @@
-import AppsFlyerLib
-import AppTrackingTransparency
 import RevenueCat
 import SwiftData
 import UIKit
@@ -11,9 +9,6 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         configureRevenueCat()
-        configureAppsFlyer()
-        // Device identifiers can be collected immediately
-        Purchases.shared.attribution.collectDeviceIdentifiers()
         // Listen for real-time subscription changes
         Purchases.shared.delegate = self
         // Register notification categories + set delegate
@@ -34,14 +29,6 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
 
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         .portrait
-    }
-
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        AppsFlyerLib.shared().start()
-        // Wire AppsFlyer ID to RevenueCat AFTER start() so the UID is initialized
-        Purchases.shared.attribution.setAppsflyerID(
-            AppsFlyerLib.shared().getAppsFlyerUID()
-        )
     }
 
     // MARK: - Notification Handling
@@ -103,6 +90,13 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         UNUserNotificationCenter.current().removePendingNotificationRequests(
             withIdentifiers: ["timer-reminder-2h", "timer-reminder-3h"]
         )
+
+        // Dismiss the Live Activity mirror of this session.
+        Task { await LiveActivityService.end() }
+
+        // Push today's new aggregate to Supabase so the company-wide Intel
+        // page reflects sessions ended via the notification "Stop Timer" action.
+        Task { await SupabaseSync.syncTodayStats(context: context) }
     }
 }
 
@@ -111,17 +105,5 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
 private extension AppDelegate {
     func configureRevenueCat() {
         Purchases.configure(withAPIKey: "appl_knNMlBgWKDwKzuSRCPOPFJZMZZI")
-    }
-
-    func configureAppsFlyer() {
-        AppsFlyerLib.shared().appsFlyerDevKey = "mDAyAgYQxtGgiVHDoHttoi"
-        AppsFlyerLib.shared().appleAppID = "6761917321"
-
-        // Wait for ATT response before sending first launch (up to 60s)
-        AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
-
-        #if DEBUG
-        AppsFlyerLib.shared().isDebug = true
-        #endif
     }
 }

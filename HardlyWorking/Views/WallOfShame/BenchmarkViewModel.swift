@@ -13,6 +13,17 @@ final class BenchmarkViewModel {
     /// Load benchmarks, but skip if data was fetched recently (within 2 minutes).
     /// Use `forceRefresh: true` for pull-to-refresh.
     func loadBenchmarks(forceRefresh: Bool = false) async {
+        #if DEBUG
+        if ScreenshotSeeder.isActive {
+            globalStats = ScreenshotSeeder.mockGlobalBenchmark
+            countries = ScreenshotSeeder.mockCountries
+            industries = ScreenshotSeeder.mockIndustries
+            userPercentile = ScreenshotSeeder.mockPercentile
+            isLiveData = true
+            return
+        }
+        #endif
+
         // Skip if we fetched recently (unless forced)
         if !forceRefresh, isLiveData, let lastFetch = lastFetchTime, Date.now.timeIntervalSince(lastFetch) < 120 {
             return

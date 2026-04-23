@@ -50,40 +50,49 @@ final class NotificationManager {
     /// Schedule local notifications for a running timer (1h and 2h marks).
     /// Pass the category name for contextual notification copy.
     func scheduleTimerReminder(category: String, startTime: Date) {
+        Self.scheduleTimerReminderDirect(category: category, startTime: startTime)
+    }
+
+    /// Cancel all pending timer reminders (called when timer stops).
+    func cancelTimerReminder() {
+        Self.cancelTimerReminderDirect()
+    }
+
+    // MARK: - Process-agnostic helpers
+
+    /// Static version usable from `LiveActivityIntent.perform()` or any context without
+    /// access to the `NotificationManager` instance. Touches only `UNUserNotificationCenter.current()`.
+    nonisolated static func scheduleTimerReminderDirect(category: String, startTime: Date) {
         let center = UNUserNotificationCenter.current()
 
-        // Cancel any existing reminders first (safety for rapid category switches)
-        cancelTimerReminder()
+        cancelTimerReminderDirect()
 
-        // 2-hour reminder
         let interval2h = startTime.addingTimeInterval(7200).timeIntervalSinceNow
         if interval2h > 1 {
             let content2h = UNMutableNotificationContent()
             content2h.title = "ACTIVITY REPORT"
             content2h.body = "Your \(category) timer has been running for 2 hours. Still reclaiming, or did you accidentally become productive?"
             content2h.sound = .default
-            content2h.categoryIdentifier = Self.timerCategoryId
+            content2h.categoryIdentifier = timerCategoryId
 
             let trigger2h = UNTimeIntervalNotificationTrigger(timeInterval: interval2h, repeats: false)
             center.add(UNNotificationRequest(identifier: "timer-reminder-2h", content: content2h, trigger: trigger2h))
         }
 
-        // 3-hour reminder
         let interval3h = startTime.addingTimeInterval(10800).timeIntervalSinceNow
         if interval3h > 1 {
             let content3h = UNMutableNotificationContent()
             content3h.title = "ACTIVITY AUDIT"
             content3h.body = "Session exceeds 3 hours. HR has been notified. (Just kidding. But your timer is still going.)"
             content3h.sound = .default
-            content3h.categoryIdentifier = Self.timerCategoryId
+            content3h.categoryIdentifier = timerCategoryId
 
             let trigger3h = UNTimeIntervalNotificationTrigger(timeInterval: interval3h, repeats: false)
             center.add(UNNotificationRequest(identifier: "timer-reminder-3h", content: content3h, trigger: trigger3h))
         }
     }
 
-    /// Cancel all pending timer reminders (called when timer stops).
-    func cancelTimerReminder() {
+    nonisolated static func cancelTimerReminderDirect() {
         UNUserNotificationCenter.current().removePendingNotificationRequests(
             withIdentifiers: ["timer-reminder-2h", "timer-reminder-3h"]
         )

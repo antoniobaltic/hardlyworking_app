@@ -15,3 +15,6 @@ Packages/
 # Claude
 .claude/
 web/
+
+# Generated marketing assets (regenerable via ScreenshotSeeder)
+hardlyworking_screenshots/

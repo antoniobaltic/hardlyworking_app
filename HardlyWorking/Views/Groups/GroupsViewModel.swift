@@ -26,6 +26,14 @@ final class GroupsViewModel {
     // MARK: - Load
 
     func loadGroups() async {
+        #if DEBUG
+        if ScreenshotSeeder.isActive {
+            groups = ScreenshotSeeder.mockGroups
+            hasLoaded = true
+            return
+        }
+        #endif
+
         // If auth hasn't resolved yet, leave `hasLoaded` unset so the view
         // keeps showing the loading state. The view re-fires this task once
         // `SupabaseManager.shared.isAuthenticated` flips to true.
@@ -45,6 +53,15 @@ final class GroupsViewModel {
     }
 
     func loadLeaderboard(groupId: UUID) async {
+        #if DEBUG
+        if ScreenshotSeeder.isActive {
+            leaderboard = ScreenshotSeeder.mockLeaderboard(
+                currentUserId: SupabaseManager.shared.userId
+            )
+            return
+        }
+        #endif
+
         isLoadingLeaderboard = true
         defer { isLoadingLeaderboard = false }
 
