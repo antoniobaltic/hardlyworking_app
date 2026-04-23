@@ -14,6 +14,12 @@ Packages/
 
 # Claude
 .claude/
+
+# Internal docs — intentionally NOT on the public repo
+CLAUDE.md
+marketing.md
+
+# Landing page — lives in its own repo (antoniobaltic/hardlyworking_web)
 web/
 
 # Generated marketing assets (regenerable via ScreenshotSeeder)
