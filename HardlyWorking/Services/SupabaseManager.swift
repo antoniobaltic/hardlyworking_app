@@ -1,4 +1,5 @@
 import AuthenticationServices
+import CryptoKit
 import Foundation
 import RevenueCat
 import Supabase
@@ -72,6 +73,29 @@ final class SupabaseManager {
 
     // MARK: - Sign in with Apple
 
+    /// The raw random nonce generated for the last `ASAuthorizationAppleIDRequest`.
+    /// Apple's identity token will carry the SHA-256 hash of this string in its
+    /// `nonce` claim; Supabase re-hashes whatever we pass in and compares. The
+    /// value is single-use — we wipe it after the sign-in call finishes.
+    private var currentSignInNonce: String?
+
+    /// Build a fresh nonce pair for a Sign in with Apple request. Call this
+    /// when configuring the `ASAuthorizationAppleIDRequest`, set the returned
+    /// `hashed` on `request.nonce`, and we'll reuse the raw value in
+    /// `signInWithApple(credential:)` to prove to Supabase that the token we
+    /// present was actually issued to this client — not replayed from a
+    /// compromised token elsewhere.
+    ///
+    /// Apple's ASAuthorization flow (and by extension Supabase's
+    /// `signInWithIdToken`) expects nonce-binding on newer iOS/iPadOS
+    /// versions. Omitting it caused App Store review to fail at sign-in on
+    /// iPadOS 26.4.1.
+    func prepareAppleSignInNonce() -> (raw: String, hashed: String) {
+        let raw = Self.generateRandomNonce()
+        currentSignInNonce = raw
+        return (raw: raw, hashed: Self.sha256(raw))
+    }
+
     func signInWithApple(credential: ASAuthorizationAppleIDCredential) async throws {
         guard let identityToken = credential.identityToken,
               let tokenString = String(data: identityToken, encoding: .utf8)
@@ -79,12 +103,49 @@ final class SupabaseManager {
             throw SupabaseAuthError.missingIdentityToken
         }
 
-        try await client.auth.signInWithIdToken(
-            credentials: .init(
-                provider: .apple,
-                idToken: tokenString
+        let rawNonce = currentSignInNonce
+        currentSignInNonce = nil
+
+        do {
+            try await client.auth.signInWithIdToken(
+                credentials: .init(
+                    provider: .apple,
+                    idToken: tokenString,
+                    nonce: rawNonce
+                )
             )
-        )
+        } catch {
+            print("[SIWA] signInWithIdToken failed: \(error)")
+            throw error
+        }
+    }
+
+    // MARK: - Nonce helpers
+
+    /// 32-character URL-safe random nonce. The set of characters is the same
+    /// one Apple recommends in the Sign in with Apple sample code.
+    private static func generateRandomNonce(length: Int = 32) -> String {
+        precondition(length > 0)
+        let charset: [Character] = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+        var result = ""
+        var remaining = length
+        while remaining > 0 {
+            var randoms = [UInt8](repeating: 0, count: 16)
+            let status = SecRandomCopyBytes(kSecRandomDefault, randoms.count, &randoms)
+            precondition(status == errSecSuccess, "SecRandomCopyBytes failed: \(status)")
+            for byte in randoms where remaining > 0 {
+                if byte < charset.count {
+                    result.append(charset[Int(byte)])
+                    remaining -= 1
+                }
+            }
+        }
+        return result
+    }
+
+    private static func sha256(_ input: String) -> String {
+        let hashed = SHA256.hash(data: Data(input.utf8))
+        return hashed.map { String(format: "%02x", $0) }.joined()
     }
 
     // MARK: - Sign Out

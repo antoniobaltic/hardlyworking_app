@@ -78,6 +78,14 @@ struct OnboardingCommitmentView: View {
 
                             SignInWithAppleButton(.signIn) { request in
                                 request.requestedScopes = []
+                                // Bind this request to a fresh SHA-256 nonce so
+                                // Supabase's ID-token verification can prove
+                                // the token was issued to THIS client session,
+                                // not replayed from elsewhere. Without this,
+                                // sign-in silently fails on iPadOS 26.4+ where
+                                // token verification is strictest.
+                                let nonce = SupabaseManager.shared.prepareAppleSignInNonce()
+                                request.nonce = nonce.hashed
                             } onCompletion: { result in
                                 handleSignIn(result)
                             }
@@ -172,7 +180,11 @@ struct OnboardingCommitmentView: View {
     private func handleSignIn(_ result: Result<ASAuthorization, Error>) {
         switch result {
         case .success(let authorization):
-            guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential else { return }
+            guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential else {
+                signInError = "Unexpected credential type. Please try again."
+                print("[SIWA] Unexpected credential: \(authorization.credential)")
+                return
+            }
 
             isSigningIn = true
             signInError = nil
@@ -191,15 +203,26 @@ struct OnboardingCommitmentView: View {
                         UserDefaults.standard.set(empId, forKey: "employeeId")
                     }
                 } catch {
-                    signInError = "Verification failed. Please try again."
+                    // Surface a short description so reviewers (and us, in
+                    // logs) can see the actual failure reason. Until this
+                    // release, sign-in errors were shown as a generic
+                    // "Verification failed" — which obscured a missing-nonce
+                    // regression that cost us an App Review rejection.
+                    let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                    signInError = "Verification failed: \(message)"
                     print("[SIWA] Error: \(error)")
                 }
                 isSigningIn = false
             }
 
-        case .failure:
-            // User cancelled — not an error
-            break
+        case .failure(let error):
+            // `ASAuthorizationError.canceled` is the normal user-cancelled
+            // case; everything else is a real failure worth surfacing.
+            if let authError = error as? ASAuthorizationError, authError.code == .canceled {
+                return
+            }
+            signInError = "Sign-in request failed. \(error.localizedDescription)"
+            print("[SIWA] Authorization failed: \(error)")
         }
     }
 }
