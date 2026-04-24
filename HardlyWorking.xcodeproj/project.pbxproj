@@ -17,7 +17,7 @@
 		A8B93B1C2F90F00000B35E0D /* HardlyWorkingActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B93B022F90F00000B35E0D /* HardlyWorkingActivityAttributes.swift */; };
 		A8B93B1D2F90F00000B35E0D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F0003 /* Theme.swift */; };
 		A8B93B1E2F90F00000B35E0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000F000A /* Assets.xcassets */; };
-		A8B93B1F2F90F00000B35E0D /* HardlyWorkingWidgets.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = A8B93B112F90F00000B35E0D /* HardlyWorkingWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A8B93B1F2F90F00000B35E0D /* HardlyWorkingWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A8B93B112F90F00000B35E0D /* HardlyWorkingWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A8B93B202F90F00000B35E0D /* EndSessionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B93B072F90F00000B35E0D /* EndSessionIntent.swift */; };
 		A8B93B212F90F00000B35E0D /* SwitchActivityIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B93B092F90F00000B35E0D /* SwitchActivityIntent.swift */; };
 		A8B93B222F90F00000B35E0D /* LiveActivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B93B042F90F00000B35E0D /* LiveActivityService.swift */; };
@@ -116,15 +116,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		A8B93B192F90F00000B35E0D /* Embed App Extensions */ = {
+		A8B93B192F90F00000B35E0D /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				A8B93B1F2F90F00000B35E0D /* HardlyWorkingWidgets.appex in Embed App Extensions */,
+				A8B93B1F2F90F00000B35E0D /* HardlyWorkingWidgets.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -537,7 +537,7 @@
 				AA00000000000000000D0001 /* Sources */,
 				AA00000000000000000D0002 /* Frameworks */,
 				AA00000000000000000D0003 /* Resources */,
-				A8B93B192F90F00000B35E0D /* Embed App Extensions */,
+				A8B93B192F90F00000B35E0D /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -736,7 +736,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 7;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 7Z862J5PAH;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -771,7 +771,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 7;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 7Z862J5PAH;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -932,7 +932,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = HardlyWorking/HardlyWorking.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HardlyWorking/Info.plist;
@@ -968,7 +968,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = HardlyWorking/HardlyWorking.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HardlyWorking/Info.plist;
