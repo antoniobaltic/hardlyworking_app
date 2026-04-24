@@ -126,7 +126,7 @@ final class SupabaseManager {
     /// one Apple recommends in the Sign in with Apple sample code.
     private static func generateRandomNonce(length: Int = 32) -> String {
         precondition(length > 0)
-        let charset: [Character] = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+        let charset: [Character] = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-._")
         var result = ""
         var remaining = length
         while remaining > 0 {
